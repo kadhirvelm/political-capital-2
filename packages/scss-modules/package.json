@@ -1,0 +1,27 @@
+{
+    "name": "@pc2/scss-modules",
+    "version": "1.0.0",
+    "description": "Webpack loader for SCSS modules.",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "repository": "https://github.com/kadhirvelm/political-capital-2",
+    "dependencies": {
+        "fs-extra": "^11.1.0",
+        "loader-utils": "^3.2.1",
+        "source-map": "^0.7.4",
+        "webpack": "^5.75.0"
+    },
+    "scripts": {
+        "build": "tsc -d",
+        "dev": "tsc -d --watch",
+        "dev:mobile": "tsc -d --watch",
+        "lint": "eslint . --ext .ts,.tsx --cache",
+        "lint:fix": "yarn lint --fix"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "9.0.13",
+        "@types/loader-utils": "^2.0.3",
+        "@types/source-map": "^0.5.7",
+        "typescript": "^4.9.4"
+    }
+}

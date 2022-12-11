@@ -1,0 +1,36 @@
+{
+    "ts-node": {
+        "files": true,
+        "transpileOnly": true,
+        "moduleTypes": {
+            "*.ts": "cjs"
+        },
+        "compilerOptions": {
+            "module": "commonjs"
+        },
+        "cwd": "political-capital-2/packages/backend/scripts",
+        "projectSearchDir": "political-capital-2/packages/backend/scripts",
+        "require": [],
+        "project": "political-capital-2/packages/backend/scripts/tsconfig.json"
+    },
+    "compilerOptions": {
+        "lib": [
+            "es2021"
+        ],
+        "module": "esnext",
+        "target": "es2021",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "sourceMap": true,
+        "inlineSourceMap": false,
+        "inlineSources": true,
+        "declaration": false,
+        "noEmit": false,
+        "outDir": "./.ts-node"
+    },
+    "files": [
+        "generate-db.ts"
+    ]
+}

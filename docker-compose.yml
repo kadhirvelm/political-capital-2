@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./packages/backend/Dockerfile
+    container_name: backend
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./:/usr/political-capital-two:rw
+    working_dir: /usr/political-capital-two/packages/backend
+    command: yarn dev
+  frontend:
+    build:
+      context: .
+      dockerfile: ./packages/frontend/Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/usr/political-capital-two:rw
+    working_dir: /usr/political-capital-two/packages/frontend
+    command: yarn dev

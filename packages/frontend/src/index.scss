@@ -1,0 +1,18 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+body {
+    display: flex;
+    font-family: "Roboto", sans-serif;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    width: 100vw;
+}
+
+.root {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}

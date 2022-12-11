@@ -1,0 +1,4 @@
+{
+    "ignore": [""],
+    "watch": [".", "../api/dist", "../utility/dist"]
+}
