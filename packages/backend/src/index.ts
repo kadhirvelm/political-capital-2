@@ -10,6 +10,9 @@ import { createServer } from "http";
 import { configureAllRoutes } from "./routes/configureAllRoutes";
 import { configureSecurity } from "./security/configureSecurity";
 
+// Initialize the models
+import "./models";
+
 const app = express();
 const server = createServer(app);
 

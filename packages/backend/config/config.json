@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "yugabyte",
+    "password": null,
+    "database": "political-capital-two",
+    "host": "localhost",
+    "port": "5433",
+    "dialect": "postgres"
+  }
+}

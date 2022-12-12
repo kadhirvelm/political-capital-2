@@ -23,3 +23,15 @@ services:
       - ./:/usr/political-capital-two:rw
     working_dir: /usr/political-capital-two/packages/frontend
     command: yarn dev
+  database:
+    image: yugabytedb/yugabyte:latest
+    container_name: database
+    ports:
+      - "7001:7000"
+      - "9000:9000"
+      - "5433:5433"
+      - "9042:9042"
+    volumes:
+      - ./yb_data:/home/yugabyte/yb_data
+    command: bin/yugabyted start --base_dir=/home/yugabyte/yb_data --daemon=false
+    

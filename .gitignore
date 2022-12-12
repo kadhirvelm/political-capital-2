@@ -247,3 +247,4 @@ temp_api/
 
 docker-registry/auth/
 docker-registry/data/
+yb_data/
