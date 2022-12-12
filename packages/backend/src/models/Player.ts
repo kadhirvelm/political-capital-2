@@ -1,10 +1,15 @@
 import { Column, Model, Table } from "sequelize-typescript";
 
 @Table({
-    tableName: "User",
+    tableName: "Player",
     timestamps: false,
 })
-export class User extends Model {
+export class Player extends Model {
+    @Column({
+        type: "string",
+    })
+    playerRid!: string;
+
     @Column({
         type: "string",
     })
@@ -14,11 +19,4 @@ export class User extends Model {
         type: "string",
     })
     name!: string;
-
-    @Column({
-        type: "string",
-    })
-    createdAt!: string;
-
-    updatedAt!: false;
 }

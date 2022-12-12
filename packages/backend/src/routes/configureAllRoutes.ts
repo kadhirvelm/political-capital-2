@@ -4,7 +4,7 @@
 
 import { SampleServiceBackend } from "@pc2/api";
 import Express from "express";
-import { User } from "../models/User";
+import { User } from "../models/Player";
 import { sampleEndpoint } from "../services/sampleService";
 import { configureFrontendRoutes } from "./configureFrontendRoutes";
 

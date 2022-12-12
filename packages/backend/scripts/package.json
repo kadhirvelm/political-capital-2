@@ -1,3 +1,0 @@
-{
-    "reason": "This is incredibly stupid, but ts-node ignores all attempts to override the module type so we have this empty package.json file in here."
-}

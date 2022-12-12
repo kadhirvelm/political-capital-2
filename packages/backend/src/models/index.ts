@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
-import { User } from "./User";
+import { Game } from "./Game";
+import { Player } from "./Player";
 
 const sequelize = new Sequelize({
     username: "yugabyte",
@@ -8,7 +9,7 @@ const sequelize = new Sequelize({
     host: "localhost",
     port: 5433,
     dialect: "postgres",
-    models: [User],
+    models: [Game, Player],
 });
 
 export { sequelize };
