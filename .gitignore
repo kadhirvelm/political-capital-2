@@ -244,3 +244,6 @@ temp_api/
 
 # Vim .swp files
 .swp
+
+docker-registry/auth/
+docker-registry/data/

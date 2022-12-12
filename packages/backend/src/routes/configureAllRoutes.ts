@@ -10,9 +10,13 @@ import { configureFrontendRoutes } from "./configureFrontendRoutes";
 const mockGetToken = () => null;
 
 export function configureAllRoutes(app: Express.Express) {
-    configureFrontendRoutes(app);
+    app.get("/status", (_req, res) => {
+        res.status(200).send({ message: "success" });
+    });
 
     SampleServiceBackend(app, mockGetToken, {
         sampleEndpoint: sampleEndpoint,
     });
+
+    configureFrontendRoutes(app);
 }

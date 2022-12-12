@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { adjustStyleLoaders, override, addWebpackExternals } = require("customize-cra");
+const { adjustStyleLoaders, override, addWebpackExternals, addWebpackModuleRule } = require("customize-cra");
 
 const SAMPLE_SCSS_FILE_NAME = "test.module.scss";
 
@@ -33,6 +33,12 @@ module.exports = override(
         });
     }),
     addEnvVariablesToDefinePlugin,
+    addWebpackModuleRule({
+        test: /\.m?js/,
+        resolve: {
+            fullySpecified: false,
+        },
+    }),
     ...(process.env.NODE_ENV === "production"
         ? [
               addWebpackExternals({

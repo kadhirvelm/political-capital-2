@@ -11,7 +11,6 @@ Overall
 * Websockets
 
 Backend
-* Custom Node HTTP server
 * Yugabyte DB
 * Locally distributed compute (via Raspberry Pis)
 * Local network DNS
