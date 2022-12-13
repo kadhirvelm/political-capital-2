@@ -6,7 +6,7 @@ const sequelize = new Sequelize({
     username: "yugabyte",
     password: undefined,
     database: "political-capital-two",
-    host: "localhost",
+    host: "host.docker.internal",
     port: 5433,
     dialect: "postgres",
     models: [Game, Player],

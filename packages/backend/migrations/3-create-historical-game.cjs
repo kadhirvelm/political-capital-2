@@ -16,7 +16,7 @@ module.exports = {
                 type: Sequelize.STRING,
             },
             playerValues: {
-                type: Sequelize.ARRAY,
+                type: Sequelize.JSONB,
             },
             createdAt: {
                 type: Sequelize.STRING,

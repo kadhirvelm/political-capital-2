@@ -13,6 +13,9 @@ import { configureSecurity } from "./security/configureSecurity";
 // Initialize the models
 import "./models";
 
+// Initialize the socket service
+import "./services/socketService";
+
 const app = express();
 const server = createServer(app);
 

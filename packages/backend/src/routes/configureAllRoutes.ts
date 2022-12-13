@@ -2,31 +2,20 @@
  * Copyright (c) 2022 - KM
  */
 
-import { SampleServiceBackend } from "@pc2/api";
+import { PlayerServiceBackend } from "@pc2/api";
 import Express from "express";
-import { User } from "../models/Player";
-import { sampleEndpoint } from "../services/sampleService";
+import { getPlayer, registerNewPlayer, updatePlayer } from "../services/playerService";
 import { configureFrontendRoutes } from "./configureFrontendRoutes";
-
-const mockGetToken = () => null;
 
 export function configureAllRoutes(app: Express.Express) {
     app.get("/status", (_req, res) => {
         res.status(200).send({ message: "success" });
     });
 
-    app.get("/new-user", async (_req, res) => {
-        const newUser = await User.create({
-            browserIdentifier: "sample",
-            createdAt: new Date().toLocaleString(),
-            name: "sample-name",
-        });
-
-        res.status(200).send({ newUser });
-    });
-
-    SampleServiceBackend(app, mockGetToken, {
-        sampleEndpoint: sampleEndpoint,
+    PlayerServiceBackend(app, {
+        getPlayer,
+        registerNewPlayer,
+        updatePlayer,
     });
 
     configureFrontendRoutes(app);

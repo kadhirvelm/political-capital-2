@@ -13,7 +13,7 @@ module.exports = {
                 type: Sequelize.BOOLEAN,
             },
             playerRids: {
-                type: Sequelize.ARRAY,
+                type: Sequelize.JSONB,
             },
             gameState: {
                 type: Sequelize.JSONB,

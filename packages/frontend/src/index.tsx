@@ -2,33 +2,35 @@
  * Copyright (c) 2022 - KM
  */
 
-import { SampleServiceFrontend } from "@pc2/api";
-import React from "react";
-import ReactDOM from "react-dom";
-import { checkIsError } from "./utility/alertOnError";
+import { PoliticalCapitalTwo } from "./components/PoliticalCapitalTwo";
+import { createRoot } from "react-dom/client";
+import { ChakraProvider } from "@chakra-ui/react";
+
 import "./index.scss";
 
-const HelloWorld: React.FC<{}> = () => {
-    const [endpointValue, setEndpointValue] = React.useState<string | undefined>(undefined);
+// const HelloWorld: React.FC<{}> = () => {
+//     const attemptWebSocket = () => {
+//         const maybeSocket = new WebSocket("ws://localhost:3003/");
 
-    const loadEndpoint = async () => {
-        const loadedValue = checkIsError(
-            await SampleServiceFrontend.sampleEndpoint({ samplePayload: "Sent from the browser!" }),
-        );
-        if (loadedValue === undefined) {
-            return;
-        }
+//         maybeSocket.onopen = (event) => {
+//             console.log("Open", event);
+//         };
 
-        const { newPayload } = loadedValue;
+//         maybeSocket.onmessage = (event) => {
+//             console.log("Message", event);
+//         };
+//     };
 
-        setEndpointValue(newPayload);
-    };
+//     React.useEffect(() => {
+//         attemptWebSocket();
+//     }, []);
 
-    React.useEffect(() => {
-        loadEndpoint();
-    }, []);
+//     return <div>Hello world!</div>;
+// };
 
-    return <div>Hello world! {endpointValue}</div>;
-};
-
-ReactDOM.render(<HelloWorld />, document.getElementById("root"));
+const root = createRoot(document.getElementById("root")!);
+root.render(
+    <ChakraProvider>
+        <PoliticalCapitalTwo />
+    </ChakraProvider>,
+);

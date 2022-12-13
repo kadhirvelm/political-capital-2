@@ -2,22 +2,25 @@
  * Copyright (c) 2022 - KM
  */
 
+import { IPlayerHistoricalState } from "@pc2/api";
 import { Column, Model, Table } from "sequelize-typescript";
-import { IPossibleStaffer } from "./IStaffer";
 
-export interface IPlayerHistoricalState {
-    playerRid: string;
-    politicalCapital: number;
-    staffers: IPossibleStaffer[];
+interface IHistoricalGameState {
+    historicalGameStateRid: string;
+    gameRid: string;
+    atResolutionRid: string;
+    playerValues: IPlayerHistoricalState[];
+    createdAt: string;
 }
 
 @Table({
     tableName: "HistoricalGameState",
     timestamps: false,
 })
-export class HistoricalGameState extends Model {
+export class HistoricalGameState extends Model<IHistoricalGameState> {
     @Column({
         type: "string",
+        primaryKey: true,
     })
     historicalGameStateRid!: string;
 

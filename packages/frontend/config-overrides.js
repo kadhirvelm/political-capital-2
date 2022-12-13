@@ -1,6 +1,16 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { adjustStyleLoaders, override, addWebpackExternals, addWebpackModuleRule } = require("customize-cra");
 
+function addPolyfillFallbacks(config) {
+    const { resolve } = config;
+    resolve.fallback = {
+        ...(config.resolve.fallback ?? {}),
+        crypto: false,
+    };
+
+    return config;
+}
+
 const SAMPLE_SCSS_FILE_NAME = "test.module.scss";
 
 // https://github.com/arackaf/customize-cra/issues/44
@@ -23,6 +33,7 @@ function addEnvVariablesToDefinePlugin(config) {
 const noop = (config) => config;
 
 module.exports = override(
+    addPolyfillFallbacks,
     adjustStyleLoaders((loader) => {
         if (SAMPLE_SCSS_FILE_NAME.match(loader.test)?.[0] !== ".module.scss") {
             return;

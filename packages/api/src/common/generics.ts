@@ -5,8 +5,6 @@
 import Express from "express";
 import { getBackendUrlFromFrontend } from "../constants";
 
-type IAccountId = string & { _brand: "user-id" };
-
 type IMethods = "get" | "post" | "put" | "delete";
 
 export interface IEndpoint<Payload, Response> {
@@ -20,7 +18,6 @@ type IImplementEndpoint<Service extends IService> = {
     [Key in keyof Service]: {
         method: IMethods;
         slug: string;
-        isPublic?: boolean;
     };
 };
 
@@ -28,7 +25,6 @@ export type IBackendEndpoint<Service extends IService> = {
     [Key in keyof Service]: (
         payload: Service[Key]["payload"],
         response: Express.Response,
-        accountId: IAccountId | null,
     ) => Promise<Service[Key]["response"] | undefined>;
 };
 
@@ -42,38 +38,14 @@ export type IFrontendEndpoint<Service extends IService> = {
 const STORE_TOKEN_KEY = "accountIdFromToken";
 
 function implementBackend<Service extends IService>(endpoints: IImplementEndpoint<Service>) {
-    return (
-        app: Express.Express,
-        decodeWebToken: (token: string | undefined) => IAccountId | null,
-        backendImplementedEndpoints: IBackendEndpoint<Service>,
-    ) => {
-        const verifyToken =
-            (isPublic: boolean) =>
-            (request: Express.Request, response: Express.Response, next: Express.NextFunction) => {
-                if (isPublic) {
-                    next();
-                    return;
-                }
-
-                const token = decodeWebToken(request.headers.authorization);
-                if (token == null) {
-                    response.status(403).send({ error: "Invalid authorization token." });
-                } else {
-                    request.body = request.body ?? {};
-                    request.body[STORE_TOKEN_KEY] = token;
-
-                    next();
-                }
-            };
-
+    return (app: Express.Express, backendImplementedEndpoints: IBackendEndpoint<Service>) => {
         Object.entries(endpoints).forEach((endpoint) => {
-            const [key, { method, slug, isPublic }] = endpoint;
-            app[method](`/api${slug}`, verifyToken(isPublic ?? false), async (request, response) => {
+            const [key, { method, slug }] = endpoint;
+            app[method](`/api${slug}`, async (request, response) => {
                 try {
                     const payload = method === "get" ? Object.values(request.params)[0] : request.body;
-                    const accountIdFromToken = request.body[STORE_TOKEN_KEY] as IAccountId | null;
 
-                    const responseData = await backendImplementedEndpoints[key](payload, response, accountIdFromToken);
+                    const responseData = await backendImplementedEndpoints[key](payload, response);
                     if (responseData === undefined) {
                         return;
                     }
@@ -100,7 +72,7 @@ function maybeRemoveVariableFromSlug(slug: string) {
 
 declare global {
     interface Window {
-        onTokenInvalidate: () => void;
+        onInvalidGame: () => void;
     }
 }
 
@@ -116,8 +88,10 @@ function implementFrontend<Service extends IService>(
 
             const headers =
                 cookie == null
-                    ? { "Content-Type": "application/json", Authorization: "N/A" }
-                    : { "Content-Type": "application/json", Authorization: cookie };
+                    ? // eslint-disable-next-line @typescript-eslint/naming-convention
+                      { "Content-Type": "application/json", Authorization: "N/A" }
+                    : // eslint-disable-next-line @typescript-eslint/naming-convention
+                      { "Content-Type": "application/json", Authorization: cookie };
 
             const hostname = getBackendUrlFromFrontend();
 
@@ -138,7 +112,7 @@ function implementFrontend<Service extends IService>(
 
             // This is a magic function thrown on the window on the frontend that lets us invalidate the token whenever any request comes back as a 403.
             if (rawResponse.status === 403) {
-                window.onTokenInvalidate();
+                window.onInvalidGame();
                 return undefined;
             }
 
@@ -152,11 +126,7 @@ function implementFrontend<Service extends IService>(
 export function implementEndpoints<Service extends IService>(
     endpoints: IImplementEndpoint<Service>,
 ): {
-    backend: (
-        app: Express.Express,
-        decodeWebToken: (token: string | undefined) => IAccountId | null,
-        backendImplementedEndpoints: IBackendEndpoint<Service>,
-    ) => void;
+    backend: (app: Express.Express, backendImplementedEndpoints: IBackendEndpoint<Service>) => void;
     frontend: IFrontendEndpoint<Service>;
 } {
     return {

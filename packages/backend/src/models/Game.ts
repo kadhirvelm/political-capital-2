@@ -2,39 +2,25 @@
  * Copyright (c) 2022 - KM
  */
 
+import { IGameState } from "@pc2/api";
 import { Column, Model, Table } from "sequelize-typescript";
-import { IPastResolution, IPossibleResolution } from "./IResolution";
-import { IPossibleStaffer } from "./IStaffer";
 
-export interface IPlayerState {
-    playerRid: string;
-    politicalCapital: number;
-    partyRid: string;
-    staffers: IPossibleStaffer[];
-}
-
-export interface IPartyRid {
-    partyRid: string;
-    partyName: string;
-    partyColor: string;
-}
-
-export interface IGameState {
-    pastResolutions: IPastResolution[];
-    currentResolution: IPossibleResolution;
-
-    parties: IPartyRid[];
-
-    playerStates: IPlayerState[];
+interface IGame {
+    gameRid: string;
+    isRunning: boolean;
+    playerRids: string[];
+    gameState: IGameState;
+    createdAt: string;
 }
 
 @Table({
     tableName: "Game",
     timestamps: false,
 })
-export class Game extends Model {
+export class Game extends Model<IGame> {
     @Column({
         type: "string",
+        primaryKey: true,
     })
     gameRid!: string;
 
