@@ -60,10 +60,22 @@ export function useHandlePlayerRegistration() {
 
         newWebSocket.onclose = () => {
             setWebSocket(undefined);
+            toast({
+                title: "Disconnected",
+                description: "Connection to the server was lost, please refresh the page.",
+                status: "error",
+                duration: 2000,
+            });
         };
 
         newWebSocket.onerror = () => {
             setWebSocket(undefined);
+            toast({
+                title: "Disconnected",
+                description: "Connection to the server was lost, please refresh the page.",
+                status: "error",
+                duration: 2000,
+            });
         };
 
         newWebSocket.onmessage = (message) => {

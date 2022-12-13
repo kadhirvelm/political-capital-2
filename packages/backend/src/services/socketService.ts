@@ -21,6 +21,11 @@ POLITICAL_CAPITAL_WEBSOCKET.on("connection", (socketConnection: IAddPlayerId) =>
             return;
         }
 
+        const maybeExistingSocketForPlayer = socketsToPlayerMapping.get(parsedData.playerRid);
+        if (maybeExistingSocketForPlayer !== undefined) {
+            maybeExistingSocketForPlayer.terminate();
+        }
+
         socketsToPlayerMapping.set(parsedData.playerRid, socketConnection);
         socketConnection.playerId = parsedData.playerRid;
     });

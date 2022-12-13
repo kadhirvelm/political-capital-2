@@ -8,26 +8,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import "./index.scss";
 
-// const HelloWorld: React.FC<{}> = () => {
-//     const attemptWebSocket = () => {
-//         const maybeSocket = new WebSocket("ws://localhost:3003/");
-
-//         maybeSocket.onopen = (event) => {
-//             console.log("Open", event);
-//         };
-
-//         maybeSocket.onmessage = (event) => {
-//             console.log("Message", event);
-//         };
-//     };
-
-//     React.useEffect(() => {
-//         attemptWebSocket();
-//     }, []);
-
-//     return <div>Hello world!</div>;
-// };
-
 const root = createRoot(document.getElementById("root")!);
 root.render(
     <ChakraProvider>
