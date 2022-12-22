@@ -16,19 +16,24 @@ import "./models";
 // Initialize the socket service
 import "./services/socketService";
 
-const app = express();
-const server = createServer(app);
+function setupServer() {
+    const app = express();
+    const server = createServer(app);
 
-app.use(compression());
-app.use(express.json({ limit: "50mb" }));
-app.use(bodyParser.json({ limit: "50mb" }));
+    app.use(compression());
+    app.use(express.json({ limit: "50mb" }));
+    app.use(bodyParser.json({ limit: "50mb" }));
 
-app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.urlencoded({ extended: true }));
 
-configureSecurity(app);
-configureAllRoutes(app);
+    configureSecurity(app);
 
-server.listen(PORT as unknown as number | undefined, ORIGIN, () => {
-    // eslint-disable-next-line no-console
-    console.log({ level: "info", message: `Server started, listening on http://${ORIGIN ?? ""}:${PORT ?? ""}` });
-});
+    configureAllRoutes(app);
+
+    server.listen(PORT as unknown as number | undefined, ORIGIN, () => {
+        // eslint-disable-next-line no-console
+        console.log({ level: "info", message: `Server started, listening on http://${ORIGIN ?? ""}:${PORT ?? ""}` });
+    });
+}
+
+setupServer();

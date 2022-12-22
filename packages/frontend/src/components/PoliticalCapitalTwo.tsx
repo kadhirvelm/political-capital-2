@@ -2,8 +2,8 @@
  * Copyright (c) 2022 - KM
  */
 
-import { useHandlePlayerRegistration } from "../hooks/handlePlayerRegistration";
 import * as React from "react";
+import { useHandlePlayerRegistration } from "../hooks/handlePlayerRegistration";
 import { PlayerModal } from "./PlayerModal";
 
 export const PoliticalCapitalTwo: React.FC<{}> = () => {
