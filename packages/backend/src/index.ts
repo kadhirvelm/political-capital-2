@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2022 - KM
  */
+import "reflect-metadata";
 
 import { ORIGIN, PORT } from "@pc2/api";
 import bodyParser from "body-parser";

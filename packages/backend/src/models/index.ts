@@ -1,5 +1,9 @@
 import { Sequelize } from "sequelize-typescript";
-import { Game } from "./Game";
+import { ActivePlayer } from "./ActivePlayer";
+import { ActiveResolution } from "./ActiveResolution";
+import { ActiveResolutionVote } from "./ActiveResolutionVote";
+import { ActiveStaffer } from "./ActiveStaffer";
+import { GameState } from "./GameState";
 import { Player } from "./Player";
 
 const sequelize = new Sequelize({
@@ -9,7 +13,7 @@ const sequelize = new Sequelize({
     host: "host.docker.internal",
     port: 5433,
     dialect: "postgres",
-    models: [Game, Player],
+    models: [ActivePlayer, ActiveResolution, ActiveResolutionVote, ActiveStaffer, GameState, Player],
 });
 
 export { sequelize };

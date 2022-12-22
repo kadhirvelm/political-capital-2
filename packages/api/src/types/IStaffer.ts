@@ -4,20 +4,21 @@
 
 import { IVisit } from "./IVisit";
 
-interface IBasicStaffer {
-    stafferRid: string;
+export interface IBasicStaffer {
+    displayName: string;
+    upgradedFrom: IPossibleStaffer["type"][];
     type: string;
 }
 
-interface IInternStaffer extends IBasicStaffer {
+export interface IInternStaffer extends IBasicStaffer {
     type: "intern";
 }
 
-interface INewCongressPerson extends IBasicStaffer {
+export interface INewCongressPerson extends IBasicStaffer {
     type: "new-congress-person";
 }
 
-export interface IAllStaffers {
+interface IAllStaffers {
     intern: IInternStaffer;
     newCongressPerson: INewCongressPerson;
     unknown: never;

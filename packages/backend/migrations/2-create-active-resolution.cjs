@@ -2,28 +2,31 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("HistoricalGameState", {
-            historicalGameStateRid: {
+        await queryInterface.createTable("ActiveResolution", {
+            gameStateRid: {
+                allowNull: false,
+                type: Sequelize.STRING,
+            },
+            activeResolutionRid: {
                 allowNull: false,
                 primaryKey: true,
                 type: Sequelize.STRING,
             },
-            gameRid: {
+            resolutionDetails: {
+                allowNull: false,
+                type: Sequelize.JSONB,
+            },
+            state: {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
-            atResolutionRid: {
-                type: Sequelize.STRING,
-            },
-            playerValues: {
-                type: Sequelize.JSONB,
-            },
-            createdAt: {
-                type: Sequelize.STRING,
+            endsOn: {
+                allowNull: false,
+                type: Sequelize.INTEGER,
             },
         });
     },
     async down(queryInterface) {
-        await queryInterface.dropTable("HistoricalGameState");
+        await queryInterface.dropTable("ActiveResolution");
     },
 };

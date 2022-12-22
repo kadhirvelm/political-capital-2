@@ -2,28 +2,28 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IPlayer } from "@pc2/api";
+import { IGameState } from "@pc2/api";
 import { DataTypes } from "sequelize";
 import { Column, Model, Table } from "sequelize-typescript";
 
 @Table({
-    tableName: "Player",
+    tableName: "GameState",
     timestamps: false,
 })
-export class Player extends Model<IPlayer> {
+export class GameState extends Model<IGameState> {
     @Column({
         type: DataTypes.STRING,
         primaryKey: true,
     })
-    playerRid!: IPlayer["playerRid"];
+    gameStateRid!: IGameState["gameStateRid"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    browserIdentifier!: IPlayer["browserIdentifier"];
+    state!: IGameState["state"];
 
     @Column({
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
     })
-    name!: IPlayer["name"];
+    gameClock!: IGameState["gameClock"];
 }

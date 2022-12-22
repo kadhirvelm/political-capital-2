@@ -2,39 +2,51 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IPastResolution, IPossibleResolution } from "./IResolution";
+import { IActiveResolutionRid, IActiveStafferRid, IGameClock, IGameStateRid, IPlayerRid } from "./BrandedIDs";
+import { IPossibleResolution } from "./IResolution";
 import { IPossibleStaffer } from "./IStaffer";
+import { IPossibleStafferEvent } from "./IStafferEvent";
 
-export interface IPlayerState {
-    playerRid: string;
-    politicalCapital: number;
-    partyRid: string;
-    staffers: IPossibleStaffer[];
-}
-
-export interface IPartyRid {
-    partyRid: string;
-    partyName: string;
-    partyColor: string;
+export interface IPlayer {
+    playerRid: IPlayerRid;
+    browserIdentifier: string;
+    name: string;
 }
 
 export interface IGameState {
-    pastResolutions: IPastResolution[];
-    currentResolution: IPossibleResolution;
-
-    parties: IPartyRid[];
-
-    playerStates: IPlayerState[];
+    gameStateRid: IGameStateRid;
+    state: "active" | "paused" | "complete";
+    gameClock: IGameClock;
 }
 
-export interface IPlayerHistoricalState {
-    playerRid: string;
+export interface IActivePlayer {
+    gameStateRid: IGameStateRid;
+    playerRid: IPlayerRid;
     politicalCapital: number;
-    staffers: IPossibleStaffer[];
+    approvalRating: number;
 }
 
-export interface IPlayer {
-    playerRid: string;
-    browserIdentifier: string;
-    name: string;
+export interface IActiveResolution {
+    gameStateRid: IGameStateRid;
+    activeResolutionRid: IActiveResolutionRid;
+    resolutionDetails: IPossibleResolution;
+    state: "active" | "passed" | "failed";
+    endsOn: IGameClock;
+}
+
+export interface IActiveResolutionVote {
+    gameStateRid: IGameStateRid;
+    activeResolutionRid: IActiveResolutionRid;
+    activeStafferRid: IActiveStafferRid;
+    vote: "inFavor" | "against" | "abstain";
+}
+
+export interface IActiveStaffer {
+    gameStateRid: IGameStateRid;
+    playerRid: IPlayerRid;
+    activeStafferRid: IActiveStafferRid;
+    stafferDetails: IPossibleStaffer;
+    stafferEvents: IPossibleStafferEvent[];
+    state: "active" | "recruiting" | "disabled";
+    hiresOn: IGameClock;
 }

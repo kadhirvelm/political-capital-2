@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IPlayerService } from "@pc2/api";
+import { IPlayerRid, IPlayerService } from "@pc2/api";
 import { v4 } from "uuid";
 import { Player } from "../models/Player";
 import Express from "express";
@@ -22,7 +22,7 @@ export async function registerNewPlayer(
     payload: IPlayerService["registerNewPlayer"]["payload"],
 ): Promise<IPlayerService["registerNewPlayer"]["response"]> {
     const newPlayer = await Player.create({
-        playerRid: v4(),
+        playerRid: v4() as IPlayerRid,
         browserIdentifier: payload.browserIdentifier,
         name: payload.name,
     });

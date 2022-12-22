@@ -4,13 +4,12 @@
 
 import { IVisit } from "./IVisit";
 
-interface IBasicResolution {
-    resolutionRid: string;
+export interface IBasicResolution {
     politicalCapitalPayout: number;
     type: string;
 }
 
-interface IDoublePoliticalCapitalFromResolutions extends IBasicResolution {
+export interface IDoublePoliticalCapitalFromResolutions extends IBasicResolution {
     title: "Double all the things.";
     effect: "Doubles the political capital earned from resolutions.";
     type: "double-political-capital-from-resolutions";
@@ -22,15 +21,6 @@ interface IAllResolutions {
 }
 
 export type IPossibleResolution = IAllResolutions[keyof IAllResolutions];
-
-export interface IPastResolution extends IPossibleResolution {
-    vote: {
-        inFavor: string[];
-        against: string[];
-        abstain: string[];
-    };
-    didPass: boolean;
-}
 
 export namespace IResolution {
     export const isDoublePoliticalCapitalFromResolutions = (

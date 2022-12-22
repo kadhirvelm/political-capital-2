@@ -1,27 +1,18 @@
 version: "3.9"
 
 services:
-  backend:
+  political_capital_twp:
     image: node:18
-    container_name: backend
+    container_name: political_capital_two
     ports:
+      - "3000:3000"
       - "3002:3002"
-      - "3003:3003"
     volumes:
       - ./:/usr/political-capital-two:rw
-    working_dir: /usr/political-capital-two/packages/backend
+    working_dir: /usr/political-capital-two
     command: yarn dev
     environment:
       - ORIGIN=0.0.0.0
-  frontend:
-    image: node:18
-    container_name: frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./:/usr/political-capital-two:rw
-    working_dir: /usr/political-capital-two/packages/frontend
-    command: yarn dev
   database:
     image: yugabytedb/yugabyte:latest
     container_name: database
