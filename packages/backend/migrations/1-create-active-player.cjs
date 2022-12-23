@@ -23,6 +23,9 @@ module.exports = {
             approvalRating: {
                 type: Sequelize.INTEGER,
             },
+            lastUpdatedGameClock: {
+                type: Sequelize.INTEGER,
+            },
         });
     },
     async down(queryInterface) {

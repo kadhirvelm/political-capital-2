@@ -1,4 +1,10 @@
 {
-    "ignore": [""],
-    "watch": [".", "../api/dist", "../utility/dist"]
+    "ignore": [
+        ""
+    ],
+    "watch": [
+        ".",
+        "../api/dist",
+        "../distributed/dist"
+    ]
 }

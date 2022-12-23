@@ -24,6 +24,7 @@ export interface IActivePlayer {
     playerRid: IPlayerRid;
     politicalCapital: number;
     approvalRating: number;
+    lastUpdatedGameClock: IGameClock;
 }
 
 export interface IActiveResolution {

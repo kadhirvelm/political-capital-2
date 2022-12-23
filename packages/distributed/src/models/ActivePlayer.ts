@@ -30,4 +30,9 @@ export class ActivePlayer extends Model<IActivePlayer> {
         type: DataTypes.INTEGER,
     })
     approvalRating!: IActivePlayer["approvalRating"];
+
+    @Column({
+        type: DataTypes.INTEGER,
+    })
+    lastUpdatedGameClock!: IActivePlayer["lastUpdatedGameClock"];
 }

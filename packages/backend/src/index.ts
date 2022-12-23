@@ -10,9 +10,9 @@ import express from "express";
 import { createServer } from "http";
 import { configureAllRoutes } from "./routes/configureAllRoutes";
 import { configureSecurity } from "./security/configureSecurity";
-
-// Initialize the models
-import "./models";
+import { startGameClockTicker } from "./ticker/gameClock";
+import { configureAllQueueProcessors } from "./queue/configureAllQueueProcessors";
+import { initializeModels } from "@pc2/distributed-compute";
 
 // Initialize the socket service
 import "./services/socketService";
@@ -28,8 +28,12 @@ function setupServer() {
     app.use(bodyParser.urlencoded({ extended: true }));
 
     configureSecurity(app);
-
     configureAllRoutes(app);
+
+    initializeModels();
+
+    configureAllQueueProcessors();
+    startGameClockTicker();
 
     server.listen(PORT as unknown as number | undefined, ORIGIN, () => {
         // eslint-disable-next-line no-console

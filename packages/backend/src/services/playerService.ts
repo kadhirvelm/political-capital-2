@@ -4,9 +4,9 @@
 
 import { IPlayerRid, IPlayerService } from "@pc2/api";
 import { v4 } from "uuid";
-import { Player } from "../models/Player";
 import Express from "express";
 import _ from "lodash";
+import { Player } from "@pc2/distributed-compute";
 
 export async function getPlayer(
     payload: IPlayerService["getPlayer"]["payload"],

@@ -2,8 +2,9 @@
  * Copyright (c) 2022 - KM
  */
 
-import { PlayerServiceBackend } from "@pc2/api";
+import { ActiveGameBackend, PlayerServiceBackend } from "@pc2/api";
 import Express from "express";
+import { getGameState } from "../services/gameService";
 import { getPlayer, registerNewPlayer, updatePlayer } from "../services/playerService";
 import { configureFrontendRoutes } from "./configureFrontendRoutes";
 
@@ -16,6 +17,10 @@ export function configureAllRoutes(app: Express.Express) {
         getPlayer,
         registerNewPlayer,
         updatePlayer,
+    });
+
+    ActiveGameBackend(app, {
+        getGameState,
     });
 
     configureFrontendRoutes(app);

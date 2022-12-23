@@ -5,7 +5,9 @@
 export * from "./common/generics";
 
 export * from "./services/playerService";
-export * from "./services/politicalCapitalService";
+export * from "./services/activeGameService";
+
+export * from "./socketMessages/allowedMessages";
 
 export * from "./types/BrandedIDs";
 export * from "./types/IResolution";

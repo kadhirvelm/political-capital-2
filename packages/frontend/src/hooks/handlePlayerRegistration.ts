@@ -3,7 +3,7 @@
  */
 
 import { useToast } from "@chakra-ui/react";
-import { IPlayer, PlayerServiceFrontend } from "@pc2/api";
+import { IPlayer, IRegisterPlayer, PlayerServiceFrontend } from "@pc2/api";
 import React from "react";
 import { checkIsError } from "../utility/alertOnError";
 
@@ -48,8 +48,11 @@ export function useHandlePlayerRegistration() {
         const newWebSocket = new WebSocket("ws://localhost:3003/");
 
         newWebSocket.onopen = () => {
-            newWebSocket.send(JSON.stringify({ ...player, type: "player" }));
+            const registerPlayer: IRegisterPlayer = { player, type: "register-player" };
+            newWebSocket.send(JSON.stringify(registerPlayer));
+
             setWebSocket(newWebSocket);
+
             toast({
                 title: "Success",
                 description: "Logged in and connected to the server.",
@@ -68,11 +71,12 @@ export function useHandlePlayerRegistration() {
             });
         };
 
-        newWebSocket.onerror = () => {
+        newWebSocket.onerror = (error) => {
+            console.error(error);
             setWebSocket(undefined);
             toast({
                 title: "Disconnected",
-                description: "Connection to the server was lost, please refresh the page.",
+                description: "Connection to the server was lost due to an error, please refresh the page.",
                 status: "error",
                 duration: 2000,
             });
