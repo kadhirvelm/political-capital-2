@@ -12,6 +12,10 @@ export async function updateGameStates() {
 
     activeGames.forEach(async (activeGame) => {
         activeGame.gameClock = (activeGame.gameClock + 1) as IGameClock;
+        if (activeGame.gameClock === 365) {
+            activeGame.state = "complete";
+        }
+
         await activeGame.save();
 
         const maybeResolutionToResolve = await ActiveResolution.findOne({
@@ -33,7 +37,7 @@ export async function updateGameStates() {
 
 export function startGameClockTicker() {
     // Ticks every 10 seconds
-    cron.schedule("*/10 * * * * *", () => {
+    cron.schedule("*/5 * * * * *", () => {
         updateGameStates();
     });
 }

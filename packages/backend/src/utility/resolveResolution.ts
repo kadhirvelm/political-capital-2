@@ -19,4 +19,6 @@ export async function resolveResolution(activeResolution: ActiveResolution) {
     }
 
     await activeResolution.save();
+
+    // TODO: create a new resolution
 }

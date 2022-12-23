@@ -72,6 +72,7 @@ export function useHandlePlayerRegistration() {
         };
 
         newWebSocket.onerror = (error) => {
+            // eslint-disable-next-line no-console
             console.error(error);
             setWebSocket(undefined);
             toast({
@@ -80,10 +81,6 @@ export function useHandlePlayerRegistration() {
                 status: "error",
                 duration: 2000,
             });
-        };
-
-        newWebSocket.onmessage = (message) => {
-            console.log("Received message ", message);
         };
     };
 

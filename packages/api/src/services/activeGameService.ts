@@ -13,6 +13,23 @@ import {
 } from "../types/politicalCapitalTwo";
 
 export interface IActiveGameService extends IService {
+    joinActiveGame: {
+        payload: {
+            playerRid: IPlayerRid;
+        };
+        response: IActiveGameService["getGameState"]["response"] | undefined;
+    };
+    createNewGame: {
+        payload: {};
+        response: IActiveGameService["getGameState"]["response"] | undefined;
+    };
+    changeActiveGameState: {
+        payload: {
+            gameStateRid: IGameStateRid;
+            newState: IGameState["state"];
+        };
+        response: IActiveGameService["getGameState"]["response"];
+    };
     getGameState: {
         payload: {
             gameStateRid: IGameStateRid;
@@ -29,6 +46,18 @@ export interface IActiveGameService extends IService {
 }
 
 const { backend, frontend } = implementEndpoints<IActiveGameService>({
+    joinActiveGame: {
+        slug: "/game-service/join-active-game",
+        method: "post",
+    },
+    createNewGame: {
+        slug: "/game-service/create-new-game",
+        method: "post",
+    },
+    changeActiveGameState: {
+        slug: "/game-service/change-active-game-state",
+        method: "post",
+    },
     getGameState: {
         slug: "/game-service/get-game-state",
         method: "post",
