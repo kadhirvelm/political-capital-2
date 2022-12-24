@@ -3,31 +3,26 @@
  */
 
 import * as React from "react";
-import { useHandlePlayerRegistration } from "../hooks/handlePlayerRegistration";
-import { PlayerModal } from "./PlayerModal";
+import { usePoliticalCapitalSelector } from "../store/createStore";
+import { Lobby } from "./lobby/Lobby";
+import { RegisterPlayerModal } from "./registerPlayer/RegisterPlayerModal";
 
 export const PoliticalCapitalTwo: React.FC<{}> = () => {
-    const { browserIdentifier, isLoading, player } = useHandlePlayerRegistration();
+    const player = usePoliticalCapitalSelector((s) => s.playerState.player);
+    const activeGame = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
-    const onCreateNewPlayer = () => window.location.reload();
-
-    const maybeRenderWelcomePlayer = () => {
-        if (player === undefined) {
+    const maybeRenderLobby = () => {
+        if (player === undefined || (activeGame !== undefined && activeGame.gameState.state === "waiting")) {
             return undefined;
         }
 
-        return <div>Welcome {player.name}!</div>;
+        return <Lobby />;
     };
 
     return (
         <div>
-            <div>Political capital two</div>
-            {maybeRenderWelcomePlayer()}
-            <PlayerModal
-                isOpen={player === undefined && !isLoading}
-                browserIdentifier={browserIdentifier}
-                onCreate={onCreateNewPlayer}
-            />
+            <RegisterPlayerModal />
+            {maybeRenderLobby()}
         </div>
     );
 };

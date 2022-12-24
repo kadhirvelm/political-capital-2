@@ -3,13 +3,16 @@
  */
 
 import { useToast } from "@chakra-ui/react";
-import { IPlayer, IRegisterPlayer, PlayerServiceFrontend } from "@pc2/api";
+import { IPossibleToPlayerMessages, IRegisterPlayer, PlayerServiceFrontend } from "@pc2/api";
 import React from "react";
+import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../store/createStore";
+import { handleGameMessage } from "../store/gameState";
+import { setPlayer } from "../store/playerState";
 import { checkIsError } from "../utility/alertOnError";
 
 const BROWSER_RID_KEY = "Political_Capital_Two_Browser_Rid";
 
-const getOrCreateBrowserRid = () => {
+export const getOrCreateBrowserRid = () => {
     let maybeExistingBrowserRid: string | null = window.localStorage.getItem(BROWSER_RID_KEY);
     if (maybeExistingBrowserRid == null) {
         maybeExistingBrowserRid = crypto.randomUUID();
@@ -20,24 +23,26 @@ const getOrCreateBrowserRid = () => {
     return maybeExistingBrowserRid;
 };
 
-export function useHandlePlayerRegistration() {
+export function useHandlePlayerAndSocketRegistration() {
     const browserIdentifier = getOrCreateBrowserRid();
 
     const toast = useToast();
 
     const [isLoading, setIsLoading] = React.useState(true);
-    const [player, setPlayer] = React.useState<IPlayer | undefined>(undefined);
     const [webSocket, setWebSocket] = React.useState<WebSocket | undefined>(undefined);
+
+    const dispatch = usePoliticalCapitalDispatch();
+    const player = usePoliticalCapitalSelector((s) => s.playerState.player);
 
     const maybeGetExistingPlayer = async () => {
         const maybePlayer = checkIsError(await PlayerServiceFrontend.getPlayer({ browserIdentifier }));
         setIsLoading(false);
 
-        if (maybePlayer === undefined) {
+        if (maybePlayer === undefined || maybePlayer.player === undefined) {
             return;
         }
 
-        setPlayer(maybePlayer.player);
+        dispatch(setPlayer(maybePlayer.player));
     };
 
     const registerNewSocket = () => {
@@ -82,6 +87,10 @@ export function useHandlePlayerRegistration() {
                 duration: 2000,
             });
         };
+
+        newWebSocket.onmessage = (message: MessageEvent<IPossibleToPlayerMessages>) => {
+            dispatch(handleGameMessage(JSON.parse(message.data as any)));
+        };
     };
 
     React.useEffect(() => {
@@ -93,8 +102,7 @@ export function useHandlePlayerRegistration() {
     }, [player, webSocket]);
 
     return {
-        browserIdentifier,
         isLoading,
-        player,
+        webSocket,
     };
 }

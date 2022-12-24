@@ -2,7 +2,6 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IPlayer, PlayerServiceFrontend } from "@pc2/api";
 import {
     Button,
     Input,
@@ -14,16 +13,20 @@ import {
     ModalHeader,
     ModalOverlay,
 } from "@chakra-ui/react";
+import { PlayerServiceFrontend } from "@pc2/api";
 import * as React from "react";
-import { checkIsError } from "../utility/alertOnError";
+import { getOrCreateBrowserRid, useHandlePlayerAndSocketRegistration } from "../../hooks/handlePlayerRegistration";
+import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
+import { setPlayer } from "../../store/playerState";
+import { checkIsError } from "../../utility/alertOnError";
 
-export const PlayerModal: React.FC<{
-    isOpen: boolean;
-    browserIdentifier: string;
-    onCreate: (newPlayer: IPlayer) => void;
-}> = ({ browserIdentifier, isOpen, onCreate }) => {
-    const [name, setName] = React.useState("");
+export const RegisterPlayerModal: React.FC<{}> = ({}) => {
+    const { isLoading } = useHandlePlayerAndSocketRegistration();
 
+    const dispatch = usePoliticalCapitalDispatch();
+    const player = usePoliticalCapitalSelector((s) => s.playerState.player);
+
+    const [name, setName] = React.useState(player?.name ?? "");
     const onNameUpdate = (event: React.ChangeEvent<HTMLInputElement>) => setName(event.currentTarget.value);
 
     const onConfirm = async () => {
@@ -31,16 +34,18 @@ export const PlayerModal: React.FC<{
             return;
         }
 
-        const newPlayer = checkIsError(await PlayerServiceFrontend.registerNewPlayer({ browserIdentifier, name }));
+        const newPlayer = checkIsError(
+            await PlayerServiceFrontend.registerNewPlayer({ browserIdentifier: getOrCreateBrowserRid(), name }),
+        );
         if (newPlayer === undefined) {
             return;
         }
 
-        onCreate(newPlayer.player);
+        dispatch(setPlayer(newPlayer.player));
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={() => {}}>
+        <Modal isOpen={player === undefined && !isLoading} onClose={() => {}}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>New player</ModalHeader>

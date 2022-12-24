@@ -12,6 +12,14 @@ import {
     IGameState,
 } from "../types/politicalCapitalTwo";
 
+export interface IFullGameState {
+    gameState: IGameState;
+    activePlayers: IActivePlayer[];
+    activeResolution: IActiveResolution;
+    activePlayersVotes: IActiveResolutionVote[];
+    activePlayersStaffers: IActiveStaffer[];
+}
+
 export interface IActiveGameService extends IService {
     createNewGame: {
         payload: {
@@ -43,13 +51,7 @@ export interface IActiveGameService extends IService {
         payload: {
             gameStateRid: IGameStateRid;
         };
-        response: {
-            gameState: IGameState;
-            activePlayers: IActivePlayer[];
-            activeResolution: IActiveResolution;
-            activePlayersVotes: IActiveResolutionVote[];
-            activePlayersStaffers: IActiveStaffer[];
-        };
+        response: IFullGameState;
     };
 }
 
