@@ -4,7 +4,13 @@
 
 import { ActiveGameBackend, PlayerServiceBackend } from "@pc2/api";
 import Express from "express";
-import { getGameState } from "../services/gameService";
+import {
+    changeActiveGameState,
+    createNewGame,
+    getGameState,
+    joinActiveGame,
+    readyPlayer,
+} from "../services/gameService";
 import { getPlayer, registerNewPlayer, updatePlayer } from "../services/playerService";
 import { configureFrontendRoutes } from "./configureFrontendRoutes";
 
@@ -20,6 +26,10 @@ export function configureAllRoutes(app: Express.Express) {
     });
 
     ActiveGameBackend(app, {
+        createNewGame,
+        joinActiveGame,
+        readyPlayer,
+        changeActiveGameState,
         getGameState,
     });
 

@@ -15,7 +15,7 @@ export interface IPlayer {
 
 export interface IGameState {
     gameStateRid: IGameStateRid;
-    state: "active" | "paused" | "complete";
+    state: "waiting" | "active" | "paused" | "complete";
     gameClock: IGameClock;
 }
 
@@ -25,6 +25,7 @@ export interface IActivePlayer {
     politicalCapital: number;
     approvalRating: number;
     lastUpdatedGameClock: IGameClock;
+    isReady: boolean;
 }
 
 export interface IActiveResolution {

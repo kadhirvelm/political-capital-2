@@ -4,7 +4,7 @@
 
 import { IActivePlayer } from "@pc2/api";
 import { DataTypes } from "sequelize";
-import { Column, Model, Table } from "sequelize-typescript";
+import { Column, DataType, Model, Table } from "sequelize-typescript";
 
 @Table({
     tableName: "ActivePlayer",
@@ -35,4 +35,9 @@ export class ActivePlayer extends Model<IActivePlayer> {
         type: DataTypes.INTEGER,
     })
     lastUpdatedGameClock!: IActivePlayer["lastUpdatedGameClock"];
+
+    @Column({
+        type: DataType.BOOLEAN,
+    })
+    isReady!: IActivePlayer["isReady"];
 }

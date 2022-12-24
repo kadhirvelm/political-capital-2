@@ -26,6 +26,9 @@ module.exports = {
             lastUpdatedGameClock: {
                 type: Sequelize.INTEGER,
             },
+            isReady: {
+                type: Sequelize.BOOLEAN,
+            },
         });
     },
     async down(queryInterface) {

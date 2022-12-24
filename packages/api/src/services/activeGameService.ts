@@ -13,45 +13,57 @@ import {
 } from "../types/politicalCapitalTwo";
 
 export interface IActiveGameService extends IService {
+    createNewGame: {
+        payload: {
+            playerRid: IPlayerRid;
+        };
+        response: {};
+    };
     joinActiveGame: {
         payload: {
             playerRid: IPlayerRid;
         };
-        response: IActiveGameService["getGameState"]["response"] | undefined;
+        response: {};
     };
-    createNewGame: {
-        payload: {};
-        response: IActiveGameService["getGameState"]["response"] | undefined;
+    readyPlayer: {
+        payload: {
+            playerRid: IPlayerRid;
+            gameStateRid: IGameStateRid;
+        };
+        response: {};
     };
     changeActiveGameState: {
         payload: {
             gameStateRid: IGameStateRid;
             newState: IGameState["state"];
         };
-        response: IActiveGameService["getGameState"]["response"];
+        response: {};
     };
     getGameState: {
         payload: {
             gameStateRid: IGameStateRid;
-            playerRid: IPlayerRid;
         };
         response: {
             gameState: IGameState;
-            activePlayer: IActivePlayer;
+            activePlayers: IActivePlayer[];
             activeResolution: IActiveResolution;
-            activePlayerVotes: IActiveResolutionVote[];
-            activePlayerStaffers: IActiveStaffer[];
+            activePlayersVotes: IActiveResolutionVote[];
+            activePlayersStaffers: IActiveStaffer[];
         };
     };
 }
 
 const { backend, frontend } = implementEndpoints<IActiveGameService>({
+    createNewGame: {
+        slug: "/game-service/create-new-game",
+        method: "post",
+    },
     joinActiveGame: {
         slug: "/game-service/join-active-game",
         method: "post",
     },
-    createNewGame: {
-        slug: "/game-service/create-new-game",
+    readyPlayer: {
+        slug: "/game-service/ready-player",
         method: "post",
     },
     changeActiveGameState: {
