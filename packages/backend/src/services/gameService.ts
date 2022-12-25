@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IActiveGameService, IGameClock, IGameStateRid } from "@pc2/api";
+import { IActiveGameService, IEvent, IFullGameState, IGameClock, IGameStateRid, IResolveGameEvent } from "@pc2/api";
 import {
     ActivePlayer,
     ActiveResolution,
@@ -10,12 +10,63 @@ import {
     ActiveStaffer,
     GameState,
     Player,
+    ResolveGameEvent,
 } from "@pc2/distributed-compute";
 import Express from "express";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
 import { INITIAL_APPROVAL_RATING, INITIAL_POLITICAL_CAPITAL } from "../constants/initializePlayers";
 import { sendMessageToPlayer } from "./socketService";
+
+// This isn't strictly necessary, but given there's a second promise going out anyway, might as well optimize it
+async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<IFullGameState["resolveEvents"]> {
+    return new Promise((resolve) => {
+        const indexedResolveEvents: IFullGameState["resolveEvents"] = {
+            game: [],
+            players: {},
+        };
+
+        resolveEvents.forEach((resolveEvent) => {
+            IEvent.visit<void>(resolveEvent.eventDetails, {
+                finishHiringStaffer: (finishHiringStaffer) => {
+                    indexedResolveEvents.players[finishHiringStaffer.playerRid] = indexedResolveEvents.players[
+                        finishHiringStaffer.playerRid
+                    ] ?? {
+                        overall: [],
+                        staffers: {},
+                    };
+
+                    indexedResolveEvents.players[finishHiringStaffer.playerRid].staffers[
+                        finishHiringStaffer.activeStafferRid
+                    ] =
+                        indexedResolveEvents.players[finishHiringStaffer.playerRid].staffers[
+                            finishHiringStaffer.activeStafferRid
+                        ] ?? {};
+
+                    indexedResolveEvents.players[finishHiringStaffer.playerRid].staffers[
+                        finishHiringStaffer.activeStafferRid
+                    ].push(resolveEvent);
+                },
+                startHiringStaffer: (startHiringStaffer) => {
+                    indexedResolveEvents.players[startHiringStaffer.playerRid] = indexedResolveEvents.players[
+                        startHiringStaffer.playerRid
+                    ] ?? {
+                        overall: [],
+                        staffers: {},
+                    };
+
+                    indexedResolveEvents.players[startHiringStaffer.playerRid].overall.push(resolveEvent);
+                },
+                newResolution: () => {
+                    indexedResolveEvents.game.push(resolveEvent);
+                },
+                unknown: () => {},
+            });
+        });
+
+        resolve(indexedResolveEvents);
+    });
+}
 
 export async function getGameState(
     payload: IActiveGameService["getGameState"]["payload"],
@@ -35,19 +86,27 @@ export async function getGameState(
     const activePlayersStaffersPromise = ActiveStaffer.findAll({
         where: { gameStateRid: payload.gameStateRid },
     });
+    const allResolveEventsPromise = ResolveGameEvent.findAll({
+        where: { gameStateRid: payload.gameStateRid },
+    });
 
-    const [gameState, activePlayers, activeResolution, activePlayersVotes, activePlayersStaffers] = await Promise.all([
-        gameStatePromise,
-        activePlayersPromise,
-        activeResolutionPromise,
-        activePlayerVotesPromise,
-        activePlayersStaffersPromise,
-    ]);
+    const [gameState, activePlayers, activeResolution, activePlayersVotes, activePlayersStaffers, allResolveEvents] =
+        await Promise.all([
+            gameStatePromise,
+            activePlayersPromise,
+            activeResolutionPromise,
+            activePlayerVotesPromise,
+            activePlayersStaffersPromise,
+            allResolveEventsPromise,
+        ]);
     if (gameState == null) {
         throw new Error(`Something went wrong when trying to get the game state for: ${payload.gameStateRid}.`);
     }
 
-    const players = await Player.findAll({ where: { playerRid: activePlayers.map((p) => p.playerRid) } });
+    const [players, indexedResolveEvents] = await Promise.all([
+        Player.findAll({ where: { playerRid: activePlayers.map((p) => p.playerRid) } }),
+        indexResolveEvents(allResolveEvents),
+    ]);
 
     return {
         gameState,
@@ -56,6 +115,7 @@ export async function getGameState(
         activeResolution: activeResolution ?? undefined,
         activePlayersVotes,
         activePlayersStaffers,
+        resolveEvents: indexedResolveEvents,
     };
 }
 
@@ -90,6 +150,13 @@ export async function createNewGame(
             approvalRating: INITIAL_APPROVAL_RATING,
             lastUpdatedGameClock: 0 as IGameClock,
             isReady: false,
+        }),
+        ResolveGameEvent.create({
+            gameStateRid: newGameStateRid,
+            resolvesOn: 0 as IGameClock,
+            eventDetails: { type: "new-resolution" },
+            state: "active",
+            type: { type: "game" },
         }),
     ]);
 

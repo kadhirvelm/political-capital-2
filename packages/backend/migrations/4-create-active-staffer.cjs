@@ -19,16 +19,9 @@ module.exports = {
             stafferDetails: {
                 type: Sequelize.JSONB,
             },
-            stafferEvents: {
-                type: Sequelize.JSONB,
-            },
             state: {
                 allowNull: false,
                 type: Sequelize.STRING,
-            },
-            hiresOn: {
-                allowNull: false,
-                type: Sequelize.INTEGER,
             },
         });
     },

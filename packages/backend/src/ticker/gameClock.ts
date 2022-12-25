@@ -3,9 +3,9 @@
  */
 
 import { IGameClock } from "@pc2/api";
-import { ActivePlayer, ActiveResolution, GameState, ProcessPlayerQueue } from "@pc2/distributed-compute";
+import { ActivePlayer, GameState, ProcessPlayerQueue } from "@pc2/distributed-compute";
 import cron from "node-cron";
-import { resolveResolution } from "../utility/resolveResolution";
+import { resolveGameEvents } from "./resolveGameEvents";
 
 export async function updateGameStates() {
     const activeGames = await GameState.findAll({ where: { state: "active" } });
@@ -18,12 +18,7 @@ export async function updateGameStates() {
 
         await activeGame.save();
 
-        const maybeResolutionToResolve = await ActiveResolution.findOne({
-            where: { gameStateRid: activeGame.gameStateRid, state: "active", endsOn: activeGame.gameClock },
-        });
-        if (maybeResolutionToResolve != null) {
-            resolveResolution(maybeResolutionToResolve);
-        }
+        await resolveGameEvents(activeGame);
 
         const activePlayers = await ActivePlayer.findAll({ where: { gameStateRid: activeGame.gameStateRid } });
         activePlayers.forEach((activePlayer) => {

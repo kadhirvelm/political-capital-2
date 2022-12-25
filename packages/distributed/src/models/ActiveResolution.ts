@@ -31,9 +31,4 @@ export class ActiveResolution extends Model<IActiveResolution> {
         type: DataTypes.STRING,
     })
     state!: IActiveResolution["state"];
-
-    @Column({
-        type: DataTypes.INTEGER,
-    })
-    endsOn!: IActiveResolution["endsOn"];
 }

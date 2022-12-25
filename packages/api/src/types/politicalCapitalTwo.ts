@@ -3,9 +3,9 @@
  */
 
 import { IActiveResolutionRid, IActiveStafferRid, IGameClock, IGameStateRid, IPlayerRid } from "./BrandedIDs";
+import { IPossibleEvent } from "./IEvent";
 import { IPossibleResolution } from "./IResolution";
 import { IPossibleStaffer } from "./IStaffer";
-import { IPossibleStafferEvent } from "./IStafferEvent";
 
 export interface IPlayer {
     playerRid: IPlayerRid;
@@ -33,7 +33,6 @@ export interface IActiveResolution {
     activeResolutionRid: IActiveResolutionRid;
     resolutionDetails: IPossibleResolution;
     state: "active" | "passed" | "failed";
-    endsOn: IGameClock;
 }
 
 export interface IActiveResolutionVote {
@@ -48,7 +47,12 @@ export interface IActiveStaffer {
     playerRid: IPlayerRid;
     activeStafferRid: IActiveStafferRid;
     stafferDetails: IPossibleStaffer;
-    stafferEvents: IPossibleStafferEvent[];
-    state: "active" | "recruiting" | "disabled";
-    hiresOn: IGameClock;
+    state: "active" | "disabled";
+}
+
+export interface IResolveGameEvent {
+    gameStateRid: IGameStateRid;
+    resolvesOn: IGameClock;
+    eventDetails: IPossibleEvent;
+    state: "active" | "complete";
 }

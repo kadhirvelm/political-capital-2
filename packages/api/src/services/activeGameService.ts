@@ -3,7 +3,7 @@
  */
 
 import { implementEndpoints, IService } from "../common/generics";
-import { IGameStateRid, IPlayerRid } from "../types/BrandedIDs";
+import { IActiveStafferRid, IGameStateRid, IPlayerRid } from "../types/BrandedIDs";
 import {
     IActivePlayer,
     IActiveResolution,
@@ -11,7 +11,20 @@ import {
     IActiveStaffer,
     IGameState,
     IPlayer,
+    IResolveGameEvent,
 } from "../types/politicalCapitalTwo";
+
+export interface IIndexedResolveEvents {
+    game: IResolveGameEvent[];
+    players: {
+        [playerRid: IPlayerRid]: {
+            overall: IResolveGameEvent[];
+            staffers: {
+                [stafferRid: IActiveStafferRid]: IResolveGameEvent[];
+            };
+        };
+    };
+}
 
 export interface IFullGameState {
     gameState: IGameState;
@@ -20,6 +33,7 @@ export interface IFullGameState {
     activeResolution?: IActiveResolution;
     activePlayersVotes: IActiveResolutionVote[];
     activePlayersStaffers: IActiveStaffer[];
+    resolveEvents: IIndexedResolveEvents;
 }
 
 export interface IActiveGameService extends IService {

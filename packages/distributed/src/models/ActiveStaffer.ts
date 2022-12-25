@@ -33,17 +33,7 @@ export class ActiveStaffer extends Model<IActiveStaffer> {
     stafferDetails!: IActiveStaffer["stafferDetails"];
 
     @Column({
-        type: DataTypes.JSONB,
-    })
-    stafferEvents!: IActiveStaffer["stafferEvents"];
-
-    @Column({
         type: DataTypes.STRING,
     })
     state!: IActiveStaffer["state"];
-
-    @Column({
-        type: DataTypes.INTEGER,
-    })
-    hiresOn!: IActiveStaffer["hiresOn"];
 }
