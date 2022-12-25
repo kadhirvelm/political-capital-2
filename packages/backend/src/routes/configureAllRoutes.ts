@@ -9,7 +9,7 @@ import {
     createNewGame,
     getGameState,
     joinActiveGame,
-    readyPlayer,
+    changeReadyState,
 } from "../services/gameService";
 import { getPlayer, registerNewPlayer, updatePlayer } from "../services/playerService";
 import { configureFrontendRoutes } from "./configureFrontendRoutes";
@@ -28,7 +28,7 @@ export function configureAllRoutes(app: Express.Express) {
     ActiveGameBackend(app, {
         createNewGame,
         joinActiveGame,
-        readyPlayer,
+        changeReadyState,
         changeActiveGameState,
         getGameState,
     });

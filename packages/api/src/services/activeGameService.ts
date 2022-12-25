@@ -10,10 +10,12 @@ import {
     IActiveResolutionVote,
     IActiveStaffer,
     IGameState,
+    IPlayer,
 } from "../types/politicalCapitalTwo";
 
 export interface IFullGameState {
     gameState: IGameState;
+    players: IPlayer[];
     activePlayers: IActivePlayer[];
     activeResolution?: IActiveResolution;
     activePlayersVotes: IActiveResolutionVote[];
@@ -33,10 +35,11 @@ export interface IActiveGameService extends IService {
         };
         response: {};
     };
-    readyPlayer: {
+    changeReadyState: {
         payload: {
             playerRid: IPlayerRid;
             gameStateRid: IGameStateRid;
+            isReady: boolean;
         };
         response: {};
     };
@@ -64,8 +67,8 @@ const { backend, frontend } = implementEndpoints<IActiveGameService>({
         slug: "/game-service/join-active-game",
         method: "post",
     },
-    readyPlayer: {
-        slug: "/game-service/ready-player",
+    changeReadyState: {
+        slug: "/game-service/change-ready-state",
         method: "post",
     },
     changeActiveGameState: {

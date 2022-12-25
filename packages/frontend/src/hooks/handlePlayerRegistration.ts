@@ -52,7 +52,7 @@ export function useHandlePlayerAndSocketRegistration() {
             return;
         }
 
-        const newWebSocket = new WebSocket("ws://localhost:3003/");
+        const newWebSocket = new WebSocket(`ws://${window.location.hostname}:3003/`);
         webSocket.current = newWebSocket;
 
         newWebSocket.onopen = async () => {

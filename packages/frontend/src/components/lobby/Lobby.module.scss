@@ -1,0 +1,86 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables.scss";
+
+.lobbyMainContainer {
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+}
+
+.lobbyText {
+    display: flex;
+    align-items: center;
+
+    > :first-child {
+        margin-right: 10px;
+    }
+}
+
+.createNewGame {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.playerActions {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+
+    > :not(:last-child) {
+        margin-right: 10px;
+    }
+}
+
+.tableHeaders {
+    display: flex;
+    box-shadow: 0 1px $gray;
+    margin: 0 0 10px 30px;
+}
+
+.isReady {
+    margin-right: 10px;
+
+    &.ready {
+        color: $green;
+    }
+
+    &.notReady {
+        color: $red;
+    }
+}
+
+.name {
+    display: flex;
+    flex: 3;
+}
+
+.politicalCapital {
+    display: flex;
+    flex: 1;
+    margin: 0 10px;
+}
+
+.staffers {
+    display: flex;
+    flex: 3;
+}
+
+.playersContainer {
+    display: flex;
+    justify-content: baseline;
+    flex-direction: column;
+
+    > :not(:last-child) {
+        margin-bottom: 10px;
+    }
+}
+
+.singlePlayer {
+    display: flex;
+    align-items: baseline;
+}

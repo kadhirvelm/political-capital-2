@@ -9,6 +9,7 @@ import {
     ActiveResolutionVote,
     ActiveStaffer,
     GameState,
+    Player,
 } from "@pc2/distributed-compute";
 import Express from "express";
 import { Op } from "sequelize";
@@ -46,8 +47,11 @@ export async function getGameState(
         throw new Error(`Something went wrong when trying to get the game state for: ${payload.gameStateRid}.`);
     }
 
+    const players = await Player.findAll({ where: { playerRid: activePlayers.map((p) => p.playerRid) } });
+
     return {
         gameState,
+        players,
         activePlayers,
         activeResolution: activeResolution ?? undefined,
         activePlayersVotes,
@@ -121,10 +125,10 @@ export async function joinActiveGame(
     return {};
 }
 
-export async function readyPlayer(
-    payload: IActiveGameService["readyPlayer"]["payload"],
+export async function changeReadyState(
+    payload: IActiveGameService["changeReadyState"]["payload"],
     response: Express.Response,
-): Promise<IActiveGameService["readyPlayer"]["response"] | undefined> {
+): Promise<IActiveGameService["changeReadyState"]["response"] | undefined> {
     const maybeActivePlayer = await ActivePlayer.findOne({
         where: { gameStateRid: payload.gameStateRid, playerRid: payload.playerRid },
     });
@@ -135,8 +139,8 @@ export async function readyPlayer(
         return undefined;
     }
 
-    if (!maybeActivePlayer.isReady) {
-        maybeActivePlayer.isReady = true;
+    if (maybeActivePlayer.isReady !== payload.isReady) {
+        maybeActivePlayer.isReady = payload.isReady;
         await maybeActivePlayer.save();
     }
 
