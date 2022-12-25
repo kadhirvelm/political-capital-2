@@ -42,16 +42,14 @@ export async function getGameState(
         activePlayerVotesPromise,
         activePlayersStaffersPromise,
     ]);
-    if (gameState == null || activeResolution == null) {
-        // eslint-disable-next-line no-console
-        console.error({ gameState, activeResolution });
+    if (gameState == null) {
         throw new Error(`Something went wrong when trying to get the game state for: ${payload.gameStateRid}.`);
     }
 
     return {
         gameState,
         activePlayers,
-        activeResolution,
+        activeResolution: activeResolution ?? undefined,
         activePlayersVotes,
         activePlayersStaffers,
     };
@@ -91,7 +89,9 @@ export async function createNewGame(
         }),
     ]);
 
-    sendGameStateToAllActivePlayers(newGameStateRid);
+    await sendGameStateToAllActivePlayers(newGameStateRid);
+
+    return {};
 }
 
 export async function joinActiveGame(
@@ -116,7 +116,9 @@ export async function joinActiveGame(
         });
     }
 
-    sendGameStateToAllActivePlayers(availableGame.gameStateRid);
+    await sendGameStateToAllActivePlayers(availableGame.gameStateRid);
+
+    return {};
 }
 
 export async function readyPlayer(
@@ -138,7 +140,9 @@ export async function readyPlayer(
         await maybeActivePlayer.save();
     }
 
-    sendGameStateToAllActivePlayers(maybeActivePlayer.gameStateRid);
+    await sendGameStateToAllActivePlayers(maybeActivePlayer.gameStateRid);
+
+    return {};
 }
 
 export async function changeActiveGameState(
@@ -167,5 +171,7 @@ export async function changeActiveGameState(
     maybeActiveGame.state = payload.newState;
     await maybeActiveGame.save();
 
-    sendGameStateToAllActivePlayers(maybeActiveGame.gameStateRid);
+    await sendGameStateToAllActivePlayers(maybeActiveGame.gameStateRid);
+
+    return {};
 }

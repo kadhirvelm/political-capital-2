@@ -16,6 +16,9 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.STRING,
             },
+            stafferDetails: {
+                type: Sequelize.JSONB,
+            },
             stafferEvents: {
                 type: Sequelize.JSONB,
             },

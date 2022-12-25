@@ -12,6 +12,13 @@ import { Column, DataType, Model, Table } from "sequelize-typescript";
 })
 export class ActivePlayer extends Model<IActivePlayer> {
     @Column({
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    })
+    activePlayerId?: number | null;
+
+    @Column({
         type: DataTypes.STRING,
     })
     gameStateRid!: IActivePlayer["gameStateRid"];

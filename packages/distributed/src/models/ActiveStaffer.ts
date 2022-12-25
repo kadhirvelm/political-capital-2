@@ -23,6 +23,7 @@ export class ActiveStaffer extends Model<IActiveStaffer> {
 
     @Column({
         type: DataTypes.STRING,
+        primaryKey: true,
     })
     activeStafferRid!: IActiveStaffer["activeStafferRid"];
 

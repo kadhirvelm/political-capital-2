@@ -3,19 +3,21 @@
  */
 
 import { useToast } from "@chakra-ui/react";
-import { IPossibleToPlayerMessages, IRegisterPlayer, PlayerServiceFrontend } from "@pc2/api";
+import { ActiveGameFrontend, IPossibleToPlayerMessages, IRegisterPlayer, PlayerServiceFrontend } from "@pc2/api";
 import React from "react";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../store/createStore";
 import { handleGameMessage } from "../store/gameState";
-import { setPlayer } from "../store/playerState";
+import { isConnectedToServer, disconnectedFromServer, setPlayer } from "../store/playerState";
 import { checkIsError } from "../utility/alertOnError";
+import { sleep } from "../utility/sleep";
+import { v4 } from "uuid";
 
 const BROWSER_RID_KEY = "Political_Capital_Two_Browser_Rid";
 
 export const getOrCreateBrowserRid = () => {
     let maybeExistingBrowserRid: string | null = window.localStorage.getItem(BROWSER_RID_KEY);
     if (maybeExistingBrowserRid == null) {
-        maybeExistingBrowserRid = crypto.randomUUID();
+        maybeExistingBrowserRid = v4();
 
         window.localStorage.setItem(BROWSER_RID_KEY, maybeExistingBrowserRid);
     }
@@ -28,17 +30,17 @@ export function useHandlePlayerAndSocketRegistration() {
 
     const toast = useToast();
 
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [webSocket, setWebSocket] = React.useState<WebSocket | undefined>(undefined);
+    const webSocket = React.useRef<WebSocket | undefined>(undefined);
 
     const dispatch = usePoliticalCapitalDispatch();
+
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
 
     const maybeGetExistingPlayer = async () => {
         const maybePlayer = checkIsError(await PlayerServiceFrontend.getPlayer({ browserIdentifier }));
-        setIsLoading(false);
 
         if (maybePlayer === undefined || maybePlayer.player === undefined) {
+            dispatch(isConnectedToServer());
             return;
         }
 
@@ -46,17 +48,16 @@ export function useHandlePlayerAndSocketRegistration() {
     };
 
     const registerNewSocket = () => {
-        if (player === undefined || webSocket !== undefined) {
+        if (player === undefined || webSocket.current !== undefined) {
             return;
         }
 
         const newWebSocket = new WebSocket("ws://localhost:3003/");
+        webSocket.current = newWebSocket;
 
-        newWebSocket.onopen = () => {
+        newWebSocket.onopen = async () => {
             const registerPlayer: IRegisterPlayer = { player, type: "register-player" };
             newWebSocket.send(JSON.stringify(registerPlayer));
-
-            setWebSocket(newWebSocket);
 
             toast({
                 title: "Success",
@@ -64,28 +65,28 @@ export function useHandlePlayerAndSocketRegistration() {
                 status: "success",
                 duration: 2000,
             });
+
+            await ActiveGameFrontend.joinActiveGame({ playerRid: player.playerRid });
+            dispatch(isConnectedToServer());
         };
 
-        newWebSocket.onclose = () => {
-            setWebSocket(undefined);
+        newWebSocket.onclose = async () => {
+            webSocket.current = undefined;
+
             toast({
                 title: "Disconnected",
-                description: "Connection to the server was lost, please refresh the page.",
+                description: "Connection to the server was lost, attempting to reconnect in 5 seconds.",
                 status: "error",
                 duration: 2000,
             });
+
+            dispatch(disconnectedFromServer());
+            await sleep(5);
+            registerNewSocket();
         };
 
-        newWebSocket.onerror = (error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            setWebSocket(undefined);
-            toast({
-                title: "Disconnected",
-                description: "Connection to the server was lost due to an error, please refresh the page.",
-                status: "error",
-                duration: 2000,
-            });
+        newWebSocket.onerror = () => {
+            newWebSocket.close();
         };
 
         newWebSocket.onmessage = (message: MessageEvent<IPossibleToPlayerMessages>) => {
@@ -100,9 +101,4 @@ export function useHandlePlayerAndSocketRegistration() {
     React.useEffect(() => {
         registerNewSocket();
     }, [player, webSocket]);
-
-    return {
-        isLoading,
-        webSocket,
-    };
 }

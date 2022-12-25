@@ -18,6 +18,7 @@ export class ActiveResolution extends Model<IActiveResolution> {
 
     @Column({
         type: DataTypes.STRING,
+        primaryKey: true,
     })
     activeResolutionRid!: IActiveResolution["activeResolutionRid"];
 

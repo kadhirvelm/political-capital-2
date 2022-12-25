@@ -18,6 +18,7 @@ export class ActiveResolutionVote extends Model<IActiveResolutionVote> {
 
     @Column({
         type: DataTypes.STRING,
+        primaryKey: true,
     })
     activeResolutionRid!: IActiveResolutionVote["activeResolutionRid"];
 

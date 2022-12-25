@@ -15,7 +15,7 @@ import {
 export interface IFullGameState {
     gameState: IGameState;
     activePlayers: IActivePlayer[];
-    activeResolution: IActiveResolution;
+    activeResolution?: IActiveResolution;
     activePlayersVotes: IActiveResolutionVote[];
     activePlayersStaffers: IActiveStaffer[];
 }

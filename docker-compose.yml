@@ -23,8 +23,6 @@ services:
       - "9000:9000"
       - "5433:5433"
       - "9042:9042"
-    volumes:
-      - ./yb_data:/home/yugabyte/yb_data
     command: bin/yugabyted start --base_dir=/home/yugabyte/yb_data --daemon=false
   redis:
     image: redis:latest

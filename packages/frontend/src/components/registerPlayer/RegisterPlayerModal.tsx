@@ -21,9 +21,10 @@ import { setPlayer } from "../../store/playerState";
 import { checkIsError } from "../../utility/alertOnError";
 
 export const RegisterPlayerModal: React.FC<{}> = ({}) => {
-    const { isLoading } = useHandlePlayerAndSocketRegistration();
+    useHandlePlayerAndSocketRegistration();
 
     const dispatch = usePoliticalCapitalDispatch();
+    const isConnectedToServer = usePoliticalCapitalSelector((s) => s.playerState.isConnectedToServer);
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
 
     const [name, setName] = React.useState(player?.name ?? "");
@@ -45,7 +46,7 @@ export const RegisterPlayerModal: React.FC<{}> = ({}) => {
     };
 
     return (
-        <Modal isOpen={player === undefined && !isLoading} onClose={() => {}}>
+        <Modal isOpen={player === undefined && isConnectedToServer} onClose={() => {}}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>New player</ModalHeader>
