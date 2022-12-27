@@ -39,7 +39,7 @@ export interface IActiveResolutionVote {
     gameStateRid: IGameStateRid;
     activeResolutionRid: IActiveResolutionRid;
     activeStafferRid: IActiveStafferRid;
-    vote: "inFavor" | "against" | "abstain";
+    vote: "passed" | "failed" | "abstain";
 }
 
 export interface IActiveStaffer {

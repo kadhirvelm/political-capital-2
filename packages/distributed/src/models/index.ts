@@ -19,7 +19,7 @@ export function initializeModels() {
     return new Sequelize({
         username: "yugabyte",
         password: undefined,
-        database: "political-capital-two",
+        database: process.env.TEST_DATABASE ?? "political-capital-two",
         host: process.env.DATABASE_HOST ?? "localhost",
         port: 5433,
         dialect: "postgres",

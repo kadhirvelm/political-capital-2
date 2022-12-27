@@ -6,5 +6,13 @@
     "host": "localhost",
     "port": "5433",
     "dialect": "postgres"
+  },
+  "test": {
+    "username": "yugabyte",
+    "password": null,
+    "database": "political-capital-two-test",
+    "host": "localhost",
+    "port": "5433",
+    "dialect": "postgres"
   }
 }

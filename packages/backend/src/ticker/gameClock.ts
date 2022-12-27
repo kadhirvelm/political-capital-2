@@ -5,6 +5,7 @@
 import { IGameClock } from "@pc2/api";
 import { ActivePlayer, GameState, ProcessPlayerQueue } from "@pc2/distributed-compute";
 import cron from "node-cron";
+import { TOTAL_DAYS_IN_GAME } from "../constants/game";
 import { resolveGameEvents } from "./resolveGameEvents";
 
 export async function updateGameStates() {
@@ -12,7 +13,7 @@ export async function updateGameStates() {
 
     activeGames.forEach(async (activeGame) => {
         activeGame.gameClock = (activeGame.gameClock + 1) as IGameClock;
-        if (activeGame.gameClock === 365) {
+        if (activeGame.gameClock >= TOTAL_DAYS_IN_GAME) {
             activeGame.state = "complete";
         }
 
@@ -25,6 +26,7 @@ export async function updateGameStates() {
             ProcessPlayerQueue.add({
                 gameStateRid: activeGame.gameStateRid,
                 playerRid: activePlayer.playerRid,
+                gameClock: activeGame.gameClock,
             });
         });
     });

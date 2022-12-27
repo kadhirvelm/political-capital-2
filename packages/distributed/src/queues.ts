@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IGameStateRid, IPlayerRid } from "@pc2/api";
+import { IGameClock, IGameStateRid, IPlayerRid } from "@pc2/api";
 import queue from "bull";
 
 const connection = {
@@ -12,6 +12,7 @@ const connection = {
 export interface IProcessPlayerQueue {
     gameStateRid: IGameStateRid;
     playerRid: IPlayerRid;
+    gameClock: IGameClock;
 }
 export const ProcessPlayerQueue = new queue<IProcessPlayerQueue>("process-player-queue", connection);
 

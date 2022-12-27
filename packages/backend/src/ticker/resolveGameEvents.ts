@@ -2,11 +2,15 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IEvent, IPossibleEvent, ITallyResolution } from "@pc2/api";
+import { IEvent, IGameClock, IPossibleEvent, ITallyResolution } from "@pc2/api";
 import { ActiveResolution, ActiveResolutionVote, GameState, ResolveGameEvent } from "@pc2/distributed-compute";
-import { Op } from "sequelize";
+import {
+    TIME_BETWEEN_RESOLUTIONS_IN_DAYS,
+    TIME_FOR_EACH_RESOLUTION_IN_DAYS,
+    TOTAL_DAYS_IN_GAME,
+} from "../constants/game";
 
-async function resolveResolution(tallyResolution: ITallyResolution) {
+async function resolveResolution(gameState: GameState, tallyResolution: ITallyResolution) {
     const [activeResolution, allActiveVotes] = await Promise.all([
         ActiveResolution.findOne({ where: { activeResolutionRid: tallyResolution.activeResolutionRid } }),
         ActiveResolutionVote.findAll({
@@ -17,18 +21,29 @@ async function resolveResolution(tallyResolution: ITallyResolution) {
         return;
     }
 
-    const votesInFavor = allActiveVotes.filter((vote) => vote.vote === "inFavor");
-    const votesAgainst = allActiveVotes.filter((vote) => vote.vote === "against");
+    const passedVotes = allActiveVotes.filter((vote) => vote.vote === "passed");
+    const failedVotes = allActiveVotes.filter((vote) => vote.vote === "failed");
 
-    if (votesInFavor > votesAgainst) {
+    if (passedVotes > failedVotes) {
         activeResolution.state = "passed";
     } else {
         activeResolution.state = "failed";
     }
 
-    await activeResolution.save();
+    const timeForAnotherResolution =
+        gameState.gameClock + TIME_FOR_EACH_RESOLUTION_IN_DAYS + TIME_BETWEEN_RESOLUTIONS_IN_DAYS < TOTAL_DAYS_IN_GAME;
 
-    // TODO: conditionally create new resolution event
+    await Promise.all([
+        activeResolution.save(),
+        timeForAnotherResolution
+            ? ResolveGameEvent.create({
+                  gameStateRid: gameState.gameStateRid,
+                  resolvesOn: (gameState.gameClock + TIME_BETWEEN_RESOLUTIONS_IN_DAYS) as IGameClock,
+                  eventDetails: { type: "new-resolution" },
+                  state: "active",
+              })
+            : Promise.resolve({}),
+    ]);
 }
 
 export async function resolveGameEvents(gameState: GameState) {
@@ -37,10 +52,15 @@ export async function resolveGameEvents(gameState: GameState) {
         where: {
             gameStateRid: gameState.gameStateRid,
             eventDetails: { type: gameEventTypes },
-            resolvesOn: { [Op.lte]: gameState.gameClock },
+            resolvesOn: gameState.gameClock,
             state: "active",
         },
     });
+
+    const completeEvent = (gameEvent: ResolveGameEvent) => {
+        gameEvent.state = "complete";
+        return gameEvent.save();
+    };
 
     await Promise.all(
         gameEvents.map((gameEvent) => {
@@ -49,7 +69,7 @@ export async function resolveGameEvents(gameState: GameState) {
                 startHiringStaffer: () => Promise.resolve({}),
                 newResolution: () => Promise.resolve({}),
                 tallyResolution: (tallyResolution) => {
-                    return resolveResolution(tallyResolution);
+                    return Promise.all([resolveResolution(gameState, tallyResolution), completeEvent(gameEvent)]);
                 },
                 unknown: () => Promise.resolve({}),
             });

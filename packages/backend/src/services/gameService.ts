@@ -57,7 +57,66 @@ async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<I
 
                     indexedResolveEvents.players[startHiringStaffer.playerRid].overall.push(resolveEvent);
                 },
+                startTrainingStaffer: (startTrainingStaffer) => {
+                    indexedResolveEvents.players[startTrainingStaffer.playerRid] = indexedResolveEvents.players[
+                        startTrainingStaffer.playerRid
+                    ] ?? {
+                        overall: [],
+                        staffers: {},
+                    };
+
+                    indexedResolveEvents.players[startTrainingStaffer.playerRid].staffers[
+                        startTrainingStaffer.trainerRid
+                    ] =
+                        indexedResolveEvents.players[startTrainingStaffer.playerRid].staffers[
+                            startTrainingStaffer.trainerRid
+                        ] ?? [];
+                    indexedResolveEvents.players[startTrainingStaffer.playerRid].staffers[
+                        startTrainingStaffer.trainerRid
+                    ].push(resolveEvent);
+
+                    indexedResolveEvents.players[startTrainingStaffer.playerRid].staffers[
+                        startTrainingStaffer.activeStafferRid
+                    ] =
+                        indexedResolveEvents.players[startTrainingStaffer.playerRid].staffers[
+                            startTrainingStaffer.activeStafferRid
+                        ] ?? [];
+                    indexedResolveEvents.players[startTrainingStaffer.playerRid].staffers[
+                        startTrainingStaffer.activeStafferRid
+                    ].push(resolveEvent);
+                },
+                finishTrainingStaffer: (finishTrainingStaffer) => {
+                    indexedResolveEvents.players[finishTrainingStaffer.playerRid] = indexedResolveEvents.players[
+                        finishTrainingStaffer.playerRid
+                    ] ?? {
+                        overall: [],
+                        staffers: {},
+                    };
+
+                    indexedResolveEvents.players[finishTrainingStaffer.playerRid].staffers[
+                        finishTrainingStaffer.trainerRid
+                    ] =
+                        indexedResolveEvents.players[finishTrainingStaffer.playerRid].staffers[
+                            finishTrainingStaffer.trainerRid
+                        ] ?? [];
+                    indexedResolveEvents.players[finishTrainingStaffer.playerRid].staffers[
+                        finishTrainingStaffer.trainerRid
+                    ].push(resolveEvent);
+
+                    indexedResolveEvents.players[finishTrainingStaffer.playerRid].staffers[
+                        finishTrainingStaffer.activeStafferRid
+                    ] =
+                        indexedResolveEvents.players[finishTrainingStaffer.playerRid].staffers[
+                            finishTrainingStaffer.activeStafferRid
+                        ] ?? [];
+                    indexedResolveEvents.players[finishTrainingStaffer.playerRid].staffers[
+                        finishTrainingStaffer.activeStafferRid
+                    ].push(resolveEvent);
+                },
                 newResolution: () => {
+                    indexedResolveEvents.game.push(resolveEvent);
+                },
+                tallyResolution: () => {
                     indexedResolveEvents.game.push(resolveEvent);
                 },
                 unknown: () => {},
@@ -156,7 +215,6 @@ export async function createNewGame(
             resolvesOn: 0 as IGameClock,
             eventDetails: { type: "new-resolution" },
             state: "active",
-            type: { type: "game" },
         }),
     ]);
 
