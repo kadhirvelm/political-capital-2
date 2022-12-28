@@ -1,0 +1,48 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables.scss";
+
+.resourcesContainer {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 15px;
+    box-shadow: 0 1px $gray;
+}
+
+.singleResource {
+    display: flex;
+    align-items: center;
+
+    > :first-child {
+        width: 100px;
+        color: $gray;
+        margin-right: 10px;
+    }
+}
+
+.staffers {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+
+    > :not(:last-child) {
+        padding-bottom: 15px;
+    }
+}
+
+.categoryTitle {
+    color: $gray;
+    margin-bottom: 5px;
+}
+
+.staffersInCategory {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.noneFound {
+    color: $gray;
+}

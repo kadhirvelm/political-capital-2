@@ -2,13 +2,14 @@
  * Copyright (c) 2022 - KM
  */
 
-import { CheckIcon, CloseIcon, TimeIcon } from "@chakra-ui/icons";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
 import { ActiveGameFrontend } from "@pc2/api";
 import classNames from "classnames";
 import { keyBy } from "lodash-es";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
+import { StafferCard } from "../common/StafferCard";
 import styles from "./Lobby.module.scss";
 
 export const Lobby: React.FC<{}> = () => {
@@ -73,8 +74,9 @@ export const Lobby: React.FC<{}> = () => {
             return undefined;
         }
 
-        const areAllPlayersReady = fullGameState?.activePlayers.every((p) => p.isReady);
-        const canThisPlayerStart = fullGameState.activePlayers[0].playerRid === player.playerRid;
+        const areAllPlayersReady = Object.values(fullGameState?.activePlayers ?? {}).every((p) => p.isReady);
+        const canThisPlayerStart =
+            Object.values(fullGameState.activePlayers ?? {})?.[0]?.playerRid === player.playerRid;
 
         if (!areAllPlayersReady || !canThisPlayerStart) {
             return undefined;
@@ -94,24 +96,7 @@ export const Lobby: React.FC<{}> = () => {
             return undefined;
         }
 
-        const thisPlayer = fullGameState.activePlayers.find((p) => p.playerRid === player.playerRid);
-
-        return (
-            <div className={styles.playerActions}>
-                <div>
-                    {thisPlayer?.isReady ? (
-                        <Button colorScheme="red" isLoading={isLoading} onClick={changePlayerReady(false)}>
-                            Not ready
-                        </Button>
-                    ) : (
-                        <Button colorScheme="green" isLoading={isLoading} onClick={changePlayerReady(true)}>
-                            Ready
-                        </Button>
-                    )}
-                </div>
-                {maybeRenderStartGame()}
-            </div>
-        );
+        return <div className={styles.playerActions}>{maybeRenderStartGame()}</div>;
     };
 
     const maybeRenderPlayers = () => {
@@ -120,6 +105,7 @@ export const Lobby: React.FC<{}> = () => {
         }
 
         const indexedPlayers = keyBy(fullGameState.players, (p) => p.playerRid);
+        const thisPlayer = fullGameState.activePlayers[player.playerRid];
 
         return (
             <>
@@ -129,24 +115,56 @@ export const Lobby: React.FC<{}> = () => {
                     <div className={styles.staffers}>Staffers</div>
                 </div>
                 <div className={styles.playersContainer}>
-                    {fullGameState.activePlayers.map((activePlayer) => (
-                        <div className={styles.singlePlayer} key={activePlayer.playerRid}>
-                            <div
-                                className={classNames(styles.isReady, {
-                                    [styles.ready]: activePlayer.isReady,
-                                    [styles.notReady]: !activePlayer.isReady,
-                                })}
-                            >
-                                {activePlayer.isReady ? <CheckIcon /> : <CloseIcon />}
+                    {Object.values(fullGameState.activePlayers).map((activePlayer) => {
+                        return (
+                            <div className={styles.singlePlayer} key={activePlayer.playerRid}>
+                                <div
+                                    className={classNames(styles.isReady, {
+                                        [styles.ready]: activePlayer.isReady,
+                                        [styles.notReady]: !activePlayer.isReady,
+                                    })}
+                                >
+                                    <div>{activePlayer.isReady ? <CheckIcon /> : <CloseIcon />}</div>
+                                </div>
+                                <div className={styles.name}>
+                                    <div>
+                                        {indexedPlayers[activePlayer.playerRid].name}
+                                        {activePlayer.playerRid === player.playerRid && " (you)"}
+                                    </div>
+                                    {player.playerRid === activePlayer.playerRid && (
+                                        <div className={styles.readyUpContainer}>
+                                            {thisPlayer?.isReady ? (
+                                                <Button
+                                                    colorScheme="red"
+                                                    isLoading={isLoading}
+                                                    onClick={changePlayerReady(false)}
+                                                >
+                                                    Unready
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    colorScheme="green"
+                                                    isLoading={isLoading}
+                                                    onClick={changePlayerReady(true)}
+                                                >
+                                                    Ready up
+                                                </Button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className={styles.politicalCapital}>{activePlayer.politicalCapital}</div>
+                                <div className={styles.staffers}>
+                                    {fullGameState.activePlayersStaffers[activePlayer.playerRid]
+                                        .slice()
+                                        .sort((a, b) => a.stafferDetails.type.localeCompare(b.stafferDetails.type))
+                                        .map((staffer) => (
+                                            <StafferCard staffer={staffer} key={staffer.activeStafferRid} />
+                                        ))}
+                                </div>
                             </div>
-                            <div className={styles.name}>
-                                {indexedPlayers[activePlayer.playerRid].name}
-                                {activePlayer.playerRid === player.playerRid && " (you)"}
-                            </div>
-                            <div className={styles.politicalCapital}>{activePlayer.politicalCapital}</div>
-                            <div className={styles.staffers}>Unknown</div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </>
         );
@@ -154,10 +172,7 @@ export const Lobby: React.FC<{}> = () => {
 
     return (
         <div className={styles.lobbyMainContainer}>
-            <div className={styles.lobbyText}>
-                <span>Lobby</span>
-                <TimeIcon />
-            </div>
+            <div className={styles.lobbyText}>Waiting for game to start</div>
             {maybeRenderCreateNewGameButton()}
             {maybeRenderPlayerActions()}
             {maybeRenderPlayers()}

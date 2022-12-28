@@ -15,15 +15,15 @@ services:
     environment:
       - ORIGIN=0.0.0.0
       - DATABASE_HOST=host.docker.internal
+      - NODE_ENV=development
   database:
-    image: yugabytedb/yugabyte:latest
+    image: postgres:15.1
     container_name: database
     ports:
-      - "7001:7000"
-      - "9000:9000"
-      - "5433:5433"
-      - "9042:9042"
-    command: bin/yugabyted start --base_dir=/home/yugabyte/yb_data --daemon=false
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
   redis:
     image: redis:latest
     container_name: redis

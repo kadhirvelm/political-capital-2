@@ -5,9 +5,10 @@
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../store/createStore";
 import { ActiveGame } from "./activeGame/ActiveGame";
-import { ServerStatus } from "./activeGame/ServerStatus";
+import { ServerStatus } from "./common/ServerStatus";
 import { Lobby } from "./lobby/Lobby";
 import { RegisterPlayerModal } from "./registerPlayer/RegisterPlayerModal";
+import styles from "./PoliticalCapitalTwo.module.scss";
 
 type IRenderGameState = "loading" | "lobby" | "game";
 
@@ -16,7 +17,7 @@ export const PoliticalCapitalTwo: React.FC<{}> = () => {
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const activeGame = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
-    const renderGameState: IRenderGameState = (() => {
+    const currentGameState: IRenderGameState = (() => {
         if (!isConnectedToServer) {
             return "loading";
         }
@@ -28,12 +29,12 @@ export const PoliticalCapitalTwo: React.FC<{}> = () => {
         return "game";
     })();
 
-    const maybeRenderLobby = () => {
-        if (renderGameState === "loading") {
+    const renderGameState = () => {
+        if (currentGameState === "loading") {
             return <div>Loading…</div>;
         }
 
-        if (renderGameState === "lobby") {
+        if (currentGameState === "lobby") {
             return <Lobby />;
         }
 
@@ -41,10 +42,10 @@ export const PoliticalCapitalTwo: React.FC<{}> = () => {
     };
 
     return (
-        <div>
+        <div className={styles.rootContainer}>
             <RegisterPlayerModal />
             <ServerStatus />
-            {maybeRenderLobby()}
+            {renderGameState()}
         </div>
     );
 };

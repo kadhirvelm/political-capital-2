@@ -4,6 +4,7 @@
 
 import { IEvent, IGameClock, IPossibleEvent, ITallyResolution } from "@pc2/api";
 import { ActiveResolution, ActiveResolutionVote, GameState, ResolveGameEvent } from "@pc2/distributed-compute";
+import { Op } from "sequelize";
 import {
     TIME_BETWEEN_RESOLUTIONS_IN_DAYS,
     TIME_FOR_EACH_RESOLUTION_IN_DAYS,
@@ -51,7 +52,7 @@ export async function resolveGameEvents(gameState: GameState) {
     const gameEvents = await ResolveGameEvent.findAll({
         where: {
             gameStateRid: gameState.gameStateRid,
-            eventDetails: { type: gameEventTypes },
+            eventDetails: { type: { [Op.in]: gameEventTypes } },
             resolvesOn: gameState.gameClock,
             state: "active",
         },

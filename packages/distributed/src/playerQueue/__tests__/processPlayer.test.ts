@@ -207,7 +207,7 @@ describe("Process player works as expected", () => {
         expect(disabledStaffer).not.toBeUndefined();
 
         const disabledStaffer2 = activeStaffers.find(
-            (staffer) => staffer.state === "disabled" && staffer.stafferDetails.type === "senior-representative",
+            (staffer) => staffer.state === "disabled" && staffer.stafferDetails.type === "seniorRepresentative",
         );
         expect(disabledStaffer2).not.toBeUndefined();
     });

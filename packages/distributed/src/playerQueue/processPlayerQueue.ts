@@ -177,28 +177,36 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
         return;
     }
 
-    const handleEventsForPlayer = await ResolveGameEvent.findAll({
+    const possibleTallyEvent = await ResolveGameEvent.findOne({
         where: {
             gameStateRid,
             resolvesOn: gameClock,
             eventDetails: {
-                [Op.or]: [{ type: "tally-resolution" }, { playerRid }],
-            } as any,
+                type: "tally-resolution",
+            },
         },
     });
 
     // Add any political capital the player gained from voting
-    const possibleResolutionPayout = handleEventsForPlayer.find((event) =>
-        IEvent.isTallyResolution(event.eventDetails),
-    );
-    if (possibleResolutionPayout !== undefined && IEvent.isTallyResolution(possibleResolutionPayout.eventDetails)) {
+    if (possibleTallyEvent != null && IEvent.isTallyResolution(possibleTallyEvent.eventDetails)) {
         const totalPayoutForPlayer = await getPayoutForPlayer(
             gameStateRid,
-            possibleResolutionPayout.eventDetails,
+            possibleTallyEvent.eventDetails,
             activePlayerStaffers,
         );
         activePlayer.politicalCapital += totalPayoutForPlayer;
     }
+
+    const handleEventsForPlayer = await ResolveGameEvent.findAll({
+        where: {
+            gameStateRid,
+            resolvesOn: { [Op.lte]: gameClock } as any,
+            eventDetails: {
+                playerRid,
+            },
+            state: "active",
+        },
+    });
 
     // Then handle any training or hiring completions
     const finishHiringOrTraining = handleEventsForPlayer.filter(

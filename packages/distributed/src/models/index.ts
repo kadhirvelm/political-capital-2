@@ -17,11 +17,11 @@ export { ResolveGameEvent } from "./ResolveGameEvent";
 
 export function initializeModels() {
     return new Sequelize({
-        username: "yugabyte",
-        password: undefined,
+        username: "postgres",
+        password: "admin",
         database: process.env.TEST_DATABASE ?? "political-capital-two",
         host: process.env.DATABASE_HOST ?? "localhost",
-        port: 5433,
+        port: 5432,
         dialect: "postgres",
         models: [
             ActivePlayer,

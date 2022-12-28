@@ -2,7 +2,19 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IActiveGameService, IEvent, IFullGameState, IGameClock, IGameStateRid, IResolveGameEvent } from "@pc2/api";
+import {
+    DEFAULT_STAFFER,
+    IActiveGameService,
+    IActiveResolutionVote,
+    IActiveStaffer,
+    IActiveStafferRid,
+    IEvent,
+    IFullGameState,
+    IGameClock,
+    IGameStateRid,
+    IPlayerRid,
+    IResolveGameEvent,
+} from "@pc2/api";
 import {
     ActivePlayer,
     ActiveResolution,
@@ -13,9 +25,12 @@ import {
     ResolveGameEvent,
 } from "@pc2/distributed-compute";
 import Express from "express";
+import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
+import { INITIAL_STAFFERS } from "../constants/game";
 import { INITIAL_APPROVAL_RATING, INITIAL_POLITICAL_CAPITAL } from "../constants/initializePlayers";
+import { getStafferOfType } from "../utils/getStafferOfType";
 import { sendMessageToPlayer } from "./socketService";
 
 // This isn't strictly necessary, but given there's a second promise going out anyway, might as well optimize it
@@ -127,15 +142,47 @@ async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<I
     });
 }
 
+async function indexVotes(activePlayersVotes: IActiveResolutionVote[]): Promise<IFullGameState["activePlayersVotes"]> {
+    return new Promise((resolve) => {
+        const indexedActivePlayerVotes: IFullGameState["activePlayersVotes"] = {};
+
+        activePlayersVotes.forEach((activeVote) => {
+            indexedActivePlayerVotes[activeVote.activeResolutionRid] =
+                indexedActivePlayerVotes[activeVote.activeResolutionRid] ?? {};
+
+            indexedActivePlayerVotes[activeVote.activeResolutionRid][activeVote.activeStafferRid] =
+                indexedActivePlayerVotes[activeVote.activeResolutionRid][activeVote.activeStafferRid] ?? [];
+
+            indexedActivePlayerVotes[activeVote.activeResolutionRid][activeVote.activeStafferRid].push(activeVote);
+        });
+
+        resolve(indexedActivePlayerVotes);
+    });
+}
+
+async function indexStaffers(activeStaffers: IActiveStaffer[]): Promise<IFullGameState["activePlayersStaffers"]> {
+    return new Promise((resolve) => {
+        const indexedStaffers: IFullGameState["activePlayersStaffers"] = {};
+
+        activeStaffers.forEach((staffer) => {
+            indexedStaffers[staffer.playerRid] = indexedStaffers[staffer.playerRid] ?? [];
+
+            indexedStaffers[staffer.playerRid].push(staffer);
+        });
+
+        resolve(indexedStaffers);
+    });
+}
+
 export async function getGameState(
     payload: IActiveGameService["getGameState"]["payload"],
-): Promise<IActiveGameService["getGameState"]["response"]> {
+): Promise<IActiveGameService["getGameState"]["response"] | undefined> {
     const gameStatePromise = GameState.findOne({ where: { gameStateRid: payload.gameStateRid } });
     const activePlayersPromise = ActivePlayer.findAll({
         where: { gameStateRid: payload.gameStateRid },
     });
-    const activeResolutionPromise = ActiveResolution.findOne({
-        where: { gameStateRid: payload.gameStateRid, state: "active" },
+    const activeResolutionsPromise = ActiveResolution.findAll({
+        where: { gameStateRid: payload.gameStateRid },
     });
     const activePlayerVotesPromise = ActiveResolutionVote.findAll({
         where: {
@@ -149,41 +196,72 @@ export async function getGameState(
         where: { gameStateRid: payload.gameStateRid },
     });
 
-    const [gameState, activePlayers, activeResolution, activePlayersVotes, activePlayersStaffers, allResolveEvents] =
+    const [gameState, activePlayers, activeResolutions, activePlayersVotes, activePlayersStaffers, allResolveEvents] =
         await Promise.all([
             gameStatePromise,
             activePlayersPromise,
-            activeResolutionPromise,
+            activeResolutionsPromise,
             activePlayerVotesPromise,
             activePlayersStaffersPromise,
             allResolveEventsPromise,
         ]);
     if (gameState == null) {
-        throw new Error(`Something went wrong when trying to get the game state for: ${payload.gameStateRid}.`);
+        // eslint-disable-next-line no-console
+        console.error(`Something went wrong when trying to get the game state for: ${payload.gameStateRid}.`);
+        return undefined;
     }
 
-    const [players, indexedResolveEvents] = await Promise.all([
+    const [players, indexedResolveEvents, indexedStaffers, indexedActivePlayersVotes] = await Promise.all([
         Player.findAll({ where: { playerRid: activePlayers.map((p) => p.playerRid) } }),
         indexResolveEvents(allResolveEvents),
+        indexStaffers(activePlayersStaffers),
+        indexVotes(activePlayersVotes),
     ]);
 
     return {
         gameState,
-        players,
-        activePlayers,
-        activeResolution: activeResolution ?? undefined,
-        activePlayersVotes,
-        activePlayersStaffers,
+        players: _.keyBy(players, (player) => player.playerRid),
+        activePlayers: _.keyBy(activePlayers, (player) => player.playerRid),
+        activeResolutions,
+        activePlayersVotes: indexedActivePlayersVotes,
+        activePlayersStaffers: indexedStaffers,
         resolveEvents: indexedResolveEvents,
     };
 }
 
 export async function sendGameStateToAllActivePlayers(gameStateRid: IGameStateRid) {
     const gameState = await getGameState({ gameStateRid });
+    if (gameState === undefined) {
+        // eslint-disable-next-line no-console
+        console.error(`Cannot send an empty game state: ${gameStateRid}.`);
+        return;
+    }
 
-    gameState.activePlayers.forEach((activePlayer) => {
+    Object.values(gameState.activePlayers).forEach((activePlayer) => {
         sendMessageToPlayer(activePlayer.playerRid, { newGameState: gameState, type: "update-game-state" });
     });
+}
+
+async function addPlayerToGame(gameStateRid: IGameStateRid, playerRid: IPlayerRid) {
+    return Promise.all([
+        ActivePlayer.create({
+            gameStateRid,
+            playerRid,
+            politicalCapital: INITIAL_POLITICAL_CAPITAL,
+            approvalRating: INITIAL_APPROVAL_RATING,
+            lastUpdatedGameClock: 0 as IGameClock,
+            isReady: false,
+        }),
+        ...INITIAL_STAFFERS.map((staffer) =>
+            ActiveStaffer.create({
+                gameStateRid,
+                playerRid,
+                activeStafferRid: v4() as IActiveStafferRid,
+                stafferDetails: getStafferOfType(staffer),
+                state: "active",
+            }),
+        ),
+    ]);
 }
 
 export async function createNewGame(
@@ -202,14 +280,7 @@ export async function createNewGame(
 
     await Promise.all([
         GameState.create({ gameStateRid: newGameStateRid, state: "waiting", gameClock: 0 as IGameClock }),
-        ActivePlayer.create({
-            gameStateRid: newGameStateRid,
-            playerRid: payload.playerRid,
-            politicalCapital: INITIAL_POLITICAL_CAPITAL,
-            approvalRating: INITIAL_APPROVAL_RATING,
-            lastUpdatedGameClock: 0 as IGameClock,
-            isReady: false,
-        }),
+        addPlayerToGame(newGameStateRid, payload.playerRid),
         ResolveGameEvent.create({
             gameStateRid: newGameStateRid,
             resolvesOn: 0 as IGameClock,
@@ -228,21 +299,14 @@ export async function joinActiveGame(
 ): Promise<IActiveGameService["joinActiveGame"]["response"] | undefined> {
     const availableGame = await GameState.findOne({ where: { state: { [Op.not]: ["complete"] } } });
     if (availableGame == null) {
-        return undefined;
+        return {};
     }
 
     const maybeExistingActivePlayer = await ActivePlayer.findOne({
         where: { playerRid: payload.playerRid, gameStateRid: availableGame.gameStateRid },
     });
     if (maybeExistingActivePlayer == null) {
-        await ActivePlayer.create({
-            gameStateRid: availableGame.gameStateRid,
-            playerRid: payload.playerRid,
-            politicalCapital: INITIAL_POLITICAL_CAPITAL,
-            approvalRating: INITIAL_APPROVAL_RATING,
-            lastUpdatedGameClock: availableGame.gameClock,
-            isReady: false,
-        });
+        await addPlayerToGame(availableGame.gameStateRid, payload.playerRid);
     }
 
     await sendGameStateToAllActivePlayers(availableGame.gameStateRid);

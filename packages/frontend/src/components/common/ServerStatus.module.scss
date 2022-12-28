@@ -8,8 +8,8 @@
     position: absolute;
     display: flex;
     align-items: center;
-    top: 10px;
-    right: 10px;
+    top: 17px;
+    right: 15px;
 }
 
 .connectedIndicator {
@@ -27,5 +27,16 @@
 }
 
 .currentTime {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.pauseIcon {
+    color: $orange;
+    margin-right: 10px;
+}
+
+.progressCounter {
     margin-right: 10px;
 }

@@ -6,12 +6,26 @@ import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import classNames from "classnames";
 import styles from "./ServerStatus.module.scss";
+import { TimeIcon } from "@chakra-ui/icons";
+import { CircularProgress } from "@chakra-ui/react";
 
 export const ServerStatus: React.FC<{}> = () => {
-    const isConnectedToServer = usePoliticalCapitalSelector((s) => s.playerState.isConnectedToServer);
+    const [progressCounter, setProgressCounter] = React.useState(0);
 
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setProgressCounter(new Date().getSeconds() % 10);
+        }, 1000);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, []);
+
+    const isConnectedToServer = usePoliticalCapitalSelector((s) => s.playerState.isConnectedToServer);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
-    const maybeRenderCurrentTime = () => {
+
+    const maybeRenderGameIndicator = () => {
         if (fullGameState === undefined) {
             return undefined;
         }
@@ -21,6 +35,18 @@ export const ServerStatus: React.FC<{}> = () => {
 
         return (
             <div className={styles.currentTime}>
+                {(fullGameState.gameState.state === "waiting" || fullGameState.gameState.state === "paused") && (
+                    <TimeIcon className={styles.pauseIcon} />
+                )}
+                {fullGameState.gameState.state === "active" && (
+                    <CircularProgress
+                        className={styles.progressCounter}
+                        min={0}
+                        max={9}
+                        value={progressCounter}
+                        size="20px"
+                    />
+                )}
                 {initialFakeDate.toLocaleDateString("default", { year: undefined, month: "short", day: "numeric" })}
             </div>
         );
@@ -28,7 +54,7 @@ export const ServerStatus: React.FC<{}> = () => {
 
     return (
         <div className={styles.serverStatus}>
-            {maybeRenderCurrentTime()}
+            {maybeRenderGameIndicator()}
             <div
                 className={classNames(styles.connectedIndicator, {
                     [styles.isConnected]: isConnectedToServer,

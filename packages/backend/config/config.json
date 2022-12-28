@@ -1,18 +1,18 @@
 {
   "development": {
-    "username": "yugabyte",
-    "password": null,
+    "username": "postgres",
+    "password": "admin",
     "database": "political-capital-two",
     "host": "localhost",
-    "port": "5433",
+    "port": "5432",
     "dialect": "postgres"
   },
   "test": {
-    "username": "yugabyte",
-    "password": null,
+    "username": "postgres",
+    "password": "admin",
     "database": "political-capital-two-test",
     "host": "localhost",
-    "port": "5433",
+    "port": "5432",
     "dialect": "postgres"
   }
 }

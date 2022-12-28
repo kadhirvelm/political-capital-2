@@ -1,0 +1,42 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.stafferCard {
+    display: flex;
+    width: 200px;
+    height: 150px;
+}
+
+.voting.voting {
+    background: rgba($green, 0.25);
+}
+
+.generator.generator {
+    background: rgba($blue, 0.25);
+}
+
+.support.support {
+    background: rgba($orange, 0.25);
+}
+
+.name {
+    display: flex;
+    padding: 5px 10px;
+    box-shadow: 0 1px $gray;
+}
+
+.description {
+    display: flex;
+    flex: 1;
+    padding: 10px;
+}
+
+.footer {
+    display: flex;
+    padding: 5px 10px;
+    box-shadow: 0 -1px $gray;
+    justify-content: flex-end;
+}

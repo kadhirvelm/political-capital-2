@@ -9,7 +9,7 @@ export interface IBasicStaffer {
     upgradedFrom: IPossibleStaffer["type"][];
     costToAcquire: number;
     timeToAcquire: number;
-    type: string;
+    type: keyof IAllStaffers;
 }
 
 export interface IInternStaffer extends IBasicStaffer {
@@ -32,7 +32,7 @@ export interface ISeniorRepresentative extends IBasicStaffer {
     costToAcquire: 4;
     timeToAcquire: 12;
     votes: 2;
-    type: "senior-representative";
+    type: "seniorRepresentative";
 }
 
 export interface IPhoneBanker extends IBasicStaffer {
@@ -40,13 +40,14 @@ export interface IPhoneBanker extends IBasicStaffer {
     costToAcquire: 1;
     timeToAcquire: 6;
     payout: 1;
-    type: "phone-banker";
+    type: "phoneBanker";
 }
 
 export interface IRecruiter extends IBasicStaffer {
     upgradedFrom: [];
     costToAcquire: 1;
     timeToAcquire: 6;
+    recruitCapacity: 1;
     type: "recruiter";
 }
 
@@ -54,7 +55,8 @@ export interface IPartTimeInstructor extends IBasicStaffer {
     upgradedFrom: [];
     costToAcquire: 1;
     timeToAcquire: 6;
-    type: "part-time-instructor";
+    trainingCapacity: 1;
+    type: "partTimeInstructor";
 }
 
 export interface IAllStaffers {
@@ -89,7 +91,7 @@ export const DEFAULT_STAFFER: IAllStaffers = {
         costToAcquire: 4,
         timeToAcquire: 12,
         votes: 2,
-        type: "senior-representative",
+        type: "seniorRepresentative",
     },
     phoneBanker: {
         displayName: "Phone banker",
@@ -97,13 +99,14 @@ export const DEFAULT_STAFFER: IAllStaffers = {
         costToAcquire: 1,
         timeToAcquire: 6,
         payout: 1,
-        type: "phone-banker",
+        type: "phoneBanker",
     },
     recruiter: {
         displayName: "Recruiter",
         upgradedFrom: [],
         costToAcquire: 1,
         timeToAcquire: 6,
+        recruitCapacity: 1,
         type: "recruiter",
     },
     partTimeInstructor: {
@@ -111,7 +114,8 @@ export const DEFAULT_STAFFER: IAllStaffers = {
         upgradedFrom: [],
         costToAcquire: 1,
         timeToAcquire: 6,
-        type: "part-time-instructor",
+        trainingCapacity: 1,
+        type: "partTimeInstructor",
     },
     unknown: {} as never,
 };
@@ -128,11 +132,11 @@ export namespace IStaffer {
     };
 
     export const isSeniorRepresentative = (staffer: IPossibleStaffer): staffer is ISeniorRepresentative => {
-        return staffer.type === "senior-representative";
+        return staffer.type === "seniorRepresentative";
     };
 
     export const isPhoneBanker = (staffer: IPossibleStaffer): staffer is IPhoneBanker => {
-        return staffer.type === "phone-banker";
+        return staffer.type === "phoneBanker";
     };
 
     export const isRecruiter = (staffer: IPossibleStaffer): staffer is IRecruiter => {
@@ -140,7 +144,7 @@ export namespace IStaffer {
     };
 
     export const isPartTimeInstructor = (staffer: IPossibleStaffer): staffer is IPartTimeInstructor => {
-        return staffer.type === "part-time-instructor";
+        return staffer.type === "partTimeInstructor";
     };
 
     export const visit = <ReturnValue>(value: IPossibleStaffer, visitor: IVisit<IAllStaffers, ReturnValue>) => {
