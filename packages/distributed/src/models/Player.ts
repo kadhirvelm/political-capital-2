@@ -15,15 +15,15 @@ export class Player extends Model<IPlayer> {
         type: DataTypes.STRING,
         primaryKey: true,
     })
-    playerRid!: IPlayer["playerRid"];
+    declare playerRid: IPlayer["playerRid"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    browserIdentifier!: IPlayer["browserIdentifier"];
+    declare browserIdentifier: IPlayer["browserIdentifier"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    name!: IPlayer["name"];
+    declare name: IPlayer["name"];
 }

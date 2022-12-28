@@ -67,6 +67,9 @@ export async function resolveGameEvents(gameState: GameState) {
             return IEvent.visit<Promise<any>>(gameEvent.eventDetails, {
                 finishHiringStaffer: () => Promise.resolve({}),
                 startHiringStaffer: () => Promise.resolve({}),
+                finishTrainingStaffer: () => Promise.resolve({}),
+                startTrainingStaffer: () => Promise.resolve({}),
+                // TODO: handle new resolutions
                 newResolution: () => Promise.resolve({}),
                 tallyResolution: (tallyResolution) => {
                     return Promise.all([resolveResolution(gameState, tallyResolution), completeEvent(gameEvent)]);

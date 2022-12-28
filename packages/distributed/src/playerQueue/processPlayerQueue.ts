@@ -244,7 +244,7 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
             gameClock,
             startHiringOrTraining,
         );
-        activePlayer.politicalCapital += deltaInPoliticalCapitalFromHiringAndTraining;
+        activePlayer.politicalCapital -= deltaInPoliticalCapitalFromHiringAndTraining;
     }
 
     // Each process would have updated the total political capital of the player, so we'll need to save

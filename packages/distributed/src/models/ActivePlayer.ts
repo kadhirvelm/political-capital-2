@@ -16,35 +16,35 @@ export class ActivePlayer extends Model<IActivePlayer> {
         autoIncrement: true,
         primaryKey: true,
     })
-    activePlayerId?: number | null;
+    declare activePlayerId?: number | null;
 
     @Column({
         type: DataTypes.STRING,
     })
-    gameStateRid!: IActivePlayer["gameStateRid"];
+    declare gameStateRid: IActivePlayer["gameStateRid"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    playerRid!: IActivePlayer["playerRid"];
+    declare playerRid: IActivePlayer["playerRid"];
 
     @Column({
         type: DataTypes.INTEGER,
     })
-    politicalCapital!: IActivePlayer["politicalCapital"];
+    declare politicalCapital: IActivePlayer["politicalCapital"];
 
     @Column({
         type: DataTypes.INTEGER,
     })
-    approvalRating!: IActivePlayer["approvalRating"];
+    declare approvalRating: IActivePlayer["approvalRating"];
 
     @Column({
         type: DataTypes.INTEGER,
     })
-    lastUpdatedGameClock!: IActivePlayer["lastUpdatedGameClock"];
+    declare lastUpdatedGameClock: IActivePlayer["lastUpdatedGameClock"];
 
     @Column({
         type: DataType.BOOLEAN,
     })
-    isReady!: IActivePlayer["isReady"];
+    declare isReady: IActivePlayer["isReady"];
 }

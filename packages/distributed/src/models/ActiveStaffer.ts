@@ -14,26 +14,26 @@ export class ActiveStaffer extends Model<IActiveStaffer> {
     @Column({
         type: DataTypes.STRING,
     })
-    gameStateRid!: IActiveStaffer["gameStateRid"];
+    declare gameStateRid: IActiveStaffer["gameStateRid"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    playerRid!: IActiveStaffer["playerRid"];
+    declare playerRid: IActiveStaffer["playerRid"];
 
     @Column({
         type: DataTypes.STRING,
         primaryKey: true,
     })
-    activeStafferRid!: IActiveStaffer["activeStafferRid"];
+    declare activeStafferRid: IActiveStaffer["activeStafferRid"];
 
     @Column({
         type: DataTypes.JSONB,
     })
-    stafferDetails!: IActiveStaffer["stafferDetails"];
+    declare stafferDetails: IActiveStaffer["stafferDetails"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    state!: IActiveStaffer["state"];
+    declare state: IActiveStaffer["state"];
 }

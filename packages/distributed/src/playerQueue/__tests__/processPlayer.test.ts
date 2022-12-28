@@ -24,8 +24,6 @@ import { IProcessPlayerQueue } from "../../queues";
 import { initDB, teardownDB } from "../../testUtilities/setupTests";
 import { handlePlayerProcessor } from "../processPlayerQueue";
 
-jest.mock("bull");
-
 beforeAll(() => {
     initDB();
 
@@ -49,15 +47,37 @@ describe("Process player works as expected", () => {
         ]);
     });
 
-    it("works in the complex case", async () => {
+    it("can process an empty sync", async () => {
         const gameClock = 10 as IGameClock;
 
         const gameStateRid = "some-game-state-rid-1" as IGameStateRid;
         const playerRid = "some-player-rid-1" as IPlayerRid;
 
+        await ActivePlayer.create({
+            playerRid,
+            gameStateRid,
+            politicalCapital: 0,
+            approvalRating: 0,
+            lastUpdatedGameClock: 9 as IGameClock,
+            isReady: true,
+        });
+
+        await handlePlayerProcessor({ data: { playerRid, gameStateRid, gameClock } } as Job<IProcessPlayerQueue>, noop);
+
+        const activePlayer = await ActivePlayer.findOne({ where: { playerRid } });
+        expect(activePlayer?.politicalCapital).toEqual(0);
+    });
+
+    it("works in the complex case", async () => {
+        const gameClock = 10 as IGameClock;
+
+        const gameStateRid = "some-game-state-rid-2" as IGameStateRid;
+        const playerRid = "some-player-rid-2" as IPlayerRid;
+
         const votingStaffer = "some-voting-staffer" as IActiveStafferRid;
         const recruiterStaffer = "some-recruiter-staffer" as IActiveStafferRid;
         const phoneBankerStaffer = "phone-banker-staffer" as IActiveStafferRid;
+        const partTimeTrainer = "part-time-trainer" as IActiveStafferRid;
 
         const activeResolutionRid = "some-active-resolution" as IActiveResolutionRid;
 
@@ -89,6 +109,13 @@ describe("Process player works as expected", () => {
             activeStafferRid: phoneBankerStaffer,
             stafferDetails: DEFAULT_STAFFER.phoneBanker,
             state: "disabled",
+        });
+        await ActiveStaffer.create({
+            gameStateRid,
+            playerRid,
+            activeStafferRid: partTimeTrainer,
+            stafferDetails: DEFAULT_STAFFER.partTimeInstructor,
+            state: "active",
         });
         await ActiveResolution.create({
             gameStateRid,
@@ -130,33 +157,58 @@ describe("Process player works as expected", () => {
             },
             state: "active",
         });
+        await ResolveGameEvent.create({
+            gameStateRid,
+            resolvesOn: gameClock,
+            eventDetails: {
+                playerRid,
+                activeStafferRid: votingStaffer,
+                trainerRid: partTimeTrainer,
+                type: "start-training-staffer",
+                toLevel: "seniorRepresentative",
+            },
+            state: "active",
+        });
 
         await handlePlayerProcessor({ data: { playerRid, gameStateRid, gameClock } } as Job<IProcessPlayerQueue>, noop);
 
         const activePlayer = await ActivePlayer.findOne({ where: { playerRid } });
 
-        // Player changes: political capital --> 10 (resolution vote) + 1 (phone banker) - 1 (intern hire)
-        expect(activePlayer?.politicalCapital).toEqual(10);
+        // Player changes: political capital --> 10 (resolution vote) + 1 (phone banker) - 1 (intern hire) - 4 (senior rep train)
+        expect(activePlayer?.politicalCapital).toEqual(6);
         expect(activePlayer?.lastUpdatedGameClock).toEqual(10);
 
-        // Resolve events --> 1 new finish hiring staffer at (10 + intern time to hire)
+        // Resolve events --> 1 new finish hiring staffer, 1 new finish training staffer
         const resolveEvents = await ResolveGameEvent.findAll();
 
-        expect(resolveEvents.length).toEqual(4);
+        expect(resolveEvents.length).toEqual(6);
         const completedEvents = resolveEvents.filter((event) => event.state === "complete");
-        expect(completedEvents.length).toEqual(3);
+        expect(completedEvents.length).toEqual(4);
 
-        const activeEvent = resolveEvents.find((event) => event.state === "active");
+        const activeEvent = resolveEvents.find(
+            (event) => event.state === "active" && event.eventDetails.type === "finish-hiring-staffer",
+        );
         expect(activeEvent?.resolvesOn).toEqual(gameClock + DEFAULT_STAFFER.intern.timeToAcquire);
-        expect(activeEvent?.eventDetails.type).toEqual("finish-hiring-staffer");
+
+        const activeEvent2 = resolveEvents.find(
+            (event) => event.state === "active" && event.eventDetails.type === "finish-training-staffer",
+        );
+        expect(activeEvent2?.resolvesOn).toEqual(gameClock + DEFAULT_STAFFER.seniorRepresentative.timeToAcquire);
 
         const activeStaffers = await ActiveStaffer.findAll({});
 
-        expect(activeStaffers.length).toEqual(4);
+        expect(activeStaffers.length).toEqual(5);
         const areActiveStaffers = activeStaffers.filter((staffer) => staffer.state === "active");
         expect(areActiveStaffers.length).toEqual(3);
 
-        const disabledStaffer = activeStaffers.find((staffer) => staffer.state === "disabled");
-        expect(disabledStaffer?.stafferDetails.type).toEqual(DEFAULT_STAFFER.intern.type);
+        const disabledStaffer = activeStaffers.find(
+            (staffer) => staffer.state === "disabled" && staffer.stafferDetails.type === "intern",
+        );
+        expect(disabledStaffer).not.toBeUndefined();
+
+        const disabledStaffer2 = activeStaffers.find(
+            (staffer) => staffer.state === "disabled" && staffer.stafferDetails.type === "senior-representative",
+        );
+        expect(disabledStaffer2).not.toBeUndefined();
     });
 });

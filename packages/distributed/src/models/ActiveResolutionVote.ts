@@ -14,21 +14,21 @@ export class ActiveResolutionVote extends Model<IActiveResolutionVote> {
     @Column({
         type: DataTypes.STRING,
     })
-    gameStateRid!: IActiveResolutionVote["gameStateRid"];
+    declare gameStateRid: IActiveResolutionVote["gameStateRid"];
 
     @Column({
         type: DataTypes.STRING,
         primaryKey: true,
     })
-    activeResolutionRid!: IActiveResolutionVote["activeResolutionRid"];
+    declare activeResolutionRid: IActiveResolutionVote["activeResolutionRid"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    activeStafferRid!: IActiveResolutionVote["activeStafferRid"];
+    declare activeStafferRid: IActiveResolutionVote["activeStafferRid"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    vote!: IActiveResolutionVote["vote"];
+    declare vote: IActiveResolutionVote["vote"];
 }

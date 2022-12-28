@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { configureStore , AnyAction, Dispatch as D, MiddlewareAPI, ThunkDispatch } from "@reduxjs/toolkit";
+import { configureStore, AnyAction, Dispatch as D, MiddlewareAPI, ThunkDispatch } from "@reduxjs/toolkit";
 import { ILocalGameState, LocalGameStateReducer } from "./gameState";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { PlayerStateReducer } from "./playerState";
@@ -20,6 +20,7 @@ const LoggingMiddleware = <Reducers>() => [
             }
 
             const result = next(action);
+            // eslint-disable-next-line no-console
             console.log(`%c ${action.type}`, "color: #cacfd2", {
                 action,
                 nextState: store.getState(),

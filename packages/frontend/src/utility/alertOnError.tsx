@@ -8,6 +8,7 @@ function isError<T>(maybeError: T | { error: string }): maybeError is { error: s
 
 export function checkIsError<T>(maybeError: T | { error: string }): T | undefined {
     if (isError(maybeError)) {
+        // eslint-disable-next-line no-console
         console.error(maybeError);
         return undefined;
     }

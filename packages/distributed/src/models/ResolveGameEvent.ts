@@ -16,25 +16,25 @@ export class ResolveGameEvent extends Model<IResolveGameEvent> {
         autoIncrement: true,
         primaryKey: true,
     })
-    resolveGameEventId?: number | null;
+    declare resolveGameEventId?: number | null;
 
     @Column({
         type: DataType.STRING,
     })
-    gameStateRid!: IResolveGameEvent["gameStateRid"];
+    declare gameStateRid: IResolveGameEvent["gameStateRid"];
 
     @Column({
         type: DataType.NUMBER,
     })
-    resolvesOn!: IResolveGameEvent["resolvesOn"];
+    declare resolvesOn: IResolveGameEvent["resolvesOn"];
 
     @Column({
         type: DataType.JSONB,
     })
-    eventDetails!: IResolveGameEvent["eventDetails"];
+    declare eventDetails: IResolveGameEvent["eventDetails"];
 
     @Column({
         type: DataType.STRING,
     })
-    state!: IResolveGameEvent["state"];
+    declare state: IResolveGameEvent["state"];
 }

@@ -15,15 +15,15 @@ export class GameState extends Model<IGameState> {
         type: DataTypes.STRING,
         primaryKey: true,
     })
-    gameStateRid!: IGameState["gameStateRid"];
+    declare gameStateRid: IGameState["gameStateRid"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    state!: IGameState["state"];
+    declare state: IGameState["state"];
 
     @Column({
         type: DataTypes.INTEGER,
     })
-    gameClock!: IGameState["gameClock"];
+    declare gameClock: IGameState["gameClock"];
 }

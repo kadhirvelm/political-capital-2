@@ -14,21 +14,21 @@ export class ActiveResolution extends Model<IActiveResolution> {
     @Column({
         type: DataTypes.STRING,
     })
-    gameStateRid!: IActiveResolution["gameStateRid"];
+    declare gameStateRid: IActiveResolution["gameStateRid"];
 
     @Column({
         type: DataTypes.STRING,
         primaryKey: true,
     })
-    activeResolutionRid!: IActiveResolution["activeResolutionRid"];
+    declare activeResolutionRid: IActiveResolution["activeResolutionRid"];
 
     @Column({
         type: DataTypes.JSONB,
     })
-    resolutionDetails!: IActiveResolution["resolutionDetails"];
+    declare resolutionDetails: IActiveResolution["resolutionDetails"];
 
     @Column({
         type: DataTypes.STRING,
     })
-    state!: IActiveResolution["state"];
+    declare state: IActiveResolution["state"];
 }
