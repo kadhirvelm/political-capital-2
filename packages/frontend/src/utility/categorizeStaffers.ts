@@ -2,19 +2,16 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IActiveStaffer, IPossibleStaffer } from "@pc2/api";
-
-export const voting: Array<IPossibleStaffer["type"]> = ["representative", "seniorRepresentative"];
-export const generator: Array<IPossibleStaffer["type"]> = ["phoneBanker"];
+import { getPayoutForStaffer, getTotalAllowedVotes, IActiveStaffer, IPossibleStaffer } from "@pc2/api";
 
 export type IStafferCategory = "voting" | "generator" | "support";
 
 export function getStafferCategory(staffer: IPossibleStaffer): IStafferCategory {
-    if (voting.includes(staffer.type)) {
+    if (getTotalAllowedVotes({ state: "active", stafferDetails: staffer } as IActiveStaffer) > 0) {
         return "voting";
     }
 
-    if (generator.includes(staffer.type)) {
+    if (getPayoutForStaffer({ state: "active", stafferDetails: staffer } as IActiveStaffer) > 0) {
         return "generator";
     }
 

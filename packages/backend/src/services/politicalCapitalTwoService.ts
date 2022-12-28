@@ -3,12 +3,13 @@
  */
 
 import {
+    getTotalAllowedRecruits,
+    getTotalAllowedTrainees,
+    getTotalAllowedVotes,
     IActiveResolutionVote,
-    IActiveStaffer,
     IGameClock,
     IPoliticalCapitalTwoService,
     IResolveGameEvent,
-    IStaffer,
     IStartHiringStaffer,
     IStartTrainingStaffer,
 } from "@pc2/api";
@@ -20,19 +21,6 @@ import {
     ResolveGameEvent,
 } from "@pc2/distributed-compute";
 import Express from "express";
-import _ from "lodash";
-
-function getTotalAllowedRecruits(staffer: IActiveStaffer): number {
-    return IStaffer.visit<number>(staffer.stafferDetails, {
-        intern: () => 0,
-        representative: () => 0,
-        seniorRepresentative: () => 0,
-        phoneBanker: () => 0,
-        recruiter: (recruit) => recruit.recruitCapacity,
-        partTimeInstructor: () => 0,
-        unknown: () => 0,
-    });
-}
 
 export async function recruitStaffer(
     payload: IPoliticalCapitalTwoService["recruitStaffer"]["payload"],
@@ -90,18 +78,6 @@ export async function recruitStaffer(
     };
 }
 
-function getTotalAllowedTrainees(staffer: IActiveStaffer): number {
-    return IStaffer.visit<number>(staffer.stafferDetails, {
-        intern: () => 0,
-        representative: () => 0,
-        seniorRepresentative: () => 0,
-        phoneBanker: () => 0,
-        recruiter: () => 0,
-        partTimeInstructor: (partTimeInstructor) => partTimeInstructor.trainingCapacity,
-        unknown: () => 0,
-    });
-}
-
 export async function trainStaffer(
     payload: IPoliticalCapitalTwoService["trainStaffer"]["payload"],
     response: Express.Response,
@@ -156,18 +132,6 @@ export async function trainStaffer(
             state: "pending",
         },
     };
-}
-
-function getTotalAllowedVotes(staffer: IActiveStaffer): number {
-    return IStaffer.visit<number>(staffer.stafferDetails, {
-        intern: () => 0,
-        representative: (representative) => representative.votes,
-        seniorRepresentative: (seniorRepresentative) => seniorRepresentative.votes,
-        phoneBanker: () => 0,
-        recruiter: () => 0,
-        partTimeInstructor: () => 0,
-        unknown: () => 0,
-    });
 }
 
 export async function castVote(

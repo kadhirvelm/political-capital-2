@@ -17,4 +17,6 @@ export * from "./types/IStaffer";
 export * from "./types/IVisit";
 export * from "./types/politicalCapitalTwo";
 
+export * from "./utils/staffer";
+
 export * from "./constants";

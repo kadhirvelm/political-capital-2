@@ -6,7 +6,7 @@ import { IVisit } from "./IVisit";
 
 export interface IBasicStaffer {
     displayName: string;
-    upgradedFrom: IPossibleStaffer["type"][];
+    upgradedFrom: Array<keyof IAllStaffers>;
     costToAcquire: number;
     timeToAcquire: number;
     type: keyof IAllStaffers;
@@ -35,12 +35,28 @@ export interface ISeniorRepresentative extends IBasicStaffer {
     type: "seniorRepresentative";
 }
 
+export interface IIndependentRepresentative extends IBasicStaffer {
+    upgradedFrom: ["representative"];
+    costToAcquire: 4;
+    timeToAcquire: 12;
+    votes: 1;
+    type: "independentRepresentative";
+}
+
 export interface IPhoneBanker extends IBasicStaffer {
     upgradedFrom: [];
     costToAcquire: 1;
     timeToAcquire: 6;
-    payout: 1;
+    payout: 0.5;
     type: "phoneBanker";
+}
+
+export interface ISocialMediaManager extends IBasicStaffer {
+    upgradedFrom: ["phoneBanker"];
+    costToAcquire: 4;
+    timeToAcquire: 12;
+    payout: 1;
+    type: "socialMediaManager";
 }
 
 export interface IRecruiter extends IBasicStaffer {
@@ -63,13 +79,15 @@ export interface IAllStaffers {
     intern: IInternStaffer;
     representative: IRepresentative;
     seniorRepresentative: ISeniorRepresentative;
+    independentRepresentative: IIndependentRepresentative;
     phoneBanker: IPhoneBanker;
+    socialMediaManager: ISocialMediaManager;
     recruiter: IRecruiter;
     partTimeInstructor: IPartTimeInstructor;
     unknown: never;
 }
 
-export const DEFAULT_STAFFER: IAllStaffers = {
+export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     intern: {
         displayName: "Intern",
         upgradedFrom: [],
@@ -93,13 +111,29 @@ export const DEFAULT_STAFFER: IAllStaffers = {
         votes: 2,
         type: "seniorRepresentative",
     },
+    independentRepresentative: {
+        displayName: "Independent representative",
+        upgradedFrom: ["representative"],
+        costToAcquire: 4,
+        timeToAcquire: 12,
+        votes: 1,
+        type: "independentRepresentative",
+    },
     phoneBanker: {
         displayName: "Phone banker",
         upgradedFrom: [],
         costToAcquire: 1,
         timeToAcquire: 6,
-        payout: 1,
+        payout: 0.5,
         type: "phoneBanker",
+    },
+    socialMediaManager: {
+        displayName: "Social media manager",
+        upgradedFrom: ["phoneBanker"],
+        costToAcquire: 4,
+        timeToAcquire: 12,
+        payout: 1,
+        type: "socialMediaManager",
     },
     recruiter: {
         displayName: "Recruiter",
@@ -117,7 +151,6 @@ export const DEFAULT_STAFFER: IAllStaffers = {
         trainingCapacity: 1,
         type: "partTimeInstructor",
     },
-    unknown: {} as never,
 };
 
 export type IPossibleStaffer = IAllStaffers[keyof IAllStaffers];
@@ -135,8 +168,16 @@ export namespace IStaffer {
         return staffer.type === "seniorRepresentative";
     };
 
+    export const isIndependentRepresentative = (staffer: IPossibleStaffer): staffer is IIndependentRepresentative => {
+        return staffer.type === "independentRepresentative";
+    };
+
     export const isPhoneBanker = (staffer: IPossibleStaffer): staffer is IPhoneBanker => {
         return staffer.type === "phoneBanker";
+    };
+
+    export const isSocialMediaManager = (staffer: IPossibleStaffer): staffer is ISocialMediaManager => {
+        return staffer.type === "socialMediaManager";
     };
 
     export const isRecruiter = (staffer: IPossibleStaffer): staffer is IRecruiter => {
@@ -160,8 +201,16 @@ export namespace IStaffer {
             return visitor.seniorRepresentative(value);
         }
 
+        if (isIndependentRepresentative(value)) {
+            return visitor.independentRepresentative(value);
+        }
+
         if (isPhoneBanker(value)) {
             return visitor.phoneBanker(value);
+        }
+
+        if (isSocialMediaManager(value)) {
+            return visitor.socialMediaManager(value);
         }
 
         if (isRecruiter(value)) {

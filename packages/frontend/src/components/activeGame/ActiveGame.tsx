@@ -11,8 +11,9 @@ import styles from "./ActiveGame.module.scss";
 import { ActiveResolution } from "./ActiveResolution";
 import { EveryoneElse } from "./EveryoneElse";
 import { PlayerParty } from "./PlayerParty";
+import { StafferLadders } from "./StafferLadders";
 
-type ICurrentView = "active-resolution" | "your-party" | "everyone-else";
+type ICurrentView = "active-resolution" | "your-party" | "everyone-else" | "staffers-ladders";
 
 export const ActiveGame: React.FC<{}> = () => {
     const [currentView, setCurrentView] = React.useState<ICurrentView>("active-resolution");
@@ -51,7 +52,11 @@ export const ActiveGame: React.FC<{}> = () => {
             return "Your party";
         }
 
-        return "Everyone else";
+        if (currentView === "everyone-else") {
+            return "Everyone else";
+        }
+
+        return "Staffer ladders";
     };
 
     const renderCurrentView = () => {
@@ -63,7 +68,11 @@ export const ActiveGame: React.FC<{}> = () => {
             return <PlayerParty playerRid={player.playerRid} />;
         }
 
-        return <EveryoneElse />;
+        if (currentView === "everyone-else") {
+            return <EveryoneElse />;
+        }
+
+        return <StafferLadders />;
     };
 
     const changeCurrentView = (newView: ICurrentView) => () => setCurrentView(newView);
@@ -79,6 +88,8 @@ export const ActiveGame: React.FC<{}> = () => {
                         <MenuItem onClick={changeCurrentView("active-resolution")}>Active resolution</MenuItem>
                         <MenuItem onClick={changeCurrentView("your-party")}>Your party</MenuItem>
                         <MenuItem onClick={changeCurrentView("everyone-else")}>Everyone else</MenuItem>
+                        <MenuDivider />
+                        <MenuItem onClick={changeCurrentView("staffers-ladders")}>Staffer ladders</MenuItem>
                         <MenuDivider />
                         {renderPauseOrResumeButton()}
                     </MenuList>

@@ -4,7 +4,7 @@
 
 import {
     DEFAULT_STAFFER,
-    IActiveStaffer,
+    getPayoutForStaffer,
     IActiveStafferRid,
     IEvent,
     IFinishHiringStaffer,
@@ -12,16 +12,15 @@ import {
     IGameClock,
     IGameStateRid,
     IPlayerRid,
-    IStaffer,
     IStartHiringStaffer,
     IStartTrainingStaffer,
     ITallyResolution,
 } from "@pc2/api";
 import { DoneCallback, Job } from "bull";
+import crypto from "crypto";
 import { Op } from "sequelize";
 import { ActivePlayer, ActiveResolution, ActiveResolutionVote, ActiveStaffer, ResolveGameEvent } from "../models";
 import { IProcessPlayerQueue, UpdatePlayerQueue } from "../queues";
-import crypto from "crypto";
 
 async function getPayoutForPlayer(
     gameStateRid: IGameStateRid,
@@ -66,22 +65,6 @@ async function handleFinishHiringOrTraining(
     ]);
 
     return updateStaffersToActive;
-}
-
-function getPayoutForStaffer(staffer: IActiveStaffer) {
-    if (staffer.state === "disabled") {
-        return 0;
-    }
-
-    return IStaffer.visit(staffer.stafferDetails, {
-        intern: () => 0,
-        representative: () => 0,
-        seniorRepresentative: () => 0,
-        phoneBanker: (phoneBanker) => phoneBanker.payout,
-        recruiter: () => 0,
-        partTimeInstructor: () => 0,
-        unknown: () => 0,
-    });
 }
 
 export async function handleStartHiringOrTraining(
