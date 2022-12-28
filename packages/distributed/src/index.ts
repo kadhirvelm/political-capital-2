@@ -6,6 +6,6 @@ export * from "./models";
 
 export * from "./playerQueue/processPlayerQueue";
 
-export * from "./constants";
+export * from "./utils/getStafferOfType";
 
 export * from "./queues";

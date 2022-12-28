@@ -3,7 +3,6 @@
  */
 
 import {
-    DEFAULT_STAFFER,
     IActiveGameService,
     IActiveResolutionVote,
     IActiveStaffer,
@@ -21,6 +20,7 @@ import {
     ActiveResolutionVote,
     ActiveStaffer,
     GameState,
+    getStafferOfType,
     Player,
     ResolveGameEvent,
 } from "@pc2/distributed-compute";
@@ -30,7 +30,6 @@ import { Op } from "sequelize";
 import { v4 } from "uuid";
 import { INITIAL_STAFFERS } from "../constants/game";
 import { INITIAL_APPROVAL_RATING, INITIAL_POLITICAL_CAPITAL } from "../constants/initializePlayers";
-import { getStafferOfType } from "../utils/getStafferOfType";
 import { sendMessageToPlayer } from "./socketService";
 
 // This isn't strictly necessary, but given there's a second promise going out anyway, might as well optimize it
@@ -56,10 +55,21 @@ async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<I
                     ] =
                         indexedResolveEvents.players[finishHiringStaffer.playerRid].staffers[
                             finishHiringStaffer.activeStafferRid
-                        ] ?? {};
+                        ] ?? [];
 
                     indexedResolveEvents.players[finishHiringStaffer.playerRid].staffers[
                         finishHiringStaffer.activeStafferRid
+                    ].push(resolveEvent);
+
+                    indexedResolveEvents.players[finishHiringStaffer.playerRid].staffers[
+                        finishHiringStaffer.recruiterRid
+                    ] =
+                        indexedResolveEvents.players[finishHiringStaffer.playerRid].staffers[
+                            finishHiringStaffer.recruiterRid
+                        ] ?? [];
+
+                    indexedResolveEvents.players[finishHiringStaffer.playerRid].staffers[
+                        finishHiringStaffer.recruiterRid
                     ].push(resolveEvent);
                 },
                 startHiringStaffer: (startHiringStaffer) => {
@@ -70,7 +80,15 @@ async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<I
                         staffers: {},
                     };
 
-                    indexedResolveEvents.players[startHiringStaffer.playerRid].overall.push(resolveEvent);
+                    indexedResolveEvents.players[startHiringStaffer.playerRid].staffers[
+                        startHiringStaffer.recruiterRid
+                    ] =
+                        indexedResolveEvents.players[startHiringStaffer.playerRid].staffers[
+                            startHiringStaffer.recruiterRid
+                        ] ?? [];
+                    indexedResolveEvents.players[startHiringStaffer.playerRid].staffers[
+                        startHiringStaffer.recruiterRid
+                    ].push(resolveEvent);
                 },
                 startTrainingStaffer: (startTrainingStaffer) => {
                     indexedResolveEvents.players[startTrainingStaffer.playerRid] = indexedResolveEvents.players[

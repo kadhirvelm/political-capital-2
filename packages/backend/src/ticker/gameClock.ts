@@ -22,6 +22,12 @@ export async function updateGameStates() {
         await resolveGameEvents(activeGame);
 
         const activePlayers = await ActivePlayer.findAll({ where: { gameStateRid: activeGame.gameStateRid } });
+
+        console.log(
+            "Sending out @@@",
+            activePlayers.map((p) => p.playerRid),
+        );
+
         activePlayers.forEach((activePlayer) => {
             ProcessPlayerQueue.add({
                 gameStateRid: activeGame.gameStateRid,

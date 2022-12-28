@@ -40,9 +40,9 @@ export const StafferLadders: React.FC<{}> = () => {
     return (
         <div className={styles.staffersContainer}>
             <div className={styles.legend}>
-                <div className={styles.votingText}>Voting</div>
                 <div className={styles.generatorText}>Generator</div>
                 <div className={styles.supportText}>Support</div>
+                <div className={styles.votingText}>Voting</div>
             </div>
             {lowestLevelStaffers.map(renderSingleStafferLevel)}
         </div>

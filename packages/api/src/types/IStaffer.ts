@@ -153,6 +153,19 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     },
 };
 
+export const StafferLadderIndex: { [stafferType: string]: string[] } = (() => {
+    const stafferIndex: { [stafferType: string]: string[] } = {};
+
+    Object.values(DEFAULT_STAFFER).forEach((staffer) => {
+        staffer.upgradedFrom.forEach((upgradedFrom) => {
+            stafferIndex[upgradedFrom] = stafferIndex[upgradedFrom] ?? [];
+            stafferIndex[upgradedFrom].push(staffer.displayName);
+        });
+    });
+
+    return stafferIndex;
+})();
+
 export type IPossibleStaffer = IAllStaffers[keyof IAllStaffers];
 
 export namespace IStaffer {

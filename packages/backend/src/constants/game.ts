@@ -10,7 +10,7 @@ export const TIME_FOR_EACH_RESOLUTION_IN_DAYS = 49;
 
 export const TOTAL_DAYS_IN_GAME = 365;
 
-export const INITIAL_STAFFERS: Array<keyof IAllStaffers> = [
+export const INITIAL_STAFFERS: Array<Exclude<keyof IAllStaffers, "unknown">> = [
     "representative",
     "representative",
     "recruiter",

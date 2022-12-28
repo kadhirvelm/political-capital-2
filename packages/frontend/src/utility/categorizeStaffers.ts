@@ -19,7 +19,10 @@ export function getStafferCategory(staffer: IPossibleStaffer): IStafferCategory 
 }
 
 export function getStaffersOfCategory(activeStaffers: IActiveStaffer[], category: IStafferCategory) {
-    return activeStaffers.slice().filter((activeStaffer) => {
-        return getStafferCategory(activeStaffer.stafferDetails) === category;
-    });
+    return activeStaffers
+        .slice()
+        .filter((activeStaffer) => {
+            return getStafferCategory(activeStaffer.stafferDetails) === category;
+        })
+        .sort((a, b) => a.stafferDetails.type.localeCompare(b.stafferDetails.type));
 }

@@ -6,8 +6,8 @@ import { ProcessPlayerQueue, handlePlayerProcessor, UpdatePlayerQueue } from "@p
 import { handleUpdatePlayerProcessor } from "./updatePlayer";
 
 function setupPlayerQueueProcessor() {
-    ProcessPlayerQueue.process(handlePlayerProcessor);
-    UpdatePlayerQueue.process(handleUpdatePlayerProcessor);
+    ProcessPlayerQueue.process(2, handlePlayerProcessor);
+    UpdatePlayerQueue.process(2, handleUpdatePlayerProcessor);
 }
 
 export function configureAllQueueProcessors() {

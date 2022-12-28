@@ -43,6 +43,15 @@
     gap: 10px;
 }
 
+.activateStafferContainer {
+    display: flex;
+    align-items: center;
+}
+
+.chevronRight {
+    margin-left: 10px;
+}
+
 .noneFound {
     color: $gray;
 }

@@ -1,0 +1,86 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables.scss";
+
+.description {
+    color: $gray;
+}
+
+.currentlyRecruiting {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.currentlyHiring {
+    margin-bottom: 10px;
+}
+
+.hiringEvents {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.recruit {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.atCapacity {
+    display: flex;
+    margin-top: 20px;
+}
+
+.jobPosting {
+    margin-bottom: 10px;
+}
+
+.allJobPostingsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.singleJobPosting {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba($gray, 0.25);
+    border-radius: 3px;
+    padding: 5px 10px;
+}
+
+.voting {
+    background: rgba($green, 0.15);
+}
+
+.generator {
+    background: rgba($blue, 0.15);
+}
+
+.support {
+    background: rgba($orange, 0.15);
+}
+
+.trainsInto {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+
+    > :first-child {
+        margin-right: 5px;
+    }
+}
+
+.modalSentence {
+    display: flex;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}

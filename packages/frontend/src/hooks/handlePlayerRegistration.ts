@@ -37,7 +37,7 @@ export function useHandlePlayerAndSocketRegistration() {
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
 
     const maybeGetExistingPlayer = async () => {
-        const maybePlayer = checkIsError(await PlayerServiceFrontend.getPlayer({ browserIdentifier }));
+        const maybePlayer = checkIsError(await PlayerServiceFrontend.getPlayer({ browserIdentifier }), toast);
 
         if (maybePlayer === undefined || maybePlayer.player === undefined) {
             dispatch(isConnectedToServer());

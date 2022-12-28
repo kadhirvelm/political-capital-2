@@ -8,6 +8,14 @@ import classNames from "classnames";
 import styles from "./ServerStatus.module.scss";
 import { TimeIcon } from "@chakra-ui/icons";
 import { CircularProgress } from "@chakra-ui/react";
+import { IGameClock } from "@pc2/api";
+
+export function getFakeDate(gameClock: IGameClock): string {
+    const initialFakeDate = new Date("January 1, 2022");
+    initialFakeDate.setDate(initialFakeDate.getDate() + gameClock);
+
+    return initialFakeDate.toLocaleDateString("default", { year: undefined, month: "short", day: "numeric" });
+}
 
 export const ServerStatus: React.FC<{}> = () => {
     const [progressCounter, setProgressCounter] = React.useState(0);
@@ -30,9 +38,6 @@ export const ServerStatus: React.FC<{}> = () => {
             return undefined;
         }
 
-        const initialFakeDate = new Date("January 1, 2022");
-        initialFakeDate.setDate(initialFakeDate.getDate() + fullGameState.gameState.gameClock);
-
         return (
             <div className={styles.currentTime}>
                 {(fullGameState.gameState.state === "waiting" || fullGameState.gameState.state === "paused") && (
@@ -47,7 +52,7 @@ export const ServerStatus: React.FC<{}> = () => {
                         size="20px"
                     />
                 )}
-                {initialFakeDate.toLocaleDateString("default", { year: undefined, month: "short", day: "numeric" })}
+                {getFakeDate(fullGameState.gameState.gameClock)}
             </div>
         );
     };

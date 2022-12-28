@@ -12,6 +12,7 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    useToast,
 } from "@chakra-ui/react";
 import { PlayerServiceFrontend } from "@pc2/api";
 import * as React from "react";
@@ -21,6 +22,7 @@ import { setPlayer } from "../../store/playerState";
 import { checkIsError } from "../../utility/alertOnError";
 
 export const RegisterPlayerModal: React.FC<{}> = ({}) => {
+    const toast = useToast();
     useHandlePlayerAndSocketRegistration();
 
     const dispatch = usePoliticalCapitalDispatch();
@@ -37,6 +39,7 @@ export const RegisterPlayerModal: React.FC<{}> = ({}) => {
 
         const newPlayer = checkIsError(
             await PlayerServiceFrontend.registerNewPlayer({ browserIdentifier: getOrCreateBrowserRid(), name }),
+            toast,
         );
         if (newPlayer === undefined) {
             return;

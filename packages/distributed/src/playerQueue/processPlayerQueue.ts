@@ -21,6 +21,7 @@ import crypto from "crypto";
 import { Op } from "sequelize";
 import { ActivePlayer, ActiveResolution, ActiveResolutionVote, ActiveStaffer, ResolveGameEvent } from "../models";
 import { IProcessPlayerQueue, UpdatePlayerQueue } from "../queues";
+import { getStafferOfType } from "../utils/getStafferOfType";
 
 async function getPayoutForPlayer(
     gameStateRid: IGameStateRid,
@@ -81,7 +82,7 @@ export async function handleStartHiringOrTraining(
 
             if (IEvent.isStartHireStaffer(trainingOrHiring)) {
                 const newStafferRid = crypto.randomUUID() as IActiveStafferRid;
-                const newStafferDetails = DEFAULT_STAFFER[trainingOrHiring.stafferType];
+                const newStafferDetails = getStafferOfType(trainingOrHiring.stafferType);
 
                 await Promise.all([
                     ActiveStaffer.create({
@@ -111,10 +112,18 @@ export async function handleStartHiringOrTraining(
             if (IEvent.isStartTrainingStaffer(trainingOrHiring)) {
                 const newStafferDetails = DEFAULT_STAFFER[trainingOrHiring.toLevel];
 
+                const existingStaffer = await ActiveStaffer.findOne({
+                    where: { gameStateRid, activeStafferRid: trainingOrHiring.activeStafferRid },
+                });
+
                 await Promise.all([
                     ActiveStaffer.update(
                         {
-                            stafferDetails: newStafferDetails,
+                            stafferDetails: {
+                                ...newStafferDetails,
+                                displayName:
+                                    existingStaffer?.stafferDetails.displayName ?? newStafferDetails.displayName,
+                            },
                             state: "disabled",
                         },
                         {
@@ -150,6 +159,8 @@ export async function handleStartHiringOrTraining(
 
 export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done: DoneCallback) {
     const { gameStateRid, playerRid, gameClock } = job.data;
+
+    console.log("Resolving @@@", playerRid);
 
     const [activePlayer, activePlayerStaffers] = await Promise.all([
         ActivePlayer.findOne({ where: { gameStateRid, playerRid } }),

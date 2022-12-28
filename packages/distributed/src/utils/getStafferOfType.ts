@@ -5,7 +5,7 @@
 import { DEFAULT_STAFFER, IAllStaffers, IPossibleStaffer } from "@pc2/api";
 import { names, uniqueNamesGenerator } from "unique-names-generator";
 
-export function getStafferOfType(staffer: keyof IAllStaffers): IPossibleStaffer {
+export function getStafferOfType(staffer: Exclude<keyof IAllStaffers, "unknown">): IPossibleStaffer {
     const defaultStaffer = DEFAULT_STAFFER[staffer];
 
     return {

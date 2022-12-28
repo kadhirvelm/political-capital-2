@@ -18,10 +18,10 @@ module.exports = {
                 type: Sequelize.STRING,
             },
             politicalCapital: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.DOUBLE,
             },
             approvalRating: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.DOUBLE,
             },
             lastUpdatedGameClock: {
                 type: Sequelize.INTEGER,

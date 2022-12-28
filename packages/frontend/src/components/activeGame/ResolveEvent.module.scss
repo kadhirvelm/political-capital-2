@@ -1,0 +1,38 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables.scss";
+
+.singleHiringEvent {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba($gray, 0.25);
+    border-radius: 3px;
+}
+
+.description {
+    color: $gray;
+}
+
+.eventBody {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+}
+
+.title {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.eventFooter {
+    display: flex;
+    justify-content: flex-end;
+    box-shadow: 0 -1px rgba($gray, 0.25);
+    padding: 5px 10px;
+
+    > :first-child {
+        margin-right: 5px;
+    }
+}
