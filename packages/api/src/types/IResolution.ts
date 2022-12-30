@@ -2,49 +2,38 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IVisit } from "./IVisit";
+import { IGameModifier } from "./IResolutionEffect";
 
 export interface IBasicResolution {
+    title: string;
+    description: string;
     politicalCapitalPayout: number;
-    type: string;
+    gameModifier?: IGameModifier;
+    stage?: "early" | "middle" | "late";
 }
 
-export interface IDoublePoliticalCapitalFromResolutions extends IBasicResolution {
-    politicalCapitalPayout: 10;
-    title: "Double all the things.";
-    effect: "Doubles the political capital earned from resolutions.";
-    type: "double-political-capital-from-resolutions";
-}
-
-interface IAllResolutions {
-    doublePoliticalCapitalFromResolutions: IDoublePoliticalCapitalFromResolutions;
-    unknown: never;
-}
-
-export const DEFAULT_RESOLUTIONS: IAllResolutions = {
-    doublePoliticalCapitalFromResolutions: {
+export const ALL_RESOLUTIONS: IBasicResolution[] = [
+    {
+        title: "Nationalization to the max",
+        description:
+            "In an effort to grow stagnating growth in the media industry, this lessens the restrictions on the political content allowed on national television.",
         politicalCapitalPayout: 10,
-        title: "Double all the things.",
-        effect: "Doubles the political capital earned from resolutions.",
-        type: "double-political-capital-from-resolutions",
+        gameModifier: {
+            type: "staffer-effect",
+            staffersAffected: ["independentRepresentative"],
+            disableTraining: true,
+            removeAll: true,
+        },
     },
-    unknown: {} as never,
-};
-
-export type IPossibleResolution = IAllResolutions[keyof IAllResolutions];
-
-export namespace IResolution {
-    export const isDoublePoliticalCapitalFromResolutions = (
-        resolution: IPossibleResolution,
-    ): resolution is IDoublePoliticalCapitalFromResolutions => {
-        return resolution.type === "double-political-capital-from-resolutions";
-    };
-
-    export const visit = <ReturnValue>(value: IPossibleResolution, visitor: IVisit<IAllResolutions, ReturnValue>) => {
-        if (isDoublePoliticalCapitalFromResolutions(value)) {
-            return visitor.doublePoliticalCapitalFromResolutions(value);
-        }
-
-        return visitor.unknown(value);
-    };
-}
+    {
+        title: "Increase phone banking regulation",
+        description:
+            "In an effort to reduce spam calls to the people, this would increase the regulations on phone bankers.",
+        politicalCapitalPayout: 10,
+        gameModifier: {
+            type: "staffer-effect",
+            staffersAffected: ["phoneBanker"],
+            effectiveness: 0.5,
+        },
+    },
+];

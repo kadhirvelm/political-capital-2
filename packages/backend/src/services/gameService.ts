@@ -28,7 +28,7 @@ import Express from "express";
 import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
-import { INITIAL_STAFFERS } from "../constants/game";
+import { INITIAL_STAFFERS, TIME_BETWEEN_RESOLUTIONS_IN_DAYS } from "../constants/game";
 import { INITIAL_APPROVAL_RATING, INITIAL_POLITICAL_CAPITAL } from "../constants/initializePlayers";
 import { sendMessageToPlayer } from "./socketService";
 
@@ -152,9 +152,7 @@ async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<I
                 tallyResolution: () => {
                     indexedResolveEvents.game.push(resolveEvent);
                 },
-                unknown: () => {
-                    console.log("REACHING @@@");
-                },
+                unknown: () => {},
             });
         });
 
@@ -303,7 +301,7 @@ export async function createNewGame(
         addPlayerToGame(newGameStateRid, payload.playerRid),
         ResolveGameEvent.create({
             gameStateRid: newGameStateRid,
-            resolvesOn: 0 as IGameClock,
+            resolvesOn: TIME_BETWEEN_RESOLUTIONS_IN_DAYS as IGameClock,
             eventDetails: { type: "new-resolution" },
             state: "active",
         }),

@@ -1,0 +1,63 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables.scss";
+
+.positive {
+    color: $green;
+}
+
+.negative {
+    color: $red;
+}
+
+.description {
+    color: $gray;
+}
+
+.resolutionModifierContainer {
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 3px;
+    border: 1px solid $gray;
+    padding: 5px 10px;
+    margin: 15px 0;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}
+
+.stafferModifierContainer {
+    display: flex;
+    flex-direction: column;
+    border-radius: 3px;
+    border: 1px solid $gray;
+    padding: 5px 10px;
+    margin: 15px 0;
+}
+
+.title {
+    margin-bottom: 10px;
+}
+
+.resolutionFooter {
+    display: flex;
+    flex-direction: column;
+}
+
+.politicalCapitalPayout {
+    color: $green;
+    margin-left: 10px;
+}
+
+.tallyContainer {
+    display: flex;
+    align-items: center;
+}
+
+.tallyOn {
+    color: $gray;
+    margin-right: 12px;
+}

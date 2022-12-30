@@ -5,7 +5,8 @@
 import { IActiveResolutionRid, IActiveStafferRid, IGameClock, IGameStateRid, IPlayerRid } from "./BrandedIDs";
 import { IPossibleStaffer } from "./generatedStaffers";
 import { IPossibleEvent } from "./IEvent";
-import { IPossibleResolution } from "./IResolution";
+import { IBasicResolution } from "./IResolution";
+import { IGameModifier } from "./IResolutionEffect";
 
 export interface IPlayer {
     playerRid: IPlayerRid;
@@ -31,7 +32,7 @@ export interface IActivePlayer {
 export interface IActiveResolution {
     gameStateRid: IGameStateRid;
     activeResolutionRid: IActiveResolutionRid;
-    resolutionDetails: IPossibleResolution;
+    resolutionDetails: IBasicResolution;
     state: "active" | "passed" | "failed";
 }
 
@@ -55,4 +56,9 @@ export interface IResolveGameEvent {
     resolvesOn: IGameClock;
     eventDetails: IPossibleEvent;
     state: "active" | "complete";
+}
+
+export interface IPassedGameModifier {
+    gameStateRid: IGameStateRid;
+    modifier: IGameModifier;
 }

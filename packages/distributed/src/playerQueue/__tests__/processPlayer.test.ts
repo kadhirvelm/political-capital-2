@@ -3,7 +3,7 @@
  */
 
 import {
-    DEFAULT_RESOLUTIONS,
+    ALL_RESOLUTIONS,
     DEFAULT_STAFFER,
     IActiveResolutionRid,
     IActiveStafferRid,
@@ -120,7 +120,7 @@ describe("Process player works as expected", () => {
         await ActiveResolution.create({
             gameStateRid,
             activeResolutionRid,
-            resolutionDetails: DEFAULT_RESOLUTIONS.doublePoliticalCapitalFromResolutions,
+            resolutionDetails: ALL_RESOLUTIONS[0],
             state: "passed",
         });
         await ActiveResolutionVote.create({
