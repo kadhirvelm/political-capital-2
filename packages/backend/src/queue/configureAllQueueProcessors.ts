@@ -2,7 +2,9 @@
  * Copyright (c) 2022 - KM
  */
 
-import { ProcessPlayerQueue, handlePlayerProcessor, UpdatePlayerQueue } from "@pc2/distributed-compute";
+import { BullAdapter, createBullBoard, ExpressAdapter } from "@bull-board/express";
+import { handlePlayerProcessor, ProcessPlayerQueue, UpdatePlayerQueue } from "@pc2/distributed-compute";
+import { Express } from "express";
 import { handleUpdatePlayerProcessor } from "./updatePlayer";
 
 function setupPlayerQueueProcessor() {
@@ -10,6 +12,16 @@ function setupPlayerQueueProcessor() {
     UpdatePlayerQueue.process(2, handleUpdatePlayerProcessor);
 }
 
-export function configureAllQueueProcessors() {
+export function configureAllQueueProcessors(app: Express) {
+    const serverAdapter = new ExpressAdapter();
+    serverAdapter.setBasePath("/queues");
+
+    createBullBoard({
+        queues: [new BullAdapter(ProcessPlayerQueue), new BullAdapter(UpdatePlayerQueue)],
+        serverAdapter,
+    });
+
+    app.use("/queues", serverAdapter.getRouter());
+
     setupPlayerQueueProcessor();
 }

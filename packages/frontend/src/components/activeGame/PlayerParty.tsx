@@ -2,9 +2,9 @@
  * Copyright (c) 2022 - KM
  */
 
-import { ArrowRightIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
-import { IActiveStaffer, IPlayerRid } from "@pc2/api";
+import { IActiveStaffer, IPlayerRid, isRecruit, isTrainer } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { getStaffersOfCategory, IStafferCategory } from "../../utility/categorizeStaffers";
@@ -43,8 +43,13 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
                         <div className={styles.activateStafferContainer} key={staffer.activeStafferRid}>
                             <StafferCard staffer={staffer} />
                             {canActivateCard && (
-                                <Button className={styles.chevronRight} onClick={activateStaffer(staffer)}>
-                                    <ArrowRightIcon />
+                                <Button
+                                    className={styles.chevronRight}
+                                    rightIcon={<ChevronRightIcon />}
+                                    onClick={activateStaffer(staffer)}
+                                >
+                                    {isRecruit(staffer) && "Hire "}
+                                    {isTrainer(staffer) && "Train "}
                                 </Button>
                             )}
                         </div>
@@ -72,6 +77,14 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
                 <div>
                     <div className={styles.categoryTitle}>Generators</div>
                     {renderCategory("generator")}
+                </div>
+                <div>
+                    <div className={styles.categoryTitle}>Passive</div>
+                    {renderCategory("passive")}
+                </div>
+                <div>
+                    <div className={styles.categoryTitle}>Other</div>
+                    {renderCategory("none")}
                 </div>
             </div>
         );

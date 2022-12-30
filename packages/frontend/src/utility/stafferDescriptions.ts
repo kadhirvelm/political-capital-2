@@ -2,10 +2,10 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IPossibleStaffer } from "@pc2/api";
+import { IAllStaffers } from "@pc2/api";
 
 type IDescriptionOfStaffer = {
-    [key in IPossibleStaffer["type"]]: string;
+    [key in Exclude<keyof IAllStaffers, "unknown">]: string;
 };
 
 export const descriptionOfStaffer: IDescriptionOfStaffer = {
@@ -16,5 +16,7 @@ export const descriptionOfStaffer: IDescriptionOfStaffer = {
     phoneBanker: "Generates 0.5 political capital every day.",
     socialMediaManager: "Generates 1 political capital every day.",
     recruiter: "Recruits 1 staffer to your party at a time.",
+    hrManager: "Recruits up to 2 staffers to your party at a time.",
     partTimeInstructor: "Trains 1 staffer in your party at a time.",
+    coach: "Trains up to 2 staffers in your party at a time.",
 };

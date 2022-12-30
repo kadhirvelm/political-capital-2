@@ -16,27 +16,27 @@ import {
 import {
     DEFAULT_STAFFER,
     IActiveStafferRid,
+    IBasicStaffer,
     IEvent,
     IGameStateRid,
     IPlayerRid,
     IPossibleStaffer,
-    IRecruiter,
+    IRecruit,
     PoliticalCapitalTwoServiceFrontend,
-    StafferLadderIndex,
 } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
 import { usePoliticalCapitalDispatch } from "../../store/createStore";
 import { addGameEventToStaffer, IUserFacingResolveEvents } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
-import { getStafferCategory } from "../../utility/categorizeStaffers";
+import { getStafferCategory, getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./RecruiterActivation.module.scss";
 import { ResolveEvent } from "./ResolveEvent";
 
 export const RecruiterActivation: React.FC<{
     recruitRequest: { gameStateRid: IGameStateRid; playerRid: IPlayerRid; recruiterRid: IActiveStafferRid };
-    recruiter: IRecruiter;
+    recruiter: IBasicStaffer & IRecruit;
     resolveGameEvents: IUserFacingResolveEvents[];
 }> = ({ recruitRequest, recruiter, resolveGameEvents }) => {
     const toast = useToast();
@@ -54,7 +54,7 @@ export const RecruiterActivation: React.FC<{
             (IEvent.isStartHireStaffer(gameEvent.eventDetails) || IEvent.isFinishHiringStaffer(gameEvent.eventDetails)),
     );
 
-    const maybeRenderCurrentlyTraining = () => {
+    const maybeRenderCurrentlyRecruiting = () => {
         if (currentlyRecruiting.length === 0) {
             return undefined;
         }
@@ -91,7 +91,7 @@ export const RecruiterActivation: React.FC<{
                 <div className={styles.allJobPostingsContainer}>
                     {availableToTrain.map((staffer) => {
                         const stafferCategory = getStafferCategory(staffer);
-                        const trainsInto = StafferLadderIndex[staffer.type] ?? ["None"];
+                        const trainsInto = getTrainsIntoDisplayName(staffer);
                         return (
                             <div
                                 className={classNames(styles.singleJobPosting, {
@@ -175,7 +175,7 @@ export const RecruiterActivation: React.FC<{
 
     return (
         <div>
-            {maybeRenderCurrentlyTraining()}
+            {maybeRenderCurrentlyRecruiting()}
             {maybeRenderRecruitStaffer()}
             <Modal isOpen={confirmStaffer !== undefined} onClose={closeModal}>
                 <ModalOverlay />

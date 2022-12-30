@@ -3,7 +3,7 @@
  */
 
 import { IActiveResolutionRid, IActiveStafferRid, IPlayerRid } from "./BrandedIDs";
-import { IAllStaffers } from "./IStaffer";
+import { IAllStaffers } from "./generatedStaffers";
 import { IVisit } from "./IVisit";
 
 interface IBasicEvent {

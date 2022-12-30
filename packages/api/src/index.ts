@@ -11,11 +11,13 @@ export * from "./services/politicalCapitalTwoService";
 export * from "./socketMessages/allowedMessages";
 
 export * from "./types/BrandedIDs";
+export * from "./types/generatedStaffers";
 export * from "./types/IEvent";
 export * from "./types/IResolution";
 export * from "./types/IStaffer";
 export * from "./types/IVisit";
 export * from "./types/politicalCapitalTwo";
+export * from "./types/stafferLadderIndex";
 
 export * from "./utils/staffer";
 

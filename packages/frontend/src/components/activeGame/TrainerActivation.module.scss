@@ -1,0 +1,96 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables.scss";
+
+.description {
+    color: $gray;
+}
+
+.currentlyTraining {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.currentlyTrainingText {
+    margin-bottom: 10px;
+}
+
+.trainingEvents {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.train {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.atCapacity {
+    display: flex;
+    margin-top: 20px;
+}
+
+.trainStaffer {
+    margin-bottom: 10px;
+}
+
+.allTrainingPossibilities {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.singleTrainee {
+    display: flex;
+    flex-direction: column;
+}
+
+.currentPosition {
+    display: flex;
+    flex-direction: column;
+    border-radius: 3px;
+    border: 1px solid rgba($gray, 0.25);
+    padding: 5px 10px;
+}
+
+.upgradeInto {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0 0 10px;
+    gap: 10px;
+}
+
+.withArrow {
+    display: flex;
+    align-items: baseline;
+}
+
+.arrow {
+    margin-right: 10px;
+}
+
+.newPosition {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    border-radius: 3px;
+    border: 1px solid rgba($gray, 0.25);
+    padding: 5px 10px;
+}
+
+.voting {
+    background: rgba($green, 0.15);
+}
+
+.generator {
+    background: rgba($blue, 0.15);
+}
+
+.support {
+    background: rgba($orange, 0.15);
+}

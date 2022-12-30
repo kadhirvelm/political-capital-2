@@ -21,6 +21,7 @@ import {
     ResolveGameEvent,
 } from "@pc2/distributed-compute";
 import Express from "express";
+import { Op } from "sequelize";
 
 export async function recruitStaffer(
     payload: IPoliticalCapitalTwoService["recruitStaffer"]["payload"],
@@ -92,11 +93,27 @@ export async function trainStaffer(
     payload: IPoliticalCapitalTwoService["trainStaffer"]["payload"],
     response: Express.Response,
 ): Promise<IPoliticalCapitalTwoService["trainStaffer"]["response"] | undefined> {
-    const [existingTrainRequests, trainerStaffer, gameState] = await Promise.all([
+    const [existingTrainRequests, existingActiveStafferRequests, trainerStaffer, gameState] = await Promise.all([
         ResolveGameEvent.findAll({
             where: {
                 gameStateRid: payload.gameStateRid,
                 eventDetails: { trainerRid: payload.trainRequest.trainerRid },
+                state: "active",
+            },
+        }),
+        ResolveGameEvent.findAll({
+            where: {
+                gameStateRid: payload.gameStateRid,
+                eventDetails: {
+                    [Op.or]: [
+                        // Cannot already be training
+                        { activeStafferRid: payload.trainRequest.activeStafferRid },
+                        // Cannot be training someone else
+                        { trainerRid: payload.trainRequest.activeStafferRid },
+                        // Cannot be recruiting
+                        { recruiterRid: payload.trainRequest.activeStafferRid },
+                    ],
+                } as any,
                 state: "active",
             },
         }),
@@ -125,9 +142,21 @@ export async function trainStaffer(
         return undefined;
     }
 
+    if (payload.trainRequest.trainerRid === payload.trainRequest.activeStafferRid) {
+        response.status(400).send({ error: `A trainer cannot train themselves. Please try again.` });
+        return undefined;
+    }
+
     const totalAllowedTrains = getTotalAllowedTrainees(trainerStaffer);
     if (existingTrainRequests.length >= totalAllowedTrains) {
         response.status(400).send({ error: `This trainer is already at capacity, please use another trainer.` });
+        return undefined;
+    }
+
+    if (existingActiveStafferRequests.length > 0) {
+        response
+            .status(400)
+            .send({ error: `Cannot train this staffer, they are currently busy. Please select someone else.` });
         return undefined;
     }
 

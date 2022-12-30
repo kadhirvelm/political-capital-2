@@ -4,7 +4,7 @@
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
-import { DEFAULT_STAFFER, IActiveStaffer, IStaffer } from "@pc2/api";
+import { DEFAULT_STAFFER, IActiveStaffer, isRecruit, isTrainer } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
@@ -25,16 +25,10 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
     }
 
     const renderStafferActivationSpecifics = () => {
-        return IStaffer.visit(activateStaffer.stafferDetails, {
-            intern: () => <div />,
-            representative: () => <div />,
-            seniorRepresentative: () => <div />,
-            independentRepresentative: () => <div />,
-            phoneBanker: () => <div />,
-            socialMediaManager: () => <div />,
-            recruiter: (recruiter) => (
+        if (isRecruit(activateStaffer)) {
+            return (
                 <RecruiterActivation
-                    recruiter={recruiter}
+                    recruiter={activateStaffer}
                     recruitRequest={{
                         gameStateRid: fullGameState.gameState.gameStateRid,
                         playerRid: player.playerRid,
@@ -44,17 +38,26 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
                         resolveEvents.players[player.playerRid]?.staffers[activateStaffer.activeStafferRid] ?? []
                     }
                 />
-            ),
-            partTimeInstructor: (trainer) => (
+            );
+        }
+
+        if (isTrainer(activateStaffer)) {
+            return (
                 <TrainerActivation
-                    trainer={trainer}
+                    trainer={activateStaffer}
+                    trainerRequest={{
+                        gameStateRid: fullGameState.gameState.gameStateRid,
+                        playerRid: player.playerRid,
+                        trainerRid: activateStaffer.activeStafferRid,
+                    }}
                     resolveGameEvents={
                         resolveEvents.players[player.playerRid]?.staffers[activateStaffer.activeStafferRid] ?? []
                     }
                 />
-            ),
-            unknown: () => <div />,
-        });
+            );
+        }
+
+        return undefined;
     };
 
     return (

@@ -3,9 +3,9 @@
  */
 
 import { IActiveResolutionRid, IActiveStafferRid, IGameClock, IGameStateRid, IPlayerRid } from "./BrandedIDs";
+import { IPossibleStaffer } from "./generatedStaffers";
 import { IPossibleEvent } from "./IEvent";
 import { IPossibleResolution } from "./IResolution";
-import { IPossibleStaffer } from "./IStaffer";
 
 export interface IPlayer {
     playerRid: IPlayerRid;

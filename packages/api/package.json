@@ -14,7 +14,8 @@
         "build": "tsc -d",
         "dev": "tsc -d --watch",
         "lint": "eslint . --ext .ts,.tsx --cache",
-        "lint:fix": "yarn lint --fix"
+        "lint:fix": "yarn lint --fix",
+        "convert": "node ./scripts/convertTypes.js"
     },
     "devDependencies": {
         "@types/express": "^4.17.14",

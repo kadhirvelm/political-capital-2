@@ -28,11 +28,12 @@ function setupServer() {
     app.use(bodyParser.urlencoded({ extended: true }));
 
     configureSecurity(app);
-    configureAllRoutes(app);
 
     initializeModels();
 
-    configureAllQueueProcessors();
+    configureAllQueueProcessors(app);
+    configureAllRoutes(app);
+
     startGameClockTicker();
 
     server.listen(PORT as unknown as number | undefined, ORIGIN, () => {

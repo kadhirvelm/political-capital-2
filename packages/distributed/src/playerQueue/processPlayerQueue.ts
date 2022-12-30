@@ -160,8 +160,6 @@ export async function handleStartHiringOrTraining(
 export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done: DoneCallback) {
     const { gameStateRid, playerRid, gameClock } = job.data;
 
-    console.log("Resolving @@@", playerRid);
-
     const [activePlayer, activePlayerStaffers] = await Promise.all([
         ActivePlayer.findOne({ where: { gameStateRid, playerRid } }),
         ActiveStaffer.findAll({ where: { gameStateRid, playerRid } }),
