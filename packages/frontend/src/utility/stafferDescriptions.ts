@@ -10,6 +10,7 @@ type IDescriptionOfStaffer = {
 
 export const descriptionOfStaffer: IDescriptionOfStaffer = {
     intern: "Something something intern",
+    newHire: "Something something new hire",
     representative: "Provides 1 vote on resolutions",
     seniorRepresentative: "Provides 2 votes on resolutions",
     independentRepresentative: "Provides 1 vote to pass, and one vote to fail on resolutions",

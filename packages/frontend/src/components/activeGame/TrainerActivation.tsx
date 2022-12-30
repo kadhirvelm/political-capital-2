@@ -32,6 +32,8 @@ export const TrainerActivation: React.FC<{
         { activeStafferRid: IActiveStafferRid; toLevel: IStartTrainingStaffer["toLevel"] } | undefined
     >(undefined);
 
+    console.log({ upgradeStafferToLevel });
+
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     if (fullGameState === undefined) {
         return null;

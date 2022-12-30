@@ -4,6 +4,7 @@
 
 import {
     IIntern,
+    INewHire,
     IRepresentative,
     ISeniorRepresentative,
     IIndependentRepresentative,
@@ -18,6 +19,7 @@ import { IVisit } from "./IVisit";
 
 export interface IAllStaffers {
     intern: IIntern;
+    newHire: INewHire;
     representative: IRepresentative;
     seniorRepresentative: ISeniorRepresentative;
     independentRepresentative: IIndependentRepresentative;
@@ -39,6 +41,13 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
         costToAcquire: 1,
         timeToAcquire: 6,
         type: "intern",
+    },
+    newHire: {
+        displayName: "New hire",
+        upgradedFrom: ["intern"],
+        costToAcquire: 1,
+        timeToAcquire: 6,
+        type: "newHire",
     },
     representative: {
         displayName: "Representative",
@@ -74,7 +83,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     },
     socialMediaManager: {
         displayName: "Social media manager",
-        upgradedFrom: ["phoneBanker"],
+        upgradedFrom: ["phoneBanker", "newHire"],
         costToAcquire: 4,
         timeToAcquire: 12,
         payout: 1,
@@ -90,7 +99,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     },
     hrManager: {
         displayName: "Hr manager",
-        upgradedFrom: ["recruiter"],
+        upgradedFrom: ["recruiter", "newHire"],
         costToAcquire: 2,
         timeToAcquire: 12,
         recruitCapacity: 2,
@@ -106,7 +115,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     },
     coach: {
         displayName: "Coach",
-        upgradedFrom: ["partTimeInstructor"],
+        upgradedFrom: ["partTimeInstructor", "newHire"],
         costToAcquire: 2,
         timeToAcquire: 12,
         trainingCapacity: 2,
@@ -117,6 +126,10 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
 export namespace IStaffer {
     export const isIntern = (staffer: IPossibleStaffer): staffer is IIntern => {
         return staffer.type === "intern";
+    };
+
+    export const isNewHire = (staffer: IPossibleStaffer): staffer is INewHire => {
+        return staffer.type === "newHire";
     };
 
     export const isRepresentative = (staffer: IPossibleStaffer): staffer is IRepresentative => {
@@ -158,6 +171,10 @@ export namespace IStaffer {
     export const visit = <ReturnValue>(value: IPossibleStaffer, visitor: IVisit<IAllStaffers, ReturnValue>) => {
         if (isIntern(value)) {
             return visitor.intern(value);
+        }
+
+        if (isNewHire(value)) {
+            return visitor.newHire(value);
         }
 
         if (isRepresentative(value)) {
