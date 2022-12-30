@@ -36,3 +36,17 @@
         margin-right: 5px;
     }
 }
+
+.minimalEvent {
+    display: flex;
+    flex-direction: column;
+}
+
+.minimalEventSentence {
+    display: flex;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}

@@ -63,8 +63,11 @@ export const RecruiterActivation: React.FC<{
             <div className={styles.currentlyRecruiting}>
                 <div className={styles.currentlyHiring}>Currently in progress</div>
                 <div className={styles.hiringEvents}>
-                    {currentlyRecruiting.map((recruitingEvent) => (
-                        <ResolveEvent event={recruitingEvent} key={recruitingEvent.eventDetails.type} />
+                    {currentlyRecruiting.map((recruitingEvent, index) => (
+                        <ResolveEvent
+                            event={recruitingEvent}
+                            key={recruitingEvent.eventDetails.type + index.toString()}
+                        />
                     ))}
                 </div>
             </div>

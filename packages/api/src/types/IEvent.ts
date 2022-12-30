@@ -74,7 +74,7 @@ export namespace IEvent {
     };
 
     export const isFinishTrainingStaffer = (event: IPossibleEvent): event is IFinishTrainingStaffer => {
-        return event.type === "finish-hiring-staffer";
+        return event.type === "finish-training-staffer";
     };
 
     export const isNewResolution = (event: IPossibleEvent): event is INewResolution => {

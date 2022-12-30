@@ -4,7 +4,7 @@
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
-import { DEFAULT_STAFFER, IActiveStaffer, isRecruit, isTrainer } from "@pc2/api";
+import { DEFAULT_STAFFER, IActiveStaffer, IBasicStaffer, IRecruit, isRecruit, isTrainer, ITrainer } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
@@ -28,7 +28,7 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
         if (isRecruit(activateStaffer)) {
             return (
                 <RecruiterActivation
-                    recruiter={activateStaffer}
+                    recruiter={activateStaffer.stafferDetails as IBasicStaffer & IRecruit}
                     recruitRequest={{
                         gameStateRid: fullGameState.gameState.gameStateRid,
                         playerRid: player.playerRid,
@@ -44,7 +44,7 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
         if (isTrainer(activateStaffer)) {
             return (
                 <TrainerActivation
-                    trainer={activateStaffer}
+                    trainer={activateStaffer.stafferDetails as IBasicStaffer & ITrainer}
                     trainerRequest={{
                         gameStateRid: fullGameState.gameState.gameStateRid,
                         playerRid: player.playerRid,

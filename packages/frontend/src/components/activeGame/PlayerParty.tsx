@@ -41,7 +41,7 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
                     const canActivateCard = isViewingSelf && category === "support";
                     return (
                         <div className={styles.activateStafferContainer} key={staffer.activeStafferRid}>
-                            <StafferCard staffer={staffer} />
+                            <StafferCard staffer={staffer} isPlayerStaffer={player?.playerRid === playerRid} />
                             {canActivateCard && (
                                 <Button
                                     className={styles.chevronRight}

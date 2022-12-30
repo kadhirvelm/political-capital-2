@@ -4,7 +4,19 @@
 
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
+    Button,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    useToast,
+} from "@chakra-ui/react";
+import {
     DEFAULT_STAFFER,
+    IActiveStaffer,
     IActiveStafferRid,
     IBasicStaffer,
     IEvent,
@@ -12,12 +24,15 @@ import {
     IPlayerRid,
     IStartTrainingStaffer,
     ITrainer,
+    PoliticalCapitalTwoServiceFrontend,
     StafferLadderIndex,
 } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
-import { usePoliticalCapitalSelector } from "../../store/createStore";
-import { IUserFacingResolveEvents } from "../../store/gameState";
+import { batch } from "react-redux";
+import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
+import { addGameEventToStaffer, IUserFacingResolveEvents } from "../../store/gameState";
+import { checkIsError } from "../../utility/alertOnError";
 import { getStafferCategory } from "../../utility/categorizeStaffers";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { ResolveEvent } from "./ResolveEvent";
@@ -28,14 +43,19 @@ export const TrainerActivation: React.FC<{
     trainer: IBasicStaffer & ITrainer;
     resolveGameEvents: IUserFacingResolveEvents[];
 }> = ({ trainer, trainerRequest, resolveGameEvents }) => {
+    const toast = useToast();
+    const dispatch = usePoliticalCapitalDispatch();
+
+    const [isLoading, setIsLoading] = React.useState(false);
     const [upgradeStafferToLevel, setUpgradeStafferToLevel] = React.useState<
-        { activeStafferRid: IActiveStafferRid; toLevel: IStartTrainingStaffer["toLevel"] } | undefined
+        { activeStaffer: IActiveStaffer; toLevel: IStartTrainingStaffer["toLevel"] } | undefined
     >(undefined);
 
-    console.log({ upgradeStafferToLevel });
+    const closeModal = () => setUpgradeStafferToLevel(undefined);
 
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
-    if (fullGameState === undefined) {
+    const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
+    if (fullGameState === undefined || resolveEvents === undefined) {
         return null;
     }
 
@@ -55,17 +75,16 @@ export const TrainerActivation: React.FC<{
             <div className={styles.currentlyTraining}>
                 <div className={styles.currentlyTrainingText}>Currently in progress</div>
                 <div className={styles.trainingEvents}>
-                    {currentlyTraining.map((trainingEvent) => (
-                        <ResolveEvent event={trainingEvent} key={trainingEvent.eventDetails.type} />
+                    {currentlyTraining.map((trainingEvent, index) => (
+                        <ResolveEvent event={trainingEvent} key={trainingEvent.eventDetails.type + index.toString()} />
                     ))}
                 </div>
             </div>
         );
     };
 
-    const upgradeStafferCurried =
-        (activeStafferRid: IActiveStafferRid, toLevel: IStartTrainingStaffer["toLevel"]) => () =>
-            setUpgradeStafferToLevel({ activeStafferRid, toLevel });
+    const upgradeStafferCurried = (activeStaffer: IActiveStaffer, toLevel: IStartTrainingStaffer["toLevel"]) => () =>
+        setUpgradeStafferToLevel({ activeStaffer, toLevel });
 
     const maybeRenderTrainStaffer = () => {
         if (currentlyTraining.length >= trainer.trainingCapacity) {
@@ -79,9 +98,9 @@ export const TrainerActivation: React.FC<{
         const availableToTrain = fullGameState.activePlayersStaffers[trainerRequest.playerRid].filter((staffer) => {
             const isNotSelf = staffer.activeStafferRid !== trainerRequest.trainerRid;
             const isNotBusy =
-                (fullGameState.resolveEvents.players[trainerRequest.playerRid]?.staffers[
-                    staffer.activeStafferRid
-                ]?.filter((event) => event.state !== "active")?.length ?? 0) === 0;
+                (resolveEvents.players[trainerRequest.playerRid]?.staffers[staffer.activeStafferRid]?.filter(
+                    (event) => event.state === "active" || event.state === "pending",
+                )?.length ?? 0) === 0;
             const hasUpgrades = (StafferLadderIndex[staffer.stafferDetails.type] ?? []).length > 0;
 
             return isNotSelf && isNotBusy && hasUpgrades && staffer.state === "active";
@@ -124,10 +143,7 @@ export const TrainerActivation: React.FC<{
                                                         [styles.generator]: newStafferCategory === "generator",
                                                         [styles.support]: newStafferCategory === "support",
                                                     })}
-                                                    onClick={upgradeStafferCurried(
-                                                        staffer.activeStafferRid,
-                                                        upgradeStaffer,
-                                                    )}
+                                                    onClick={upgradeStafferCurried(staffer, upgradeStaffer)}
                                                 >
                                                     <div>
                                                         {defaultStaffer.displayName} ({defaultStaffer.costToAcquire} PC,{" "}
@@ -149,10 +165,92 @@ export const TrainerActivation: React.FC<{
         );
     };
 
+    const maybeRenderTrainStafferBody = () => {
+        if (upgradeStafferToLevel === undefined) {
+            return undefined;
+        }
+
+        const toLevelStaffer = DEFAULT_STAFFER[upgradeStafferToLevel.toLevel];
+
+        return (
+            <div className={styles.modalSentence}>
+                <div className={styles.description}>Confirm asking</div>
+                <div>{trainer.displayName}</div>
+                <div className={styles.description}>to train</div>
+                <div>{upgradeStafferToLevel.activeStaffer.stafferDetails.displayName}</div>
+                <div className={styles.description}>
+                    from {DEFAULT_STAFFER[upgradeStafferToLevel.activeStaffer.stafferDetails.type].displayName}
+                </div>
+                <div>to {toLevelStaffer.displayName}</div>
+                <div className={styles.description}>costing</div>
+                <div>{toLevelStaffer.costToAcquire} political capital</div>
+                <div className={styles.description}>and </div>
+                <div>{toLevelStaffer.timeToAcquire} days to complete.</div>
+            </div>
+        );
+    };
+
+    const onConfirmTrainStaffer = async () => {
+        if (upgradeStafferToLevel === undefined) {
+            return;
+        }
+
+        setIsLoading(true);
+        const newTrainStaffer = checkIsError(
+            await PoliticalCapitalTwoServiceFrontend.trainStaffer({
+                gameStateRid: trainerRequest.gameStateRid,
+                trainRequest: {
+                    playerRid: trainerRequest.playerRid,
+                    trainerRid: trainerRequest.trainerRid,
+                    activeStafferRid: upgradeStafferToLevel.activeStaffer.activeStafferRid,
+                    toLevel: upgradeStafferToLevel.toLevel,
+                },
+            }),
+            toast,
+        );
+        setIsLoading(false);
+
+        if (newTrainStaffer === undefined) {
+            return;
+        }
+
+        batch(() => {
+            dispatch(
+                addGameEventToStaffer({
+                    activeStafferRid: trainerRequest.trainerRid,
+                    playerRid: trainerRequest.playerRid,
+                    resolveGameEvent: newTrainStaffer.pendingEvent,
+                }),
+            );
+            dispatch(
+                addGameEventToStaffer({
+                    activeStafferRid: upgradeStafferToLevel.activeStaffer.activeStafferRid,
+                    playerRid: trainerRequest.playerRid,
+                    resolveGameEvent: newTrainStaffer.pendingEvent,
+                }),
+            );
+        });
+
+        closeModal();
+    };
+
     return (
         <div>
             {maybeRenderCurrentlyTraining()}
             {maybeRenderTrainStaffer()}
+            <Modal isOpen={upgradeStafferToLevel !== undefined} onClose={closeModal}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Confirm training</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>{maybeRenderTrainStafferBody()}</ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="green" isLoading={isLoading} onClick={onConfirmTrainStaffer}>
+                            Train staffer
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     );
 };

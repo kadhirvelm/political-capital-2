@@ -6,20 +6,32 @@
 
 .stafferCard {
     display: flex;
-    width: 200px;
-    height: 150px;
+    width: 225px;
+    min-height: 150px;
 }
 
 .voting.voting {
     background: rgba($green, 0.25);
+
+    &.isBusy {
+        background: rgba($green, 0.05);
+    }
 }
 
 .generator.generator {
     background: rgba($blue, 0.25);
+
+    &.isBusy {
+        background: rgba($blue, 0.05);
+    }
 }
 
 .support.support {
     background: rgba($orange, 0.25);
+
+    &.isBusy {
+        background: rgba($orange, 0.05);
+    }
 }
 
 .name {
@@ -32,6 +44,14 @@
     display: flex;
     flex: 1;
     padding: 10px;
+}
+
+.busyContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+    box-shadow: 0 -1px $gray;
 }
 
 .footer {

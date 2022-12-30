@@ -73,7 +73,7 @@ const gameState = createSlice({
                 staffers: state.resolveEvents.players[playerRid]?.staffers ?? {},
             };
             state.resolveEvents.players[playerRid].staffers[activeStafferRid] =
-                state.resolveEvents.players[playerRid].staffers[activeStafferRid].slice() ?? [];
+                (state.resolveEvents.players[playerRid].staffers[activeStafferRid] ?? []).slice() ?? [];
 
             // We need to get the reference to change at this level
             state.resolveEvents.players[playerRid].staffers[activeStafferRid] =

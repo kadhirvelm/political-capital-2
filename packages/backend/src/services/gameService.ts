@@ -152,7 +152,9 @@ async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<I
                 tallyResolution: () => {
                     indexedResolveEvents.game.push(resolveEvent);
                 },
-                unknown: () => {},
+                unknown: () => {
+                    console.log("REACHING @@@");
+                },
             });
         });
 

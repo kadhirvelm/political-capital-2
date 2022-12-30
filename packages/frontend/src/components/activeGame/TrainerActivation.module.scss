@@ -94,3 +94,12 @@
 .support {
     background: rgba($orange, 0.15);
 }
+
+.modalSentence {
+    display: flex;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}
