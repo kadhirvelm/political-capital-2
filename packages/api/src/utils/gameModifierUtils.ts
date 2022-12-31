@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IStafferEffect } from "../types/IResolutionEffect";
+import { IStafferEffect } from "../types/IGameModifier";
 import { IPassedGameModifier } from "../types/politicalCapitalTwo";
 import { getStafferDetails, IActiveOrPossibleStaffer, isGenerator, isRecruit, isTrainer, isVoter } from "./staffer";
 
@@ -78,7 +78,7 @@ function getStafferModifier(
         newMultiplier = thisModifierValue > 0 ? newMultiplier + changeInModifier : newMultiplier - changeInModifier;
     });
 
-    return Math.min(newMultiplier, 0);
+    return Math.max(newMultiplier, 0);
 }
 
 export function getCostToAcquireModifier(
@@ -161,7 +161,7 @@ function getResolutionModifier(
         newMultiplier = thisModifierValue > 0 ? newMultiplier + changeInModifier : newMultiplier - changeInModifier;
     });
 
-    return Math.min(newMultiplier, 0);
+    return Math.max(newMultiplier, 0);
 }
 
 export function getTimePerResolutionModifier(allPassedGameModifiers: IPassedGameModifier[]) {

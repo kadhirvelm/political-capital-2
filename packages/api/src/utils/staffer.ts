@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IPossibleStaffer } from "../types/generatedStaffers";
+import { DEFAULT_STAFFER, IPossibleStaffer } from "../types/generatedStaffers";
 import {
     IGenerator,
     IPartTimeInstructor,
@@ -80,3 +80,35 @@ export function getPayoutForStaffer(staffer: IActiveOrPossibleStaffer): number {
 export function isGenerator(staffer: IActiveOrPossibleStaffer): staffer is IPhoneBanker {
     return (getStafferDetails(staffer) as IGenerator).payout !== undefined;
 }
+
+export const allRecruits = (() => {
+    const allStaffers = Object.values(DEFAULT_STAFFER);
+    return allStaffers
+        .filter(isRecruit)
+        .slice()
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+})();
+
+export const allTrainers = (() => {
+    const allStaffers = Object.values(DEFAULT_STAFFER);
+    return allStaffers
+        .filter(isTrainer)
+        .slice()
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+})();
+
+export const allGenerators = (() => {
+    const allStaffers = Object.values(DEFAULT_STAFFER);
+    return allStaffers
+        .filter(isGenerator)
+        .slice()
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+})();
+
+export const allVoters = (() => {
+    const allStaffers = Object.values(DEFAULT_STAFFER);
+    return allStaffers
+        .filter(isVoter)
+        .slice()
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+})();

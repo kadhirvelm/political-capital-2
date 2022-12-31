@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IGameModifier } from "./IResolutionEffect";
+import { IGameModifier } from "./IGameModifier";
 
 export interface IBasicResolution {
     title: string;

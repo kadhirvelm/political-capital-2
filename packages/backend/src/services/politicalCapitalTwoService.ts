@@ -225,7 +225,9 @@ export async function castVote(
     response: Express.Response,
 ): Promise<IPoliticalCapitalTwoService["castVote"]["response"] | undefined> {
     const [existingVotes, votingStaffer, activeResolution, gameState, passedGameModifiers] = await Promise.all([
-        ActiveResolutionVote.findAll({ where: { activeStafferRid: payload.votingStafferRid } }),
+        ActiveResolutionVote.findAll({
+            where: { activeStafferRid: payload.votingStafferRid, activeResolutionRid: payload.activeResolutionRid },
+        }),
         ActiveStaffer.findOne({
             where: { gameStateRid: payload.gameStateRid, activeStafferRid: payload.votingStafferRid },
         }),
@@ -262,6 +264,9 @@ export async function castVote(
 
     const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, votingStaffer);
     const totalAllowedVotes = Math.floor(getTotalAllowedVotes(votingStaffer) * effectivenessModifier);
+
+    console.log({ effectivenessModifier, totalAllowedVotes }, "@@@@@");
+
     if (existingVotes.length >= totalAllowedVotes) {
         response.status(400).send({ error: `This staffer has already voted, please refresh your page and try again.` });
         return undefined;

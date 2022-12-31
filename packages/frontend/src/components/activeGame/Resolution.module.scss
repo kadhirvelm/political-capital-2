@@ -85,3 +85,28 @@
     padding-top: 10px;
     margin-top: 10px;
 }
+
+.finalResults {
+    display: flex;
+    flex-direction: column;
+}
+
+.passed {
+    background: $green;
+    color: white;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+.failed {
+    background: $red;
+    color: white;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+}

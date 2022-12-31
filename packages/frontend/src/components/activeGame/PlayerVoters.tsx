@@ -16,6 +16,7 @@ import {
 } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
+import { getGameModifiers } from "../../selectors/gameModifiers";
 import { getVoters, getVotesAlreadyCast } from "../../selectors/getVoters";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addVotes } from "../../store/gameState";
@@ -35,6 +36,7 @@ export const PlayerVoters: React.FC<{
     const votesAlreadyCastOnResolution = usePoliticalCapitalSelector(
         (s) => s.localGameState.fullGameState?.activePlayersVotes?.[activeResolutionRid],
     );
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     const [isLoading, setIsLoading] = React.useState(false);
 
@@ -50,7 +52,8 @@ export const PlayerVoters: React.FC<{
 
         voters.forEach((voter) => {
             const maybeExistingVote = getStafferExistingVote(voter.activeStafferRid);
-            newCastVotesDefaultState[voter.activeStafferRid] = maybeExistingVote?.vote ?? "abstain";
+            newCastVotesDefaultState[voter.activeStafferRid] =
+                maybeExistingVote?.vote ?? castVotes[voter.activeStafferRid] ?? "abstain";
         });
 
         setCastVotes(newCastVotesDefaultState);
@@ -168,7 +171,7 @@ export const PlayerVoters: React.FC<{
                                     <div>{DEFAULT_STAFFER[voter.stafferDetails.type].displayName}</div>
                                 </div>
                                 <div className={styles.description}>
-                                    {descriptionOfStaffer[voter.stafferDetails.type]}
+                                    {descriptionOfStaffer(resolvedGameModifiers)[voter.stafferDetails.type]}
                                 </div>
                             </div>
                             <div className={styles.votingContainer}>

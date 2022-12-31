@@ -12,6 +12,13 @@ import { Column, Model, Table } from "sequelize-typescript";
 })
 export class PassedGameModifier extends Model<IPassedGameModifier> {
     @Column({
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    })
+    declare passedGameModifierId?: number | null;
+
+    @Column({
         type: DataTypes.STRING,
     })
     declare gameStateRid: IPassedGameModifier["gameStateRid"];

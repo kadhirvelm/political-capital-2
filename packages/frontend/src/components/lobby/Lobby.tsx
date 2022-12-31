@@ -111,7 +111,6 @@ export const Lobby: React.FC<{}> = () => {
             <>
                 <div className={styles.tableHeaders}>
                     <div className={styles.name}>Name</div>
-                    <div className={styles.politicalCapital}>PC</div>
                     <div className={styles.staffers}>Staffers</div>
                 </div>
                 <div className={styles.playersContainer}>
@@ -153,7 +152,6 @@ export const Lobby: React.FC<{}> = () => {
                                         </div>
                                     )}
                                 </div>
-                                <div className={styles.politicalCapital}>{activePlayer.politicalCapital}</div>
                                 <div className={styles.staffers}>
                                     {fullGameState.activePlayersStaffers[activePlayer.playerRid]
                                         .slice()

@@ -26,10 +26,12 @@ import {
 } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
-import { usePoliticalCapitalDispatch } from "../../store/createStore";
+import { getGameModifiers } from "../../selectors/gameModifiers";
+import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addGameEventToStaffer, IUserFacingResolveEvents } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { getStafferCategory, getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
+import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./RecruiterActivation.module.scss";
 import { ResolveEvent } from "./ResolveEvent";
@@ -41,6 +43,8 @@ export const RecruiterActivation: React.FC<{
 }> = ({ recruitRequest, recruiter, resolveGameEvents }) => {
     const toast = useToast();
     const dispatch = usePoliticalCapitalDispatch();
+
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     const [isLoading, setIsLoading] = React.useState(false);
     const [confirmStaffer, setConfirmStaffer] = React.useState<IPossibleStaffer | undefined>(undefined);
@@ -95,18 +99,33 @@ export const RecruiterActivation: React.FC<{
                     {availableToTrain.map((staffer) => {
                         const stafferCategory = getStafferCategory(staffer);
                         const trainsInto = getTrainsIntoDisplayName(staffer);
+
+                        const finalCost = roundToHundred(
+                            staffer.costToAcquire * resolvedGameModifiers.staffers[staffer.type].costToAcquire,
+                        );
+                        const finalTime = Math.round(
+                            staffer.timeToAcquire * resolvedGameModifiers.staffers[staffer.type].timeToAcquire,
+                        );
+
+                        const isDisabled = resolvedGameModifiers.staffers[staffer.type].disableHiring;
+
                         return (
                             <div
                                 className={classNames(styles.singleJobPosting, {
-                                    [styles.voting]: stafferCategory === "voting",
-                                    [styles.generator]: stafferCategory === "generator",
-                                    [styles.support]: stafferCategory === "support",
+                                    [styles.disabled]: isDisabled,
+                                    [styles.voting]: stafferCategory === "voting" && !isDisabled,
+                                    [styles.generator]: stafferCategory === "generator" && !isDisabled,
+                                    [styles.support]: stafferCategory === "support" && !isDisabled,
                                 })}
                                 key={staffer.type}
-                                onClick={openConfirmModal(staffer)}
+                                onClick={isDisabled ? undefined : openConfirmModal(staffer)}
                             >
-                                <div>{staffer.displayName}</div>
-                                <div className={styles.description}>{descriptionOfStaffer[staffer.type]}</div>
+                                <div>
+                                    {staffer.displayName} ({finalCost} PC, {finalTime} days)
+                                </div>
+                                <div className={styles.description}>
+                                    {descriptionOfStaffer(resolvedGameModifiers)[staffer.type]}
+                                </div>
                                 <div className={styles.trainsInto}>
                                     <div className={styles.description}>Trains into</div>
                                     {trainsInto.map((type, index) => (
@@ -129,6 +148,13 @@ export const RecruiterActivation: React.FC<{
             return undefined;
         }
 
+        const finalCost = roundToHundred(
+            confirmStaffer.costToAcquire * resolvedGameModifiers.staffers[confirmStaffer.type].costToAcquire,
+        );
+        const finalTime = Math.round(
+            confirmStaffer.timeToAcquire * resolvedGameModifiers.staffers[confirmStaffer.type].timeToAcquire,
+        );
+
         return (
             <div className={styles.modalSentence}>
                 <div className={styles.description}>Confirm asking</div>
@@ -136,9 +162,9 @@ export const RecruiterActivation: React.FC<{
                 <div className={styles.description}>to send out a job posting for a</div>
                 <div>{confirmStaffer.displayName}</div>
                 <div className={styles.description}>costing</div>
-                <div>{confirmStaffer.costToAcquire} political capital</div>
+                <div>{finalCost} political capital</div>
                 <div className={styles.description}>and </div>
-                <div>{confirmStaffer.timeToAcquire} days to hire.</div>
+                <div>{finalTime} days to hire.</div>
             </div>
         );
     };

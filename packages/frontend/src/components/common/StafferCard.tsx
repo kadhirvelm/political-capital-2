@@ -6,6 +6,7 @@ import { Card } from "@chakra-ui/react";
 import { DEFAULT_STAFFER, IActiveStaffer } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
+import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { getStafferCategory } from "../../utility/categorizeStaffers";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
@@ -20,6 +21,7 @@ export const StafferCard: React.FC<{ staffer: IActiveStaffer; isPlayerStaffer?: 
 
     const playerRid = usePoliticalCapitalSelector((s) => s.playerState.player?.playerRid);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     const maybeActiveEvents = (() => {
         if (resolveEvents === undefined || !isPlayerStaffer || playerRid === undefined) {
@@ -59,7 +61,9 @@ export const StafferCard: React.FC<{ staffer: IActiveStaffer; isPlayerStaffer?: 
             })}
         >
             <div className={styles.name}>{staffer.stafferDetails.displayName}</div>
-            <div className={styles.description}>{descriptionOfStaffer[staffer.stafferDetails.type]}</div>
+            <div className={styles.description}>
+                {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}
+            </div>
             {maybeRenderEvents()}
             <div className={styles.footer}>{DEFAULT_STAFFER[staffer.stafferDetails.type].displayName}</div>
         </Card>

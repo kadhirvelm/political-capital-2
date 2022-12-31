@@ -312,7 +312,7 @@ export async function createNewGame(
         addPlayerToGame(newGameStateRid, payload.playerRid),
         ResolveGameEvent.create({
             gameStateRid: newGameStateRid,
-            resolvesOn: TIME_BETWEEN_RESOLUTIONS_IN_DAYS as IGameClock,
+            resolvesOn: 1 as IGameClock,
             eventDetails: { type: "new-resolution" },
             state: "active",
         }),

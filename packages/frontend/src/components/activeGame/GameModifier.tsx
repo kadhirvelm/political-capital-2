@@ -3,8 +3,15 @@
  */
 
 import { MinusIcon } from "@chakra-ui/icons";
-import { DEFAULT_STAFFER } from "@pc2/api";
-import { IGameModifier, IStafferEffect } from "@pc2/api/dist/types/IResolutionEffect";
+import {
+    allGenerators,
+    allRecruits,
+    allTrainers,
+    allVoters,
+    DEFAULT_STAFFER,
+    IGameModifier,
+    IStafferEffect,
+} from "@pc2/api";
 import * as React from "react";
 import styles from "./GameModifier.module.scss";
 
@@ -68,23 +75,43 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
         const maybeRenderAnd = () => (index !== 0 ? ", and " : "");
 
         if (staffer === "everyone") {
-            return <div>{maybeRenderAnd()}All staffers</div>;
+            return <div>{maybeRenderAnd()}Everyone</div>;
         }
 
         if (staffer === "voter") {
-            return <div>{maybeRenderAnd()}All voters</div>;
+            return (
+                <div>
+                    {maybeRenderAnd()}
+                    {allVoters.join(", and ")}
+                </div>
+            );
         }
 
         if (staffer === "generator") {
-            return <div>{maybeRenderAnd()}All generators</div>;
+            return (
+                <div>
+                    {maybeRenderAnd()}
+                    {allGenerators.join(", and ")}
+                </div>
+            );
         }
 
         if (staffer === "recruit") {
-            return <div>{maybeRenderAnd()}All recruiters</div>;
+            return (
+                <div>
+                    {maybeRenderAnd()}
+                    {allRecruits.join(", and ")}
+                </div>
+            );
         }
 
         if (staffer === "trainer") {
-            return <div>{maybeRenderAnd()}All trainers</div>;
+            return (
+                <div>
+                    {maybeRenderAnd()}
+                    {allTrainers.join(", and ")}
+                </div>
+            );
         }
 
         return <div>{`${maybeRenderAnd()}${DEFAULT_STAFFER[staffer].displayName}s`}</div>;

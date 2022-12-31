@@ -56,7 +56,13 @@ export const ActiveGame: React.FC<{}> = () => {
             return "Everyone else";
         }
 
-        return "Staffer ladders";
+        if (currentView === "game-modifiers") {
+            return "Game modifiers";
+        }
+
+        if (currentView === "staffers-ladders") {
+            return "Staffer ladders";
+        }
     };
 
     const renderCurrentView = () => {
@@ -72,7 +78,13 @@ export const ActiveGame: React.FC<{}> = () => {
             return <EveryoneElse />;
         }
 
-        return <StafferLadders />;
+        if (currentView === "game-modifiers") {
+            return <div>All game modifiers here</div>;
+        }
+
+        if (currentView === "staffers-ladders") {
+            return <StafferLadders />;
+        }
     };
 
     const changeCurrentView = (newView: ICurrentView) => () => setCurrentView(newView);
@@ -88,6 +100,7 @@ export const ActiveGame: React.FC<{}> = () => {
                         <MenuItem onClick={changeCurrentView("active-resolution")}>Active resolution</MenuItem>
                         <MenuItem onClick={changeCurrentView("your-party")}>Your party</MenuItem>
                         <MenuItem onClick={changeCurrentView("everyone-else")}>Everyone else</MenuItem>
+                        <MenuItem onClick={changeCurrentView("game-modifiers")}>Game modifiers</MenuItem>
                         <MenuDivider />
                         <MenuItem onClick={changeCurrentView("staffers-ladders")}>Staffer ladders</MenuItem>
                         <MenuDivider />

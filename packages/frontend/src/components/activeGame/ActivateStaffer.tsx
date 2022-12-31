@@ -6,6 +6,7 @@ import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
 import { DEFAULT_STAFFER, IActiveStaffer, IBasicStaffer, IRecruit, isRecruit, isTrainer, ITrainer } from "@pc2/api";
 import * as React from "react";
+import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./ActivateStaffer.module.scss";
@@ -19,6 +20,7 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     if (player === undefined || fullGameState === undefined || resolveEvents === undefined) {
         return null;
@@ -71,7 +73,9 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
                 Activating {activateStaffer.stafferDetails.displayName} (
                 {DEFAULT_STAFFER[activateStaffer.stafferDetails.type].displayName})
             </div>
-            <div className={styles.description}>{descriptionOfStaffer[activateStaffer.stafferDetails.type]}</div>
+            <div className={styles.description}>
+                {descriptionOfStaffer(resolvedGameModifiers)[activateStaffer.stafferDetails.type]}
+            </div>
             {renderStafferActivationSpecifics()}
         </div>
     );

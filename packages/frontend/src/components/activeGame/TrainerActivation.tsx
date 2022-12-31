@@ -30,10 +30,12 @@ import {
 import classNames from "classnames";
 import * as React from "react";
 import { batch } from "react-redux";
+import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addGameEventToStaffer, IUserFacingResolveEvents } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { getStafferCategory } from "../../utility/categorizeStaffers";
+import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { ResolveEvent } from "./ResolveEvent";
 import styles from "./TrainerActivation.module.scss";
@@ -55,6 +57,8 @@ export const TrainerActivation: React.FC<{
 
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
+
     if (fullGameState === undefined || resolveEvents === undefined) {
         return null;
     }
@@ -126,7 +130,7 @@ export const TrainerActivation: React.FC<{
                                     <div>{staffer.stafferDetails.displayName}</div>
                                     <div>{DEFAULT_STAFFER[staffer.stafferDetails.type].displayName}</div>
                                     <div className={styles.description}>
-                                        {descriptionOfStaffer[staffer.stafferDetails.type]}
+                                        {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}
                                     </div>
                                 </div>
                                 <div className={styles.upgradeInto}>
@@ -134,23 +138,41 @@ export const TrainerActivation: React.FC<{
                                         const defaultStaffer = DEFAULT_STAFFER[upgradeStaffer];
                                         const newStafferCategory = getStafferCategory(defaultStaffer);
 
+                                        const finalCost = roundToHundred(
+                                            defaultStaffer.costToAcquire *
+                                                resolvedGameModifiers.staffers[upgradeStaffer].costToAcquire,
+                                        );
+                                        const finalTime = Math.round(
+                                            defaultStaffer.timeToAcquire *
+                                                resolvedGameModifiers.staffers[upgradeStaffer].timeToAcquire,
+                                        );
+
+                                        const isDisabled =
+                                            resolvedGameModifiers.staffers[upgradeStaffer].disableTraining;
+
                                         return (
                                             <div className={styles.withArrow} key={upgradeStaffer}>
                                                 <ArrowForwardIcon className={styles.arrow} />
                                                 <div
                                                     className={classNames(styles.newPosition, {
-                                                        [styles.voting]: newStafferCategory === "voting",
-                                                        [styles.generator]: newStafferCategory === "generator",
-                                                        [styles.support]: newStafferCategory === "support",
+                                                        [styles.disabled]: isDisabled,
+                                                        [styles.voting]: newStafferCategory === "voting" && !isDisabled,
+                                                        [styles.generator]:
+                                                            newStafferCategory === "generator" && !isDisabled,
+                                                        [styles.support]:
+                                                            newStafferCategory === "support" && !isDisabled,
                                                     })}
-                                                    onClick={upgradeStafferCurried(staffer, upgradeStaffer)}
+                                                    onClick={
+                                                        isDisabled
+                                                            ? undefined
+                                                            : upgradeStafferCurried(staffer, upgradeStaffer)
+                                                    }
                                                 >
                                                     <div>
-                                                        {defaultStaffer.displayName} ({defaultStaffer.costToAcquire} PC,{" "}
-                                                        {defaultStaffer.timeToAcquire} days)
+                                                        {defaultStaffer.displayName} ({finalCost} PC, {finalTime} days)
                                                     </div>
                                                     <div className={styles.description}>
-                                                        {descriptionOfStaffer[upgradeStaffer]}
+                                                        {descriptionOfStaffer(resolvedGameModifiers)[upgradeStaffer]}
                                                     </div>
                                                 </div>
                                             </div>
@@ -172,6 +194,13 @@ export const TrainerActivation: React.FC<{
 
         const toLevelStaffer = DEFAULT_STAFFER[upgradeStafferToLevel.toLevel];
 
+        const finalCost = roundToHundred(
+            toLevelStaffer.costToAcquire * resolvedGameModifiers.staffers[toLevelStaffer.type].costToAcquire,
+        );
+        const finalTime = Math.round(
+            toLevelStaffer.timeToAcquire * resolvedGameModifiers.staffers[toLevelStaffer.type].timeToAcquire,
+        );
+
         return (
             <div className={styles.modalSentence}>
                 <div className={styles.description}>Confirm asking</div>
@@ -183,9 +212,9 @@ export const TrainerActivation: React.FC<{
                 </div>
                 <div>to {toLevelStaffer.displayName}</div>
                 <div className={styles.description}>costing</div>
-                <div>{toLevelStaffer.costToAcquire} political capital</div>
+                <div>{finalCost} political capital</div>
                 <div className={styles.description}>and </div>
-                <div>{toLevelStaffer.timeToAcquire} days to complete.</div>
+                <div>{finalTime} days to complete.</div>
             </div>
         );
     };

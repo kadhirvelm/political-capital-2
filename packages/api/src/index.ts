@@ -13,6 +13,7 @@ export * from "./socketMessages/allowedMessages";
 export * from "./types/BrandedIDs";
 export * from "./types/generatedStaffers";
 export * from "./types/IEvent";
+export * from "./types/IGameModifier";
 export * from "./types/IResolution";
 export * from "./types/IStaffer";
 export * from "./types/IVisit";

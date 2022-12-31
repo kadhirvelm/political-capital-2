@@ -4,6 +4,7 @@
 
 import { DEFAULT_STAFFER, IEvent } from "@pc2/api";
 import * as React from "react";
+import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { isResolveGameEvent, IUserFacingResolveEvents } from "../../store/gameState";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
@@ -13,6 +14,7 @@ import styles from "./ResolveEvent.module.scss";
 export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefined }> = ({ event }) => {
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     if (player === undefined || fullGameState === undefined || event === undefined) {
         return null;
@@ -24,7 +26,9 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
                 <div>
                     <div className={styles.title}>Send out a job posting for a</div>
                     <div>{DEFAULT_STAFFER[startHiring.stafferType].displayName}</div>
-                    <div className={styles.description}>{descriptionOfStaffer[startHiring.stafferType]}</div>
+                    <div className={styles.description}>
+                        {descriptionOfStaffer(resolvedGameModifiers)[startHiring.stafferType]}
+                    </div>
                 </div>
             ),
             finishHiringStaffer: (finishHiring) => {
@@ -41,7 +45,8 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
                                 DEFAULT_STAFFER[hiringStaffer.stafferDetails.type].displayName}
                         </div>
                         <div className={styles.description}>
-                            {hiringStaffer !== undefined && descriptionOfStaffer[hiringStaffer.stafferDetails.type]}
+                            {hiringStaffer !== undefined &&
+                                descriptionOfStaffer(resolvedGameModifiers)[hiringStaffer.stafferDetails.type]}
                         </div>
                     </div>
                 );
@@ -60,7 +65,8 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
                                 `to ${DEFAULT_STAFFER[trainingStaffer?.stafferDetails.type].displayName}`}
                         </div>
                         <div className={styles.description}>
-                            {trainingStaffer !== undefined && descriptionOfStaffer[trainingStaffer.stafferDetails.type]}
+                            {trainingStaffer !== undefined &&
+                                descriptionOfStaffer(resolvedGameModifiers)[trainingStaffer.stafferDetails.type]}
                         </div>
                     </div>
                 );
@@ -79,7 +85,8 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
                                 `to ${DEFAULT_STAFFER[trainingStaffer?.stafferDetails.type].displayName}`}
                         </div>
                         <div className={styles.description}>
-                            {trainingStaffer !== undefined && descriptionOfStaffer[trainingStaffer.stafferDetails.type]}
+                            {trainingStaffer !== undefined &&
+                                descriptionOfStaffer(resolvedGameModifiers)[trainingStaffer.stafferDetails.type]}
                         </div>
                     </div>
                 );

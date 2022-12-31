@@ -10,8 +10,11 @@ import { Resolution } from "./Resolution";
 import { ResolveEvent } from "./ResolveEvent";
 import styles from "./ActiveResolution.module.scss";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { PreviousResolutions } from "./PreviousResolutions";
 
 export const ActiveResolution: React.FC<{}> = () => {
+    const [isViewingPreviousResolutions, setIsViewingPreviousResolutions] = React.useState(false);
+
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
 
@@ -32,14 +35,17 @@ export const ActiveResolution: React.FC<{}> = () => {
         return <Resolution resolution={maybeRenderResolution} />;
     };
 
+    const viewPreviousResolutions = () => setIsViewingPreviousResolutions(true);
+    const onBackFromPreviousResolutions = () => setIsViewingPreviousResolutions(false);
+
     const maybeRenderSeeResolutionHistory = () => {
         if (resolutionsSorted.length <= 1) {
             return undefined;
         }
 
         return (
-            <div className={styles.seePreviousResolutions}>
-                <span>See previous {resolutionsSorted.length - 1} resolutions</span>
+            <div className={styles.seePreviousResolutions} onClick={viewPreviousResolutions}>
+                <span>See previous resolutions</span>
                 <ArrowForwardIcon />
             </div>
         );
@@ -47,13 +53,17 @@ export const ActiveResolution: React.FC<{}> = () => {
 
     const maybeRenderVotes = () => {
         const maybeVoteOnResolution = resolutionsSorted[0];
-        if (maybeVoteOnResolution === undefined) {
+        if (maybeVoteOnResolution === undefined || maybeVoteOnResolution.state !== "active") {
             const nextResolutionEvent = resolveEvents.game
                 .slice()
                 .sort((a, b) => (a.resolvesOn > b.resolvesOn ? -1 : 1))
                 .find((event) => IEvent.isNewResolution(event.eventDetails));
 
-            return <ResolveEvent event={nextResolutionEvent} />;
+            return (
+                <div className={styles.resolveEventsContainer}>
+                    <ResolveEvent event={nextResolutionEvent} />
+                </div>
+            );
         }
 
         return (
@@ -64,11 +74,19 @@ export const ActiveResolution: React.FC<{}> = () => {
         );
     };
 
-    return (
-        <div>
-            {maybeRenderMostRecentResolution()}
-            {maybeRenderSeeResolutionHistory()}
-            {maybeRenderVotes()}
-        </div>
-    );
+    const renderBody = () => {
+        if (isViewingPreviousResolutions) {
+            return <PreviousResolutions resolutionsSorted={resolutionsSorted} onBack={onBackFromPreviousResolutions} />;
+        }
+
+        return (
+            <>
+                {maybeRenderMostRecentResolution()}
+                {maybeRenderSeeResolutionHistory()}
+                {maybeRenderVotes()}
+            </>
+        );
+    };
+
+    return <div>{renderBody()}</div>;
 };

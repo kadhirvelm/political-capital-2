@@ -114,7 +114,7 @@ export async function handleStartHiringOrTraining(
                     }),
                     ResolveGameEvent.create({
                         gameStateRid,
-                        resolvesOn: (currentGameClock + finalTimeToAcquire) as IGameClock,
+                        resolvesOn: Math.round(currentGameClock + finalTimeToAcquire) as IGameClock,
                         eventDetails: {
                             playerRid,
                             recruiterRid: trainingOrHiring.recruiterRid,
@@ -162,7 +162,7 @@ export async function handleStartHiringOrTraining(
                     ),
                     ResolveGameEvent.create({
                         gameStateRid,
-                        resolvesOn: (currentGameClock + finalTimeToAcquire) as IGameClock,
+                        resolvesOn: Math.round(currentGameClock + finalTimeToAcquire) as IGameClock,
                         eventDetails: {
                             playerRid,
                             trainerRid: trainingOrHiring.trainerRid,

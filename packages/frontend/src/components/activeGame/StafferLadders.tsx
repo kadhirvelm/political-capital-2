@@ -5,12 +5,16 @@
 import { DEFAULT_STAFFER, IAllStaffers, IPossibleStaffer } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
+import { getGameModifiers } from "../../selectors/gameModifiers";
+import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { getStafferCategory } from "../../utility/categorizeStaffers";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./StafferLadders.module.scss";
 
 export const StafferLadders: React.FC<{}> = () => {
     const allStaffers = Object.values(DEFAULT_STAFFER);
+
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     const renderSingleStafferLevel = (staffer: IPossibleStaffer) => {
         const parents = allStaffers.filter((s) => (s.upgradedFrom as Array<keyof IAllStaffers>).includes(staffer.type));
@@ -28,7 +32,9 @@ export const StafferLadders: React.FC<{}> = () => {
                     <div>
                         {staffer.displayName} ({staffer.costToAcquire} PC, {staffer.timeToAcquire} days)
                     </div>
-                    <div className={styles.description}>{descriptionOfStaffer[staffer.type]}</div>
+                    <div className={styles.description}>
+                        {descriptionOfStaffer(resolvedGameModifiers)[staffer.type]}
+                    </div>
                 </div>
                 <div className={styles.singleLevelParents}>{parents.map(renderSingleStafferLevel)}</div>
             </div>

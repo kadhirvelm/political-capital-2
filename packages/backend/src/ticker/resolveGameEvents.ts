@@ -67,7 +67,7 @@ async function createNewResolution(gameState: GameState, passedGameModifiers: IP
     const activeResolutionRid = v4() as IActiveResolutionRid;
 
     const timePerResolutionModifier = getTimePerResolutionModifier(passedGameModifiers);
-    const finalTimePerResolution = TIME_FOR_EACH_RESOLUTION_IN_DAYS * timePerResolutionModifier;
+    const finalTimePerResolution = Math.min(TIME_FOR_EACH_RESOLUTION_IN_DAYS * timePerResolutionModifier, 5);
 
     return Promise.all([
         ActiveResolution.create({
@@ -111,10 +111,10 @@ async function resolveResolution(
     }
 
     const timePerResolutionModifier = getTimePerResolutionModifier(passedGameModifiers);
-    const finalTimePerResolution = TIME_FOR_EACH_RESOLUTION_IN_DAYS * timePerResolutionModifier;
+    const finalTimePerResolution = Math.min(TIME_FOR_EACH_RESOLUTION_IN_DAYS * timePerResolutionModifier, 5);
 
     const timeBetweenResolutionsModifier = getTimeBetweenResolutionsModifier(passedGameModifiers);
-    const finalTimeBetweenResolutions = TIME_BETWEEN_RESOLUTIONS_IN_DAYS * timeBetweenResolutionsModifier;
+    const finalTimeBetweenResolutions = Math.min(TIME_BETWEEN_RESOLUTIONS_IN_DAYS * timeBetweenResolutionsModifier, 1);
 
     const timeForAnotherResolution =
         gameState.gameClock + finalTimePerResolution + finalTimeBetweenResolutions < TOTAL_DAYS_IN_GAME;

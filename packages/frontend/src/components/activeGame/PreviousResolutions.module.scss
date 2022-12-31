@@ -4,20 +4,22 @@
 
 @import "../../styles/variables.scss";
 
-.seePreviousResolutions {
+.backButton {
     display: flex;
-    align-items: center;
-    margin-top: 10px;
-    justify-content: flex-end;
+    margin-bottom: 10px;
     color: $gray;
+    align-items: center;
 
     > :first-child {
-        margin-right: 3px;
+        margin-right: 5px;
     }
 }
 
-.resolveEventsContainer {
+.resolutionsContainer {
     display: flex;
     flex-direction: column;
-    margin-top: 10px;
+
+    > :not(:last-child) {
+        margin-bottom: 20px;
+    }
 }

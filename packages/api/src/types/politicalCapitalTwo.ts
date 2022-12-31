@@ -6,7 +6,7 @@ import { IActiveResolutionRid, IActiveStafferRid, IGameClock, IGameStateRid, IPl
 import { IPossibleStaffer } from "./generatedStaffers";
 import { IPossibleEvent } from "./IEvent";
 import { IBasicResolution } from "./IResolution";
-import { IGameModifier } from "./IResolutionEffect";
+import { IGameModifier } from "./IGameModifier";
 
 export interface IPlayer {
     playerRid: IPlayerRid;

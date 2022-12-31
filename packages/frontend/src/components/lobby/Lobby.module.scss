@@ -62,14 +62,9 @@
     flex: 2;
 }
 
-.politicalCapital {
-    display: flex;
-    flex: 1;
-    margin: 0 10px;
-}
-
 .staffers {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     flex: 4;
     gap: 10px;
