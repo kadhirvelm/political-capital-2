@@ -9,6 +9,7 @@ import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import styles from "./ActiveGame.module.scss";
 import { ActiveResolution } from "./ActiveResolution";
+import { AllGameModifiers } from "./AllGameModifiers";
 import { EveryoneElse } from "./EveryoneElse";
 import { PlayerParty } from "./PlayerParty";
 import { StafferLadders } from "./StafferLadders";
@@ -79,7 +80,7 @@ export const ActiveGame: React.FC<{}> = () => {
         }
 
         if (currentView === "game-modifiers") {
-            return <div>All game modifiers here</div>;
+            return <AllGameModifiers />;
         }
 
         if (currentView === "staffers-ladders") {

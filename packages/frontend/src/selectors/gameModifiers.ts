@@ -70,3 +70,27 @@ export const getGameModifiers = createSelector(
         return resolvedGameModifiers;
     },
 );
+
+export const gameModifiersWithResolution = createSelector(
+    (state: State) => state.localGameState.fullGameState,
+    (fullGameState: IFullGameState | undefined) => {
+        if (fullGameState === undefined) {
+            return [];
+        }
+
+        return fullGameState.passedGameModifiers
+            .map((modifier) => {
+                const accordingResolution = fullGameState.activeResolutions.find(
+                    (resolution) => resolution.activeResolutionRid === modifier.fromActiveResolutionRid,
+                );
+
+                return {
+                    modifier,
+                    accordingResolution,
+                };
+            })
+            .sort((a, b) =>
+                (a.accordingResolution?.createdOn ?? 0) > (b.accordingResolution?.createdOn ?? 0) ? -1 : 1,
+            );
+    },
+);
