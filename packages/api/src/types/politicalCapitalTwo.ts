@@ -61,5 +61,7 @@ export interface IResolveGameEvent {
 
 export interface IPassedGameModifier {
     gameStateRid: IGameStateRid;
+    fromActiveResolutionRid: IActiveResolutionRid;
     modifier: IGameModifier;
+    createdOn: IGameClock;
 }

@@ -19,6 +19,7 @@ export * from "./types/IVisit";
 export * from "./types/politicalCapitalTwo";
 export * from "./types/stafferLadderIndex";
 
+export * from "./utils/gameModifierUtils";
 export * from "./utils/staffer";
 
 export * from "./constants";

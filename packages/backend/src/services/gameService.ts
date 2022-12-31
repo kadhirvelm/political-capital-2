@@ -21,6 +21,7 @@ import {
     ActiveStaffer,
     GameState,
     getStafferOfType,
+    PassedGameModifier,
     Player,
     ResolveGameEvent,
 } from "@pc2/distributed-compute";
@@ -196,6 +197,7 @@ export async function getGameState(
     payload: IActiveGameService["getGameState"]["payload"],
 ): Promise<IActiveGameService["getGameState"]["response"] | undefined> {
     const gameStatePromise = GameState.findOne({ where: { gameStateRid: payload.gameStateRid } });
+    const passedGameModifiersPromise = PassedGameModifier.findAll({ where: { gameStateRid: payload.gameStateRid } });
     const activePlayersPromise = ActivePlayer.findAll({
         where: { gameStateRid: payload.gameStateRid },
     });
@@ -214,15 +216,23 @@ export async function getGameState(
         where: { gameStateRid: payload.gameStateRid },
     });
 
-    const [gameState, activePlayers, activeResolutions, activePlayersVotes, activePlayersStaffers, allResolveEvents] =
-        await Promise.all([
-            gameStatePromise,
-            activePlayersPromise,
-            activeResolutionsPromise,
-            activePlayerVotesPromise,
-            activePlayersStaffersPromise,
-            allResolveEventsPromise,
-        ]);
+    const [
+        gameState,
+        passedGameModifiers,
+        activePlayers,
+        activeResolutions,
+        activePlayersVotes,
+        activePlayersStaffers,
+        allResolveEvents,
+    ] = await Promise.all([
+        gameStatePromise,
+        passedGameModifiersPromise,
+        activePlayersPromise,
+        activeResolutionsPromise,
+        activePlayerVotesPromise,
+        activePlayersStaffersPromise,
+        allResolveEventsPromise,
+    ]);
     if (gameState == null) {
         // eslint-disable-next-line no-console
         console.error(`Something went wrong when trying to get the game state for: ${payload.gameStateRid}.`);
@@ -238,6 +248,7 @@ export async function getGameState(
 
     return {
         gameState,
+        passedGameModifiers,
         players: _.keyBy(players, (player) => player.playerRid),
         activePlayers: _.keyBy(activePlayers, (player) => player.playerRid),
         activeResolutions,

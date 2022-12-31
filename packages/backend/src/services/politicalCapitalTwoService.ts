@@ -3,6 +3,8 @@
  */
 
 import {
+    DEFAULT_STAFFER,
+    getEffectivenessModifier,
     getTotalAllowedRecruits,
     getTotalAllowedTrainees,
     getTotalAllowedVotes,
@@ -10,6 +12,7 @@ import {
     IGameClock,
     IPoliticalCapitalTwoService,
     IResolveGameEvent,
+    isStafferHiringDisabled,
     IStartHiringStaffer,
     IStartTrainingStaffer,
     isVoter,
@@ -19,6 +22,7 @@ import {
     ActiveResolutionVote,
     ActiveStaffer,
     GameState,
+    PassedGameModifier,
     ResolveGameEvent,
 } from "@pc2/distributed-compute";
 import Express from "express";
@@ -29,7 +33,7 @@ export async function recruitStaffer(
     payload: IPoliticalCapitalTwoService["recruitStaffer"]["payload"],
     response: Express.Response,
 ): Promise<IPoliticalCapitalTwoService["recruitStaffer"]["response"] | undefined> {
-    const [existingRecruitRequests, recruiterStaffer, gameState] = await Promise.all([
+    const [existingRecruitRequests, recruiterStaffer, gameState, passedGameModifiers] = await Promise.all([
         ResolveGameEvent.findAll({
             where: {
                 gameStateRid: payload.gameStateRid,
@@ -41,6 +45,7 @@ export async function recruitStaffer(
             where: { gameStateRid: payload.gameStateRid, activeStafferRid: payload.recruitRequest.recruiterRid },
         }),
         GameState.findOne({ where: { gameStateRid: payload.gameStateRid } }),
+        PassedGameModifier.findAll({ where: { gameStateRid: payload.gameStateRid } }),
     ]);
 
     if (gameState == null) {
@@ -62,9 +67,19 @@ export async function recruitStaffer(
         return undefined;
     }
 
-    const totalAllowedRecruits = getTotalAllowedRecruits(recruiterStaffer);
+    const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, recruiterStaffer);
+    const totalAllowedRecruits = Math.floor(getTotalAllowedRecruits(recruiterStaffer) * effectivenessModifier);
     if (existingRecruitRequests.length >= totalAllowedRecruits) {
         response.status(400).send({ error: `This recruiter is already at capacity, please use another recruiter.` });
+        return undefined;
+    }
+
+    const isDisabled = isStafferHiringDisabled(
+        passedGameModifiers,
+        DEFAULT_STAFFER[payload.recruitRequest.stafferType],
+    );
+    if (isDisabled) {
+        response.status(400).send({ error: `Due to the game modifiers, hiring this type of staffer is not allowed.` });
         return undefined;
     }
 
@@ -95,7 +110,14 @@ export async function trainStaffer(
     payload: IPoliticalCapitalTwoService["trainStaffer"]["payload"],
     response: Express.Response,
 ): Promise<IPoliticalCapitalTwoService["trainStaffer"]["response"] | undefined> {
-    const [existingTrainRequests, existingActiveStafferRequests, trainerStaffer, gameState] = await Promise.all([
+    const [
+        existingTrainRequests,
+        existingActiveStafferRequests,
+        trainerStaffer,
+        attemptToTrainStaffer,
+        gameState,
+        passedGameModifiers,
+    ] = await Promise.all([
         ResolveGameEvent.findAll({
             where: {
                 gameStateRid: payload.gameStateRid,
@@ -122,7 +144,11 @@ export async function trainStaffer(
         ActiveStaffer.findOne({
             where: { gameStateRid: payload.gameStateRid, activeStafferRid: payload.trainRequest.trainerRid },
         }),
+        ActiveStaffer.findOne({
+            where: { gameStateRid: payload.gameStateRid, activeStafferRid: payload.trainRequest.activeStafferRid },
+        }),
         GameState.findOne({ where: { gameStateRid: payload.gameStateRid } }),
+        PassedGameModifier.findAll({ where: { gameStateRid: payload.gameStateRid } }),
     ]);
 
     if (gameState == null) {
@@ -137,10 +163,10 @@ export async function trainStaffer(
         return undefined;
     }
 
-    if (trainerStaffer == null) {
-        response
-            .status(400)
-            .send({ error: `Cannot find a recruiter with the rid: ${payload.trainRequest.trainerRid}.` });
+    if (trainerStaffer == null || attemptToTrainStaffer == null) {
+        response.status(400).send({
+            error: `Cannot find a recruiter with the rid: ${payload.trainRequest.trainerRid} or the active staffer with the rid: ${payload.trainRequest.activeStafferRid}.`,
+        });
         return undefined;
     }
 
@@ -149,7 +175,8 @@ export async function trainStaffer(
         return undefined;
     }
 
-    const totalAllowedTrains = getTotalAllowedTrainees(trainerStaffer);
+    const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, trainerStaffer);
+    const totalAllowedTrains = Math.floor(getTotalAllowedTrainees(trainerStaffer) * effectivenessModifier);
     if (existingTrainRequests.length >= totalAllowedTrains) {
         response.status(400).send({ error: `This trainer is already at capacity, please use another trainer.` });
         return undefined;
@@ -159,6 +186,14 @@ export async function trainStaffer(
         response
             .status(400)
             .send({ error: `Cannot train this staffer, they are currently busy. Please select someone else.` });
+        return undefined;
+    }
+
+    const isDisabled = isStafferHiringDisabled(passedGameModifiers, attemptToTrainStaffer);
+    if (isDisabled) {
+        response
+            .status(400)
+            .send({ error: `Due to the game modifiers, training this type of staffer is not allowed.` });
         return undefined;
     }
 
@@ -189,13 +224,14 @@ export async function castVote(
     payload: IPoliticalCapitalTwoService["castVote"]["payload"],
     response: Express.Response,
 ): Promise<IPoliticalCapitalTwoService["castVote"]["response"] | undefined> {
-    const [existingVotes, votingStaffer, activeResolution, gameState] = await Promise.all([
+    const [existingVotes, votingStaffer, activeResolution, gameState, passedGameModifiers] = await Promise.all([
         ActiveResolutionVote.findAll({ where: { activeStafferRid: payload.votingStafferRid } }),
         ActiveStaffer.findOne({
             where: { gameStateRid: payload.gameStateRid, activeStafferRid: payload.votingStafferRid },
         }),
         ActiveResolution.findOne({ where: { activeResolutionRid: payload.activeResolutionRid } }),
         GameState.findOne({ where: { gameStateRid: payload.gameStateRid } }),
+        PassedGameModifier.findAll({ where: { gameStateRid: payload.gameStateRid } }),
     ]);
 
     if (gameState == null || gameState.state !== "active") {
@@ -224,7 +260,8 @@ export async function castVote(
         return undefined;
     }
 
-    const totalAllowedVotes = getTotalAllowedVotes(votingStaffer);
+    const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, votingStaffer);
+    const totalAllowedVotes = Math.floor(getTotalAllowedVotes(votingStaffer) * effectivenessModifier);
     if (existingVotes.length >= totalAllowedVotes) {
         response.status(400).send({ error: `This staffer has already voted, please refresh your page and try again.` });
         return undefined;

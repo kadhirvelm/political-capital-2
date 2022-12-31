@@ -13,7 +13,7 @@ import { EveryoneElse } from "./EveryoneElse";
 import { PlayerParty } from "./PlayerParty";
 import { StafferLadders } from "./StafferLadders";
 
-type ICurrentView = "active-resolution" | "your-party" | "everyone-else" | "staffers-ladders";
+type ICurrentView = "active-resolution" | "your-party" | "everyone-else" | "game-modifiers" | "staffers-ladders";
 
 export const ActiveGame: React.FC<{}> = () => {
     const [currentView, setCurrentView] = React.useState<ICurrentView>("active-resolution");

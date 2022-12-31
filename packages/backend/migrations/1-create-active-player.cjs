@@ -30,6 +30,8 @@ module.exports = {
                 type: Sequelize.BOOLEAN,
             },
         });
+
+        await queryInterface.addIndex("ActivePlayer", ["gameStateRid", "playerRid"]);
     },
     async down(queryInterface) {
         await queryInterface.dropTable("ActivePlayer");

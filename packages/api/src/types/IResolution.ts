@@ -9,7 +9,7 @@ export interface IBasicResolution {
     description: string;
     politicalCapitalPayout: number;
     gameModifier?: IGameModifier;
-    stage?: "early" | "middle" | "late";
+    stage: "all" | "early" | "middle" | "late";
 }
 
 export const ALL_RESOLUTIONS: IBasicResolution[] = [
@@ -22,8 +22,8 @@ export const ALL_RESOLUTIONS: IBasicResolution[] = [
             type: "staffer-effect",
             staffersAffected: ["independentRepresentative"],
             disableTraining: true,
-            removeAll: true,
         },
+        stage: "all",
     },
     {
         title: "Increase phone banking regulation",
@@ -33,7 +33,8 @@ export const ALL_RESOLUTIONS: IBasicResolution[] = [
         gameModifier: {
             type: "staffer-effect",
             staffersAffected: ["phoneBanker"],
-            effectiveness: 0.5,
+            effectiveness: -0.5,
         },
+        stage: "all",
     },
 ];

@@ -104,13 +104,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
             {gameModifier.disableTraining !== undefined && (
                 <div className={styles.negative}>
                     <MinusIcon className={styles.minusIcon} />
-                    Disables training of
-                </div>
-            )}
-            {gameModifier.removeAll !== undefined && (
-                <div className={styles.negative}>
-                    <MinusIcon className={styles.minusIcon} />
-                    Removes all of
+                    Prevents training of
                 </div>
             )}
             <div className={styles.stafferModifier}>

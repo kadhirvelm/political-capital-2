@@ -4,13 +4,18 @@
 
 import {
     DEFAULT_STAFFER,
+    getCostToAcquireModifier,
+    getEffectivenessModifier,
     getPayoutForStaffer,
+    getPayoutPerResolutionModifier,
+    getTimeToAcquireModifier,
     IActiveStafferRid,
     IEvent,
     IFinishHiringStaffer,
     IFinishTrainingStaffer,
     IGameClock,
     IGameStateRid,
+    IPassedGameModifier,
     IPlayerRid,
     IStartHiringStaffer,
     IStartTrainingStaffer,
@@ -19,7 +24,14 @@ import {
 import { DoneCallback, Job } from "bull";
 import crypto from "crypto";
 import { Op } from "sequelize";
-import { ActivePlayer, ActiveResolution, ActiveResolutionVote, ActiveStaffer, ResolveGameEvent } from "../models";
+import {
+    ActivePlayer,
+    ActiveResolution,
+    ActiveResolutionVote,
+    ActiveStaffer,
+    PassedGameModifier,
+    ResolveGameEvent,
+} from "../models";
 import { IProcessPlayerQueue, UpdatePlayerQueue } from "../queues";
 import { getStafferOfType } from "../utils/getStafferOfType";
 
@@ -27,6 +39,7 @@ async function getPayoutForPlayer(
     gameStateRid: IGameStateRid,
     eventDetails: ITallyResolution,
     activePlayerStaffers: ActiveStaffer[],
+    passedGameModifiers: IPassedGameModifier[],
 ): Promise<number> {
     const [activeResolution, allVotesForResolution] = await Promise.all([
         ActiveResolution.findOne({ where: { gameStateRid, activeResolutionRid: eventDetails.activeResolutionRid } }),
@@ -43,10 +56,12 @@ async function getPayoutForPlayer(
         return 0;
     }
 
-    const payoutPerVote = activeResolution.resolutionDetails.politicalCapitalPayout;
-    const correctVotes = allVotesForResolution.filter((vote) => vote.vote === activeResolution.state).length;
+    const correctVotes = allVotesForResolution.filter((vote) => vote.vote === activeResolution.state);
 
-    return correctVotes * payoutPerVote;
+    const payoutModifier = getPayoutPerResolutionModifier(passedGameModifiers);
+    const basePayoutPerVote = activeResolution.resolutionDetails.politicalCapitalPayout * payoutModifier;
+
+    return correctVotes.map(() => basePayoutPerVote).reduce((a, b) => a + b, 0);
 }
 
 async function handleFinishHiringOrTraining(
@@ -74,6 +89,8 @@ export async function handleStartHiringOrTraining(
     startHiringOrTraining: Array<IStartHiringStaffer | IStartTrainingStaffer>,
     currentGameClock: IGameClock,
     startHiringOrTrainingModels: ResolveGameEvent[],
+    activePlayerStaffers: ActiveStaffer[],
+    passedGameModifiers: IPassedGameModifier[],
 ): Promise<number> {
     const totalCosts = await Promise.all(
         startHiringOrTraining.map(async (trainingOrHiring, index): Promise<number> => {
@@ -83,6 +100,9 @@ export async function handleStartHiringOrTraining(
             if (IEvent.isStartHireStaffer(trainingOrHiring)) {
                 const newStafferRid = crypto.randomUUID() as IActiveStafferRid;
                 const newStafferDetails = getStafferOfType(trainingOrHiring.stafferType);
+
+                const timeModifier = getTimeToAcquireModifier(passedGameModifiers, newStafferDetails);
+                const finalTimeToAcquire = newStafferDetails.timeToAcquire * timeModifier;
 
                 await Promise.all([
                     ActiveStaffer.create({
@@ -94,7 +114,7 @@ export async function handleStartHiringOrTraining(
                     }),
                     ResolveGameEvent.create({
                         gameStateRid,
-                        resolvesOn: (currentGameClock + newStafferDetails.timeToAcquire) as IGameClock,
+                        resolvesOn: (currentGameClock + finalTimeToAcquire) as IGameClock,
                         eventDetails: {
                             playerRid,
                             recruiterRid: trainingOrHiring.recruiterRid,
@@ -106,15 +126,22 @@ export async function handleStartHiringOrTraining(
                     accordingModel.save(),
                 ]);
 
-                return newStafferDetails.costToAcquire;
+                const costModifier = getCostToAcquireModifier(passedGameModifiers, newStafferDetails);
+                return newStafferDetails.costToAcquire * costModifier;
             }
 
             if (IEvent.isStartTrainingStaffer(trainingOrHiring)) {
+                const accordingStafferToTrain = activePlayerStaffers.find(
+                    (staffer) => staffer.activeStafferRid === trainingOrHiring.activeStafferRid,
+                );
                 const newStafferDetails = DEFAULT_STAFFER[trainingOrHiring.toLevel];
 
                 const existingStaffer = await ActiveStaffer.findOne({
                     where: { gameStateRid, activeStafferRid: trainingOrHiring.activeStafferRid },
                 });
+
+                const timeModifier = getTimeToAcquireModifier(passedGameModifiers, accordingStafferToTrain);
+                const finalTimeToAcquire = newStafferDetails.timeToAcquire * timeModifier;
 
                 await Promise.all([
                     ActiveStaffer.update(
@@ -135,7 +162,7 @@ export async function handleStartHiringOrTraining(
                     ),
                     ResolveGameEvent.create({
                         gameStateRid,
-                        resolvesOn: (currentGameClock + newStafferDetails.timeToAcquire) as IGameClock,
+                        resolvesOn: (currentGameClock + finalTimeToAcquire) as IGameClock,
                         eventDetails: {
                             playerRid,
                             trainerRid: trainingOrHiring.trainerRid,
@@ -147,7 +174,8 @@ export async function handleStartHiringOrTraining(
                     accordingModel.save(),
                 ]);
 
-                return newStafferDetails.costToAcquire;
+                const costModifier = getCostToAcquireModifier(passedGameModifiers, accordingStafferToTrain);
+                return newStafferDetails.costToAcquire * costModifier;
             }
 
             return 0;
@@ -160,9 +188,10 @@ export async function handleStartHiringOrTraining(
 export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done: DoneCallback) {
     const { gameStateRid, playerRid, gameClock } = job.data;
 
-    const [activePlayer, activePlayerStaffers] = await Promise.all([
+    const [activePlayer, activePlayerStaffers, passedGameModifiers] = await Promise.all([
         ActivePlayer.findOne({ where: { gameStateRid, playerRid } }),
         ActiveStaffer.findAll({ where: { gameStateRid, playerRid } }),
+        PassedGameModifier.findAll({ where: { gameStateRid } }),
     ]);
 
     if (activePlayer == null) {
@@ -185,6 +214,7 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
             gameStateRid,
             possibleTallyEvent.eventDetails,
             activePlayerStaffers,
+            passedGameModifiers,
         );
         activePlayer.politicalCapital += totalPayoutForPlayer;
     }
@@ -226,7 +256,10 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
 
     // Then any payouts from staffers
     const deltaInPoliticalCapital = activePlayerStaffers
-        .map((activeStaffer) => getPayoutForStaffer(activeStaffer))
+        .map((activeStaffer) => {
+            const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, activeStaffer);
+            return getPayoutForStaffer(activeStaffer) * effectivenessModifier;
+        })
         .reduce((previous, next) => previous + next, 0);
     activePlayer.politicalCapital += deltaInPoliticalCapital;
 
@@ -243,6 +276,8 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
             >,
             gameClock,
             startHiringOrTraining,
+            activePlayerStaffers,
+            passedGameModifiers,
         );
         activePlayer.politicalCapital -= deltaInPoliticalCapitalFromHiringAndTraining;
     }

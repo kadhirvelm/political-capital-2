@@ -122,6 +122,7 @@ describe("Process player works as expected", () => {
             activeResolutionRid,
             resolutionDetails: ALL_RESOLUTIONS[0],
             state: "passed",
+            createdOn: 0 as IGameClock,
         });
         await ActiveResolutionVote.create({
             gameStateRid,

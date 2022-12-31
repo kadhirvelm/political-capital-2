@@ -26,6 +26,8 @@ module.exports = {
                 type: Sequelize.STRING,
             },
         });
+
+        await queryInterface.addIndex("ActiveResolutionVote", ["gameStateRid"]);
     },
     async down(queryInterface) {
         await queryInterface.dropTable("ActiveResolutionVote");

@@ -2,7 +2,18 @@
  * Copyright (c) 2022 - KM
  */
 
-import { ALL_RESOLUTIONS, IActiveResolutionRid, IEvent, IGameClock, IPossibleEvent, ITallyResolution } from "@pc2/api";
+import {
+    ALL_RESOLUTIONS,
+    getTimeBetweenResolutionsModifier,
+    getTimePerResolutionModifier,
+    IActiveResolutionRid,
+    IBasicResolution,
+    IEvent,
+    IGameClock,
+    IPassedGameModifier,
+    IPossibleEvent,
+    ITallyResolution,
+} from "@pc2/api";
 import {
     ActiveResolution,
     ActiveResolutionVote,
@@ -10,23 +21,40 @@ import {
     PassedGameModifier,
     ResolveGameEvent,
 } from "@pc2/distributed-compute";
+import _ from "lodash";
 import { Op } from "sequelize";
+import { v4 } from "uuid";
 import {
     TIME_BETWEEN_RESOLUTIONS_IN_DAYS,
     TIME_FOR_EACH_RESOLUTION_IN_DAYS,
     TOTAL_DAYS_IN_GAME,
 } from "../constants/game";
-import _ from "lodash";
-import { v4 } from "uuid";
 
-async function createNewResolution(gameState: GameState) {
+function getCurrentStage(gameClock: IGameClock): IBasicResolution["stage"] {
+    const thirds = TOTAL_DAYS_IN_GAME * 0.3333;
+
+    if (gameClock < thirds) {
+        return "early";
+    }
+
+    if (gameClock < thirds * 2) {
+        return "middle";
+    }
+
+    return "late";
+}
+
+async function createNewResolution(gameState: GameState, passedGameModifiers: IPassedGameModifier[]) {
     const existingResolutions = await ActiveResolution.findAll({ where: { gameStateRid: gameState.gameStateRid } });
 
     const alreadySeenResolutions = existingResolutions.map((resolution) => resolution.resolutionDetails.title);
 
-    // TODO: filter based on the stage
+    const currentStage = getCurrentStage(gameState.gameClock);
     const allowedResolutions = ALL_RESOLUTIONS.filter((resolution) => {
-        return !alreadySeenResolutions.includes(resolution.title);
+        return (
+            !alreadySeenResolutions.includes(resolution.title) &&
+            (resolution.stage === "all" || resolution.stage === currentStage)
+        );
     });
     const randomResolution = _.sample(allowedResolutions);
 
@@ -38,6 +66,9 @@ async function createNewResolution(gameState: GameState) {
 
     const activeResolutionRid = v4() as IActiveResolutionRid;
 
+    const timePerResolutionModifier = getTimePerResolutionModifier(passedGameModifiers);
+    const finalTimePerResolution = TIME_FOR_EACH_RESOLUTION_IN_DAYS * timePerResolutionModifier;
+
     return Promise.all([
         ActiveResolution.create({
             gameStateRid: gameState.gameStateRid,
@@ -48,14 +79,18 @@ async function createNewResolution(gameState: GameState) {
         }),
         ResolveGameEvent.create({
             gameStateRid: gameState.gameStateRid,
-            resolvesOn: (gameState.gameClock + TIME_FOR_EACH_RESOLUTION_IN_DAYS) as IGameClock,
+            resolvesOn: (gameState.gameClock + finalTimePerResolution) as IGameClock,
             eventDetails: { type: "tally-resolution", activeResolutionRid },
             state: "active",
         }),
     ]);
 }
 
-async function resolveResolution(gameState: GameState, tallyResolution: ITallyResolution) {
+async function resolveResolution(
+    gameState: GameState,
+    tallyResolution: ITallyResolution,
+    passedGameModifiers: IPassedGameModifier[],
+) {
     const [activeResolution, allActiveVotes] = await Promise.all([
         ActiveResolution.findOne({ where: { activeResolutionRid: tallyResolution.activeResolutionRid } }),
         ActiveResolutionVote.findAll({
@@ -75,8 +110,14 @@ async function resolveResolution(gameState: GameState, tallyResolution: ITallyRe
         activeResolution.state = "failed";
     }
 
+    const timePerResolutionModifier = getTimePerResolutionModifier(passedGameModifiers);
+    const finalTimePerResolution = TIME_FOR_EACH_RESOLUTION_IN_DAYS * timePerResolutionModifier;
+
+    const timeBetweenResolutionsModifier = getTimeBetweenResolutionsModifier(passedGameModifiers);
+    const finalTimeBetweenResolutions = TIME_BETWEEN_RESOLUTIONS_IN_DAYS * timeBetweenResolutionsModifier;
+
     const timeForAnotherResolution =
-        gameState.gameClock + TIME_FOR_EACH_RESOLUTION_IN_DAYS + TIME_BETWEEN_RESOLUTIONS_IN_DAYS < TOTAL_DAYS_IN_GAME;
+        gameState.gameClock + finalTimePerResolution + finalTimeBetweenResolutions < TOTAL_DAYS_IN_GAME;
 
     await Promise.all([
         // Update the resolution state
@@ -85,14 +126,16 @@ async function resolveResolution(gameState: GameState, tallyResolution: ITallyRe
         activeResolution.state === "passed" && activeResolution.resolutionDetails.gameModifier !== undefined
             ? PassedGameModifier.create({
                   gameStateRid: gameState.gameStateRid,
+                  fromActiveResolutionRid: activeResolution.activeResolutionRid,
                   modifier: activeResolution.resolutionDetails.gameModifier,
+                  createdOn: gameState.gameClock,
               })
             : Promise.resolve({}),
         // If time permits, create a new resolution
         timeForAnotherResolution
             ? ResolveGameEvent.create({
                   gameStateRid: gameState.gameStateRid,
-                  resolvesOn: (gameState.gameClock + TIME_BETWEEN_RESOLUTIONS_IN_DAYS) as IGameClock,
+                  resolvesOn: (gameState.gameClock + finalTimeBetweenResolutions) as IGameClock,
                   eventDetails: { type: "new-resolution" },
                   state: "active",
               })
@@ -102,14 +145,17 @@ async function resolveResolution(gameState: GameState, tallyResolution: ITallyRe
 
 export async function resolveGameEvents(gameState: GameState) {
     const gameEventTypes: IPossibleEvent["type"][] = ["new-resolution", "tally-resolution"];
-    const gameEvents = await ResolveGameEvent.findAll({
-        where: {
-            gameStateRid: gameState.gameStateRid,
-            eventDetails: { type: { [Op.in]: gameEventTypes } },
-            resolvesOn: gameState.gameClock,
-            state: "active",
-        },
-    });
+    const [gameEvents, passedGameModifiers] = await Promise.all([
+        ResolveGameEvent.findAll({
+            where: {
+                gameStateRid: gameState.gameStateRid,
+                eventDetails: { type: { [Op.in]: gameEventTypes } },
+                resolvesOn: gameState.gameClock,
+                state: "active",
+            },
+        }),
+        PassedGameModifier.findAll({ where: { gameStateRid: gameState.gameStateRid } }),
+    ]);
 
     const completeEvent = (gameEvent: ResolveGameEvent) => {
         gameEvent.state = "complete";
@@ -124,10 +170,13 @@ export async function resolveGameEvents(gameState: GameState) {
                 finishTrainingStaffer: () => Promise.resolve({}),
                 startTrainingStaffer: () => Promise.resolve({}),
                 newResolution: () => {
-                    return Promise.all([createNewResolution(gameState), completeEvent(gameEvent)]);
+                    return Promise.all([createNewResolution(gameState, passedGameModifiers), completeEvent(gameEvent)]);
                 },
                 tallyResolution: (tallyResolution) => {
-                    return Promise.all([resolveResolution(gameState, tallyResolution), completeEvent(gameEvent)]);
+                    return Promise.all([
+                        resolveResolution(gameState, tallyResolution, passedGameModifiers),
+                        completeEvent(gameEvent),
+                    ]);
                 },
                 unknown: () => Promise.resolve({}),
             });

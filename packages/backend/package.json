@@ -38,7 +38,7 @@
         "lint": "eslint . --ext .ts,.tsx --cache",
         "lint:fix": "yarn lint --fix",
         "migrate": "yarn sequelize-cli db:migrate:undo:all && yarn sequelize-cli db:migrate",
-        "test": "jest --colors"
+        "test": "NODE_OPTIONS=--experimental-vm-modules jest --colors --detectOpenHandles"
     },
     "engines": {
         "node": "^18.12.1"

@@ -22,6 +22,8 @@ module.exports = {
                 type: Sequelize.STRING,
             },
         });
+
+        await queryInterface.addIndex("ResolveGameEvent", ["gameStateRid"]);
     },
     async down(queryInterface) {
         await queryInterface.dropTable("ResolveGameEvent");

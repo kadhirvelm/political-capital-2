@@ -10,6 +10,7 @@ import {
     IActiveResolutionVote,
     IActiveStaffer,
     IGameState,
+    IPassedGameModifier,
     IPlayer,
     IResolveGameEvent,
 } from "../types/politicalCapitalTwo";
@@ -28,6 +29,7 @@ export interface IIndexedResolveEvents {
 
 export interface IFullGameState {
     gameState: IGameState;
+    passedGameModifiers: IPassedGameModifier[];
     players: { [playerRid: IPlayerRid]: IPlayer };
     activePlayers: { [playerRid: IPlayerRid]: IActivePlayer };
     activeResolutions: IActiveResolution[];

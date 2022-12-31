@@ -17,15 +17,13 @@ export interface IStafferEffect {
     disableHiring?: boolean;
     /** If true, prevents training this type of staffer for the rest of the round. */
     disableTraining?: boolean;
-    /** If true, removes all instances of this staffer by disabling them. */
-    removeAll?: boolean;
     type: "staffer-effect";
 }
 
 export interface IResolutionEffect {
-    /** The time for each resolution. */
+    /** Percent multiplier on the time for each resolution. */
     timePerResolution?: number;
-    /** The time between the results of one resolution being announced and the next one starting. */
+    /** Percent multiplier on the time between resolutions. */
     timeBetweenResolutions?: number;
     /** A percent multiplier on the political capital payout for future resolutions, including this one. */
     payoutPerResolution?: number;

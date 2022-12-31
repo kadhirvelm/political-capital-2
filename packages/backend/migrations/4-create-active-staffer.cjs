@@ -24,6 +24,8 @@ module.exports = {
                 type: Sequelize.STRING,
             },
         });
+
+        await queryInterface.addIndex("ActiveStaffer", ["gameStateRid"]);
     },
     async down(queryInterface) {
         await queryInterface.dropTable("ActiveStaffer");

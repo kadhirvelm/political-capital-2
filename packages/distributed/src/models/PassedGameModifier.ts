@@ -17,7 +17,17 @@ export class PassedGameModifier extends Model<IPassedGameModifier> {
     declare gameStateRid: IPassedGameModifier["gameStateRid"];
 
     @Column({
+        type: DataTypes.STRING,
+    })
+    declare fromActiveResolutionRid: IPassedGameModifier["fromActiveResolutionRid"];
+
+    @Column({
         type: DataTypes.JSONB,
     })
     declare modifier: IPassedGameModifier["modifier"];
+
+    @Column({
+        type: DataTypes.INTEGER,
+    })
+    declare createdOn: IPassedGameModifier["createdOn"];
 }
