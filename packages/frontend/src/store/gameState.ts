@@ -3,6 +3,7 @@
  */
 
 import {
+    IActiveResolutionVote,
     IActiveStafferRid,
     IFullGameState,
     IPartialResolveGameEvent,
@@ -79,11 +80,25 @@ const gameState = createSlice({
             state.resolveEvents.players[playerRid].staffers[activeStafferRid] =
                 state.resolveEvents.players[playerRid].staffers[activeStafferRid].concat(resolveGameEvent);
         },
+        addVotes: (state, action: PayloadAction<IActiveResolutionVote[]>) => {
+            if (state.fullGameState === undefined) {
+                return state;
+            }
+
+            action.payload.forEach((vote) => {
+                state.fullGameState!.activePlayersVotes[vote.activeResolutionRid] =
+                    state.fullGameState?.activePlayersVotes[vote.activeResolutionRid] ?? {};
+                state.fullGameState!.activePlayersVotes[vote.activeResolutionRid][vote.activeStafferRid] =
+                    state.fullGameState!.activePlayersVotes[vote.activeResolutionRid][vote.activeStafferRid] ?? [];
+
+                state.fullGameState!.activePlayersVotes[vote.activeResolutionRid][vote.activeStafferRid].push(vote);
+            });
+        },
         setGameState: (state, action: PayloadAction<IFullGameState>) => {
             state.fullGameState = action.payload;
         },
     },
 });
 
-export const { handleGameMessage, addGameEventToStaffer, setGameState } = gameState.actions;
+export const { handleGameMessage, addVotes, addGameEventToStaffer, setGameState } = gameState.actions;
 export const LocalGameStateReducer = gameState.reducer;

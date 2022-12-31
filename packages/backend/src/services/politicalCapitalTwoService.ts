@@ -12,6 +12,7 @@ import {
     IResolveGameEvent,
     IStartHiringStaffer,
     IStartTrainingStaffer,
+    isVoter,
 } from "@pc2/api";
 import {
     ActiveResolution,
@@ -21,6 +22,7 @@ import {
     ResolveGameEvent,
 } from "@pc2/distributed-compute";
 import Express from "express";
+import _ from "lodash";
 import { Op } from "sequelize";
 
 export async function recruitStaffer(
@@ -208,34 +210,54 @@ export async function castVote(
         return undefined;
     }
 
-    if (votingStaffer == null) {
+    if (votingStaffer == null || !isVoter(votingStaffer.stafferDetails)) {
         response.status(400).send({
             error: `Cannot find a voting staffer with the rid: ${payload.votingStafferRid}. Please refresh your page and try again.`,
         });
         return undefined;
     }
 
+    if (votingStaffer.state === "disabled") {
+        response
+            .status(400)
+            .send({ error: `This staffer is currently busy, please select another one and try again.` });
+        return undefined;
+    }
+
     const totalAllowedVotes = getTotalAllowedVotes(votingStaffer);
-    if (totalAllowedVotes >= existingVotes.length) {
+    if (existingVotes.length >= totalAllowedVotes) {
         response.status(400).send({ error: `This staffer has already voted, please refresh your page and try again.` });
         return undefined;
     }
 
-    if (totalAllowedVotes < payload.votes.length) {
-        response.status(400).send({
-            error: `This staffer is only allowed ${totalAllowedVotes}, but ${payload.votes.length} were sent. Please try again.`,
-        });
-        return undefined;
-    }
+    const newActiveVotes: IActiveResolutionVote[] = [];
 
-    const newActiveVotes = payload.votes.map((vote): IActiveResolutionVote => {
-        return {
-            gameStateRid: payload.gameStateRid,
-            activeResolutionRid: payload.activeResolutionRid,
-            activeStafferRid: payload.votingStafferRid,
-            vote,
-        };
-    });
+    if (votingStaffer.stafferDetails.isIndependent) {
+        _.range(totalAllowedVotes).forEach(() => {
+            newActiveVotes.push({
+                gameStateRid: payload.gameStateRid,
+                activeResolutionRid: payload.activeResolutionRid,
+                activeStafferRid: payload.votingStafferRid,
+                vote: "passed",
+            });
+
+            newActiveVotes.push({
+                gameStateRid: payload.gameStateRid,
+                activeResolutionRid: payload.activeResolutionRid,
+                activeStafferRid: payload.votingStafferRid,
+                vote: "failed",
+            });
+        });
+    } else {
+        _.range(totalAllowedVotes).forEach(() => {
+            newActiveVotes.push({
+                gameStateRid: payload.gameStateRid,
+                activeResolutionRid: payload.activeResolutionRid,
+                activeStafferRid: payload.votingStafferRid,
+                vote: payload.vote,
+            });
+        });
+    }
 
     await ActiveResolutionVote.bulkCreate(newActiveVotes);
 

@@ -34,6 +34,7 @@ export interface IActiveResolution {
     activeResolutionRid: IActiveResolutionRid;
     resolutionDetails: IBasicResolution;
     state: "active" | "passed" | "failed";
+    createdOn: IGameClock;
 }
 
 export interface IActiveResolutionVote {

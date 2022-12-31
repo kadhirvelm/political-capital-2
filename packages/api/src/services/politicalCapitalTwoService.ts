@@ -37,7 +37,7 @@ export interface IPoliticalCapitalTwoService extends IService {
             gameStateRid: IGameStateRid;
             votingStafferRid: IActiveStafferRid;
             activeResolutionRid: IActiveResolutionRid;
-            votes: IActiveResolutionVote["vote"][];
+            vote: IActiveResolutionVote["vote"];
         };
         response: {
             votes: IActiveResolutionVote[];

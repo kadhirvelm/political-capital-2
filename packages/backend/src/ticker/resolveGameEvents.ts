@@ -44,6 +44,7 @@ async function createNewResolution(gameState: GameState) {
             activeResolutionRid,
             resolutionDetails: randomResolution,
             state: "active",
+            createdOn: gameState.gameClock,
         }),
         ResolveGameEvent.create({
             gameStateRid: gameState.gameStateRid,

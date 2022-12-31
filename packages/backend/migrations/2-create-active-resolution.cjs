@@ -20,6 +20,10 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.STRING,
             },
+            createdOn: {
+                allowNull: false,
+                type: Sequelize.INTEGER,
+            },
         });
     },
     async down(queryInterface) {

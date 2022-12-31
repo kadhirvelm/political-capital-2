@@ -1,0 +1,33 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables.scss";
+
+.description {
+    color: $gray;
+}
+
+.title {
+    margin-bottom: 10px;
+}
+
+.resolutionFooter {
+    display: flex;
+    flex-direction: column;
+}
+
+.politicalCapitalPayout {
+    color: $green;
+    margin-left: 10px;
+}
+
+.tallyContainer {
+    display: flex;
+    align-items: center;
+}
+
+.tallyOn {
+    color: $gray;
+    margin-right: 12px;
+}

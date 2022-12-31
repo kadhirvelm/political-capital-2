@@ -10,11 +10,11 @@ import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
 import styles from "./ResolveEvent.module.scss";
 
-export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents }> = ({ event }) => {
+export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefined }> = ({ event }) => {
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
-    if (player === undefined || fullGameState === undefined) {
+    if (player === undefined || fullGameState === undefined || event === undefined) {
         return null;
     }
 
@@ -84,8 +84,8 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents }> = ({ ev
                     </div>
                 );
             },
-            newResolution: () => <div />,
-            tallyResolution: () => <div />,
+            newResolution: () => <div>Create new resolution</div>,
+            tallyResolution: () => <div>Tally current resolution</div>,
             unknown: () => <div />,
         });
     };

@@ -14,6 +14,7 @@ export interface IBasicStaffer {
 
 export interface IVoter {
     votes: number;
+    isIndependent?: boolean;
 }
 
 export interface IGenerator {
@@ -63,6 +64,7 @@ export interface IIndependentRepresentative extends IBasicStaffer, IVoter {
     costToAcquire: 4;
     timeToAcquire: 12;
     votes: 1;
+    isIndependent: true;
     type: "independentRepresentative";
 }
 

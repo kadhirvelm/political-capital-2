@@ -2,6 +2,8 @@
  * Copyright (c) 2022 - KM
  */
 
+// NOTE: this is a generated file, please run yarn convert in the api package to regenerate it.
+
 import {
     IIntern,
     INewHire,
@@ -71,6 +73,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
         costToAcquire: 4,
         timeToAcquire: 12,
         votes: 1,
+        isIndependent: true,
         type: "independentRepresentative",
     },
     phoneBanker: {

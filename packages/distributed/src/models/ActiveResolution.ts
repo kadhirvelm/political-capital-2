@@ -31,4 +31,9 @@ export class ActiveResolution extends Model<IActiveResolution> {
         type: DataTypes.STRING,
     })
     declare state: IActiveResolution["state"];
+
+    @Column({
+        type: DataTypes.NUMBER,
+    })
+    declare createdOn: IActiveResolution["createdOn"];
 }
