@@ -16,10 +16,11 @@ import {
 } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
-import { getVoters } from "../../selectors/getVoters";
+import { getVoters, getVotesAlreadyCast } from "../../selectors/getVoters";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addVotes } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
+import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./PlayerVoters.module.scss";
 
 export const PlayerVoters: React.FC<{
@@ -30,7 +31,8 @@ export const PlayerVoters: React.FC<{
     const dispatch = usePoliticalCapitalDispatch();
 
     const voters = usePoliticalCapitalSelector(getVoters);
-    const votesAlreadyCast = usePoliticalCapitalSelector(
+    const votesCastByPlayerVoters = usePoliticalCapitalSelector(getVotesAlreadyCast(activeResolutionRid));
+    const votesAlreadyCastOnResolution = usePoliticalCapitalSelector(
         (s) => s.localGameState.fullGameState?.activePlayersVotes?.[activeResolutionRid],
     );
 
@@ -40,7 +42,8 @@ export const PlayerVoters: React.FC<{
         [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote["vote"];
     }>({});
 
-    const getStafferExistingVote = (activeStafferRid: IActiveStafferRid) => votesAlreadyCast?.[activeStafferRid]?.[0];
+    const getStafferExistingVote = (activeStafferRid: IActiveStafferRid) =>
+        votesAlreadyCastOnResolution?.[activeStafferRid]?.[0];
 
     React.useEffect(() => {
         const newCastVotesDefaultState: { [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote["vote"] } = {};
@@ -121,9 +124,32 @@ export const PlayerVoters: React.FC<{
         dispatch(addVotes(newVotes.votes));
     };
 
+    const maybeRenderVotesAlreadyCast = () => {
+        if (votesCastByPlayerVoters.length === 0) {
+            return undefined;
+        }
+
+        const totalYes = votesCastByPlayerVoters.filter((vote) => vote.vote === "passed").length;
+        const totalAbstain = votesCastByPlayerVoters.filter((vote) => vote.vote === "abstain").length;
+        const totalNo = votesCastByPlayerVoters.filter((vote) => vote.vote === "failed").length;
+
+        return (
+            <div className={styles.alreadyCastVotes}>
+                <div>{"("}</div>
+                <div>{totalYes} Yes,</div>
+                <div>{totalAbstain} Abstain,</div>
+                <div>{totalNo} No</div>
+                <div>{")"}</div>
+            </div>
+        );
+    };
+
     return (
         <div className={styles.availableVoters}>
-            <div className={styles.availableVotersText}>Available voters</div>
+            <div className={styles.availableVotersText}>
+                <div>Available voters</div>
+                {maybeRenderVotesAlreadyCast()}
+            </div>
             <div className={styles.votersContainer}>
                 {voters.map((voter) => {
                     const { stafferDetails } = voter;
@@ -136,9 +162,14 @@ export const PlayerVoters: React.FC<{
 
                     return (
                         <div className={styles.singleVote} key={voter.activeStafferRid}>
-                            <div>
-                                <div>{voter.stafferDetails.displayName}</div>
-                                <div>{DEFAULT_STAFFER[voter.stafferDetails.type].displayName}</div>
+                            <div className={styles.stafferDetails}>
+                                <div className={styles.nameAndType}>
+                                    <div>{voter.stafferDetails.displayName},</div>
+                                    <div>{DEFAULT_STAFFER[voter.stafferDetails.type].displayName}</div>
+                                </div>
+                                <div className={styles.description}>
+                                    {descriptionOfStaffer[voter.stafferDetails.type]}
+                                </div>
                             </div>
                             <div className={styles.votingContainer}>
                                 {stafferDetails.isIndependent

@@ -39,6 +39,17 @@
     margin-bottom: 10px;
 }
 
+.alreadyCastVotes {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    color: $gray;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}
+
 .votersContainer {
     display: flex;
     flex-direction: column;
@@ -54,6 +65,21 @@
     border-radius: 3px;
     border: 1px solid $gray;
     padding: 5px 10px;
+}
+
+.stafferDetails {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+}
+
+.nameAndType {
+    display: flex;
+    align-items: center;
+
+    > :first-child {
+        margin-right: 3px;
+    }
 }
 
 .votingContainer {

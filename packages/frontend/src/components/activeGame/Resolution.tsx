@@ -4,12 +4,19 @@
 
 import { Card, CardBody } from "@chakra-ui/react";
 import { IActiveResolution, IEvent } from "@pc2/api";
+import classNames from "classnames";
+import { flatten } from "lodash-es";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { getFakeDate } from "../common/ServerStatus";
 import { GameModifier } from "./GameModifier";
 import styles from "./Resolution.module.scss";
 
 export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolution }) => {
+    const votesOnResolution = usePoliticalCapitalSelector((s) =>
+        flatten(
+            Object.values(s.localGameState.fullGameState?.activePlayersVotes[resolution.activeResolutionRid] ?? {}),
+        ),
+    );
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
 
     if (resolveEvents === undefined) {
@@ -21,6 +28,53 @@ export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolu
             IEvent.isTallyResolution(event.eventDetails) &&
             event.eventDetails.activeResolutionRid === resolution?.activeResolutionRid,
     );
+
+    const maybeRenderTotalVotesCast = () => {
+        if (votesOnResolution.length === 0) {
+            return <div>No votes cast yet.</div>;
+        }
+
+        const totalYes = votesOnResolution.filter((vote) => vote.vote === "passed").length;
+        const totalAbstain = votesOnResolution.filter((vote) => vote.vote === "abstain").length;
+        const totalNo = votesOnResolution.filter((vote) => vote.vote === "failed").length;
+
+        const willPass = totalYes > totalNo;
+
+        return (
+            <div className={styles.totalVotes}>
+                <div className={styles.onTrack}>
+                    <div>Votes cast</div>
+                </div>
+                <div className={styles.singleVoteCategory}>
+                    <div className={styles.total}>Total</div>
+                    <div className={styles.divider} />
+                    <div>{votesOnResolution.length}</div>
+                </div>
+                <div className={styles.singleVoteCategory}>
+                    <div className={styles.yes}>Yes</div>
+                    <div className={styles.divider} />
+                    <div>{totalYes}</div>
+                </div>
+                <div className={styles.singleVoteCategory}>
+                    <div className={styles.abstain}>Abstain</div>
+                    <div className={styles.divider} />
+                    <div>{totalAbstain}</div>
+                </div>
+                <div className={styles.singleVoteCategory}>
+                    <div className={styles.no}>No</div>
+                    <div className={styles.divider} />
+                    <div>{totalNo}</div>
+                </div>
+                <div className={styles.onTrackTo}>
+                    <div className={styles.description}>On track to</div>
+                    <div className={styles.divider} />
+                    <div className={classNames({ [styles.yes]: willPass, [styles.no]: !willPass })}>
+                        {willPass ? "Pass" : "Fail"}
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <Card variant="elevated">
@@ -39,6 +93,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolu
                         <div className={styles.tallyOn}>Will tally on</div>
                         {tallyOnEvent !== undefined ? getFakeDate(tallyOnEvent.resolvesOn) : "Pending"}
                     </div>
+                    {maybeRenderTotalVotesCast()}
                 </div>
             </CardBody>
         </Card>

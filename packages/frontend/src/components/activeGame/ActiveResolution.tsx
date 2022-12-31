@@ -8,6 +8,8 @@ import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { PlayerVoters } from "./PlayerVoters";
 import { Resolution } from "./Resolution";
 import { ResolveEvent } from "./ResolveEvent";
+import styles from "./ActiveResolution.module.scss";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 export const ActiveResolution: React.FC<{}> = () => {
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
@@ -31,11 +33,16 @@ export const ActiveResolution: React.FC<{}> = () => {
     };
 
     const maybeRenderSeeResolutionHistory = () => {
-        if (resolutionsSorted.length === 0) {
+        if (resolutionsSorted.length <= 1) {
             return undefined;
         }
 
-        return <div>See previous resolutions</div>;
+        return (
+            <div className={styles.seePreviousResolutions}>
+                <span>See previous {resolutionsSorted.length - 1} resolutions</span>
+                <ArrowForwardIcon />
+            </div>
+        );
     };
 
     const maybeRenderVotes = () => {
