@@ -36,10 +36,11 @@ export interface IIntern extends IBasicStaffer {
     type: "intern";
 }
 
-export interface INewHire extends IBasicStaffer {
+export interface INewHire extends IBasicStaffer, IGenerator {
     upgradedFrom: ["intern"];
     costToAcquire: 1;
     timeToAcquire: 6;
+    payout: 0.25;
     type: "newHire";
 }
 
@@ -66,6 +67,31 @@ export interface IIndependentRepresentative extends IBasicStaffer, IVoter {
     votes: 1;
     isIndependent: true;
     type: "independentRepresentative";
+}
+
+export interface ISenator extends IBasicStaffer, IVoter {
+    upgradedFrom: ["seniorRepresentative"];
+    costToAcquire: 6;
+    timeToAcquire: 20;
+    votes: 3;
+    type: "senator";
+}
+
+export interface ISeasonedSenator extends IBasicStaffer, IVoter {
+    upgradedFrom: ["senator"];
+    costToAcquire: 8;
+    timeToAcquire: 20;
+    votes: 4;
+    type: "seasonedSenator";
+}
+
+export interface IIndependentSenator extends IBasicStaffer, IVoter {
+    upgradedFrom: ["senator"];
+    costToAcquire: 6;
+    timeToAcquire: 20;
+    votes: 3;
+    isIndependent: true;
+    type: "independentSenator";
 }
 
 export interface IPhoneBanker extends IBasicStaffer, IGenerator {

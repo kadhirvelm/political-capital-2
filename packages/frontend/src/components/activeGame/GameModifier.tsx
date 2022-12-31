@@ -75,12 +75,12 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
         const maybeRenderAnd = () => (index !== 0 ? ", and " : "");
 
         if (staffer === "everyone") {
-            return <div>{maybeRenderAnd()}Everyone</div>;
+            return <div key="everyone">{maybeRenderAnd()}Everyone</div>;
         }
 
         if (staffer === "voter") {
             return (
-                <div>
+                <div key="voter">
                     {maybeRenderAnd()}
                     {allVoters.join(", and ")}
                 </div>
@@ -89,7 +89,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
 
         if (staffer === "generator") {
             return (
-                <div>
+                <div key="generator">
                     {maybeRenderAnd()}
                     {allGenerators.join(", and ")}
                 </div>
@@ -98,7 +98,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
 
         if (staffer === "recruit") {
             return (
-                <div>
+                <div key="recruit">
                     {maybeRenderAnd()}
                     {allRecruits.join(", and ")}
                 </div>
@@ -107,14 +107,14 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
 
         if (staffer === "trainer") {
             return (
-                <div>
+                <div key="trainer">
                     {maybeRenderAnd()}
                     {allTrainers.join(", and ")}
                 </div>
             );
         }
 
-        return <div>{`${maybeRenderAnd()}${DEFAULT_STAFFER[staffer].displayName}s`}</div>;
+        return <div key={staffer}>{`${maybeRenderAnd()}${DEFAULT_STAFFER[staffer].displayName}s`}</div>;
     };
 
     return (

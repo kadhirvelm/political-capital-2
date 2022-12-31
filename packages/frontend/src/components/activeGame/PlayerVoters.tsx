@@ -23,6 +23,7 @@ import { addVotes } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./PlayerVoters.module.scss";
+import { ResolveEvent } from "./ResolveEvent";
 
 export const PlayerVoters: React.FC<{
     gameStateRid: IGameStateRid;
@@ -31,6 +32,7 @@ export const PlayerVoters: React.FC<{
     const toast = useToast();
     const dispatch = usePoliticalCapitalDispatch();
 
+    const isPaused = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState?.gameState.state !== "active");
     const voters = usePoliticalCapitalSelector(getVoters);
     const votesCastByPlayerVoters = usePoliticalCapitalSelector(getVotesAlreadyCast(activeResolutionRid));
     const votesAlreadyCastOnResolution = usePoliticalCapitalSelector(
@@ -51,9 +53,9 @@ export const PlayerVoters: React.FC<{
         const newCastVotesDefaultState: { [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote["vote"] } = {};
 
         voters.forEach((voter) => {
-            const maybeExistingVote = getStafferExistingVote(voter.activeStafferRid);
-            newCastVotesDefaultState[voter.activeStafferRid] =
-                maybeExistingVote?.vote ?? castVotes[voter.activeStafferRid] ?? "abstain";
+            const maybeExistingVote = getStafferExistingVote(voter.staffer.activeStafferRid);
+            newCastVotesDefaultState[voter.staffer.activeStafferRid] =
+                maybeExistingVote?.vote ?? castVotes[voter.staffer.activeStafferRid] ?? "abstain";
         });
 
         setCastVotes(newCastVotesDefaultState);
@@ -155,35 +157,51 @@ export const PlayerVoters: React.FC<{
             </div>
             <div className={styles.votersContainer}>
                 {voters.map((voter) => {
-                    const { stafferDetails } = voter;
+                    const { stafferDetails } = voter.staffer;
                     if (!isVoter(stafferDetails)) {
                         return undefined;
                     }
 
-                    const totalVotes = getTotalAllowedVotes(voter);
-                    const maybeExistingVote = getStafferExistingVote(voter.activeStafferRid);
+                    const totalVotes = getTotalAllowedVotes(voter.staffer);
+                    const maybeExistingVote = getStafferExistingVote(voter.staffer.activeStafferRid);
 
                     return (
-                        <div className={styles.singleVote} key={voter.activeStafferRid}>
+                        <div
+                            className={classNames(styles.singleVote, {
+                                [styles.disabled]: voter.activeEvent !== undefined,
+                            })}
+                            key={voter.staffer.activeStafferRid}
+                        >
                             <div className={styles.stafferDetails}>
                                 <div className={styles.nameAndType}>
-                                    <div>{voter.stafferDetails.displayName},</div>
-                                    <div>{DEFAULT_STAFFER[voter.stafferDetails.type].displayName}</div>
+                                    <div>{voter.staffer.stafferDetails.displayName},</div>
+                                    <div>{DEFAULT_STAFFER[voter.staffer.stafferDetails.type].displayName}</div>
                                 </div>
                                 <div className={styles.description}>
-                                    {descriptionOfStaffer(resolvedGameModifiers)[voter.stafferDetails.type]}
+                                    {descriptionOfStaffer(resolvedGameModifiers)[voter.staffer.stafferDetails.type]}
                                 </div>
-                            </div>
-                            <div className={styles.votingContainer}>
-                                {stafferDetails.isIndependent
-                                    ? renderIndependentVotes(totalVotes)
-                                    : renderNormalVotes(voter, totalVotes)}
-                                {maybeExistingVote === undefined && (
-                                    <Button isLoading={isLoading} onClick={onCastVote(voter.activeStafferRid)}>
-                                        Cast votes
-                                    </Button>
+                                {voter.activeEvent !== undefined && (
+                                    <div className={styles.activeEvent}>
+                                        <ResolveEvent event={voter.activeEvent} />
+                                    </div>
                                 )}
                             </div>
+                            {voter.activeEvent === undefined && (
+                                <div className={styles.votingContainer}>
+                                    {stafferDetails.isIndependent
+                                        ? renderIndependentVotes(totalVotes)
+                                        : renderNormalVotes(voter.staffer, totalVotes)}
+                                    {maybeExistingVote === undefined && (
+                                        <Button
+                                            isLoading={isLoading}
+                                            disabled={isPaused}
+                                            onClick={onCastVote(voter.staffer.activeStafferRid)}
+                                        >
+                                            Cast votes
+                                        </Button>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     );
                 })}

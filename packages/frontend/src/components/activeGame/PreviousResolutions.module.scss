@@ -5,14 +5,7 @@
 @import "../../styles/variables.scss";
 
 .backButton {
-    display: flex;
     margin-bottom: 10px;
-    color: $gray;
-    align-items: center;
-
-    > :first-child {
-        margin-right: 5px;
-    }
 }
 
 .resolutionsContainer {

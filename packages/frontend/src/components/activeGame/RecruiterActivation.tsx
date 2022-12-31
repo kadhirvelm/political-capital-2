@@ -45,6 +45,7 @@ export const RecruiterActivation: React.FC<{
     const dispatch = usePoliticalCapitalDispatch();
 
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
+    const isPaused = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState?.gameState.state !== "active");
 
     const [isLoading, setIsLoading] = React.useState(false);
     const [confirmStaffer, setConfirmStaffer] = React.useState<IPossibleStaffer | undefined>(undefined);
@@ -213,7 +214,12 @@ export const RecruiterActivation: React.FC<{
                     <ModalCloseButton />
                     <ModalBody>{maybeRenderJobPostingBody()}</ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green" isLoading={isLoading} onClick={onConfirmSendingOutJobPosting}>
+                        <Button
+                            colorScheme="green"
+                            disabled={isPaused}
+                            isLoading={isLoading}
+                            onClick={onConfirmSendingOutJobPosting}
+                        >
                             Send out job posting
                         </Button>
                     </ModalFooter>

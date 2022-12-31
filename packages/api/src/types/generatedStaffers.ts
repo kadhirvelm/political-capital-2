@@ -10,6 +10,9 @@ import {
     IRepresentative,
     ISeniorRepresentative,
     IIndependentRepresentative,
+    ISenator,
+    ISeasonedSenator,
+    IIndependentSenator,
     IPhoneBanker,
     ISocialMediaManager,
     IRecruiter,
@@ -25,6 +28,9 @@ export interface IAllStaffers {
     representative: IRepresentative;
     seniorRepresentative: ISeniorRepresentative;
     independentRepresentative: IIndependentRepresentative;
+    senator: ISenator;
+    seasonedSenator: ISeasonedSenator;
+    independentSenator: IIndependentSenator;
     phoneBanker: IPhoneBanker;
     socialMediaManager: ISocialMediaManager;
     recruiter: IRecruiter;
@@ -49,6 +55,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
         upgradedFrom: ["intern"],
         costToAcquire: 1,
         timeToAcquire: 6,
+        payout: 0.25,
         type: "newHire",
     },
     representative: {
@@ -75,6 +82,31 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
         votes: 1,
         isIndependent: true,
         type: "independentRepresentative",
+    },
+    senator: {
+        displayName: "Senator",
+        upgradedFrom: ["seniorRepresentative"],
+        costToAcquire: 6,
+        timeToAcquire: 20,
+        votes: 3,
+        type: "senator",
+    },
+    seasonedSenator: {
+        displayName: "Seasoned senator",
+        upgradedFrom: ["senator"],
+        costToAcquire: 8,
+        timeToAcquire: 20,
+        votes: 4,
+        type: "seasonedSenator",
+    },
+    independentSenator: {
+        displayName: "Independent senator",
+        upgradedFrom: ["senator"],
+        costToAcquire: 6,
+        timeToAcquire: 20,
+        votes: 3,
+        isIndependent: true,
+        type: "independentSenator",
     },
     phoneBanker: {
         displayName: "Phone banker",
@@ -147,6 +179,18 @@ export namespace IStaffer {
         return staffer.type === "independentRepresentative";
     };
 
+    export const isSenator = (staffer: IPossibleStaffer): staffer is ISenator => {
+        return staffer.type === "senator";
+    };
+
+    export const isSeasonedSenator = (staffer: IPossibleStaffer): staffer is ISeasonedSenator => {
+        return staffer.type === "seasonedSenator";
+    };
+
+    export const isIndependentSenator = (staffer: IPossibleStaffer): staffer is IIndependentSenator => {
+        return staffer.type === "independentSenator";
+    };
+
     export const isPhoneBanker = (staffer: IPossibleStaffer): staffer is IPhoneBanker => {
         return staffer.type === "phoneBanker";
     };
@@ -190,6 +234,18 @@ export namespace IStaffer {
 
         if (isIndependentRepresentative(value)) {
             return visitor.independentRepresentative(value);
+        }
+
+        if (isSenator(value)) {
+            return visitor.senator(value);
+        }
+
+        if (isSeasonedSenator(value)) {
+            return visitor.seasonedSenator(value);
+        }
+
+        if (isIndependentSenator(value)) {
+            return visitor.independentSenator(value);
         }
 
         if (isPhoneBanker(value)) {

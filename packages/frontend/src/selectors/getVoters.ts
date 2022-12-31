@@ -12,18 +12,36 @@ import {
 } from "@pc2/api";
 import { createSelector } from "@reduxjs/toolkit";
 import { State } from "../store/createStore";
+import { IUserFacingIndexedResolveEvents, IUserFacingResolveEvents } from "../store/gameState";
+
+export interface IVoterAndActiveEvent {
+    staffer: IActiveStaffer;
+    activeEvent: IUserFacingResolveEvents | undefined;
+}
 
 export const getVoters = createSelector(
     (state: State) => state.playerState.player,
     (state: State) => state.localGameState.fullGameState,
-    (playerState: IPlayer | undefined, fullGamState: IFullGameState | undefined) => {
-        if (playerState === undefined || fullGamState === undefined) {
+    (state: State) => state.localGameState.resolveEvents,
+    (
+        playerState: IPlayer | undefined,
+        fullGameState: IFullGameState | undefined,
+        resolveEvent: IUserFacingIndexedResolveEvents | undefined,
+    ): IVoterAndActiveEvent[] => {
+        if (playerState === undefined || fullGameState === undefined || resolveEvent === undefined) {
             return [];
         }
 
-        return fullGamState.activePlayersStaffers[playerState.playerRid].filter((staffer) => {
-            return isVoter(staffer.stafferDetails);
-        });
+        return fullGameState.activePlayersStaffers[playerState.playerRid]
+            .filter((staffer) => {
+                return isVoter(staffer.stafferDetails);
+            })
+            .map((staffer) => ({
+                activeEvent: resolveEvent.players[playerState.playerRid]?.staffers[staffer.activeStafferRid]?.find(
+                    (event) => event.state === "active",
+                ),
+                staffer,
+            }));
     },
 );
 
@@ -31,7 +49,7 @@ export const getVotesAlreadyCast = (activeResolutionRid: IActiveResolutionRid) =
     createSelector(
         getVoters,
         (state: State) => state.localGameState.fullGameState,
-        (playerVoters: IActiveStaffer[], fullGameState: IFullGameState | undefined) => {
+        (playerVoters: IVoterAndActiveEvent[], fullGameState: IFullGameState | undefined) => {
             if (fullGameState === undefined) {
                 return [];
             }
@@ -39,7 +57,8 @@ export const getVotesAlreadyCast = (activeResolutionRid: IActiveResolutionRid) =
             const alreadyCastVotes: IActiveResolutionVote[] = [];
             playerVoters.forEach((playerVoter) => {
                 alreadyCastVotes.push(
-                    ...(fullGameState.activePlayersVotes[activeResolutionRid]?.[playerVoter.activeStafferRid] ?? []),
+                    ...(fullGameState.activePlayersVotes[activeResolutionRid]?.[playerVoter.staffer.activeStafferRid] ??
+                        []),
                 );
             });
 

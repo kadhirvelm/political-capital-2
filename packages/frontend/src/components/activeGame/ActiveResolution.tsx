@@ -2,15 +2,15 @@
  * Copyright (c) 2022 - KM
  */
 
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { IEvent } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
+import styles from "./ActiveResolution.module.scss";
 import { PlayerVoters } from "./PlayerVoters";
+import { PreviousResolutions } from "./PreviousResolutions";
 import { Resolution } from "./Resolution";
 import { ResolveEvent } from "./ResolveEvent";
-import styles from "./ActiveResolution.module.scss";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
-import { PreviousResolutions } from "./PreviousResolutions";
 
 export const ActiveResolution: React.FC<{}> = () => {
     const [isViewingPreviousResolutions, setIsViewingPreviousResolutions] = React.useState(false);
@@ -25,6 +25,24 @@ export const ActiveResolution: React.FC<{}> = () => {
     const resolutionsSorted = fullGameState.activeResolutions
         .slice()
         .sort((a, b) => (a.createdOn > b.createdOn ? -1 : 1));
+
+    const maybeRenderNextResolution = () => {
+        const maybeVoteOnResolution = resolutionsSorted[0];
+        if (maybeVoteOnResolution !== undefined && maybeVoteOnResolution.state === "active") {
+            return undefined;
+        }
+
+        const nextResolutionEvent = resolveEvents.game
+            .slice()
+            .sort((a, b) => (a.resolvesOn > b.resolvesOn ? -1 : 1))
+            .find((event) => IEvent.isNewResolution(event.eventDetails));
+
+        return (
+            <div className={styles.resolveEventsContainer}>
+                <ResolveEvent event={nextResolutionEvent} />
+            </div>
+        );
+    };
 
     const maybeRenderMostRecentResolution = () => {
         const maybeRenderResolution = resolutionsSorted[0];
@@ -53,17 +71,8 @@ export const ActiveResolution: React.FC<{}> = () => {
 
     const maybeRenderVotes = () => {
         const maybeVoteOnResolution = resolutionsSorted[0];
-        if (maybeVoteOnResolution === undefined || maybeVoteOnResolution.state !== "active") {
-            const nextResolutionEvent = resolveEvents.game
-                .slice()
-                .sort((a, b) => (a.resolvesOn > b.resolvesOn ? -1 : 1))
-                .find((event) => IEvent.isNewResolution(event.eventDetails));
-
-            return (
-                <div className={styles.resolveEventsContainer}>
-                    <ResolveEvent event={nextResolutionEvent} />
-                </div>
-            );
+        if (maybeVoteOnResolution === undefined) {
+            return undefined;
         }
 
         return (
@@ -81,6 +90,7 @@ export const ActiveResolution: React.FC<{}> = () => {
 
         return (
             <>
+                {maybeRenderNextResolution()}
                 {maybeRenderMostRecentResolution()}
                 {maybeRenderSeeResolutionHistory()}
                 {maybeRenderVotes()}

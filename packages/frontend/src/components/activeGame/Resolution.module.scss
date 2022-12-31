@@ -17,6 +17,12 @@
     flex-direction: column;
 }
 
+.payoutContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
 .politicalCapitalPayout {
     color: $green;
     margin-left: 10px;

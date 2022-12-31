@@ -67,6 +67,10 @@
     padding: 5px 10px;
 }
 
+.disabled {
+    background: rgba($gray, 0.15);
+}
+
 .stafferDetails {
     display: flex;
     flex-direction: column;
@@ -80,6 +84,10 @@
     > :first-child {
         margin-right: 3px;
     }
+}
+
+.activeEvent {
+    margin: 10px 0;
 }
 
 .votingContainer {

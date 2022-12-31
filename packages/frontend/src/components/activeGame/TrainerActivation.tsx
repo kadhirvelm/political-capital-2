@@ -274,7 +274,12 @@ export const TrainerActivation: React.FC<{
                     <ModalCloseButton />
                     <ModalBody>{maybeRenderTrainStafferBody()}</ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="green" isLoading={isLoading} onClick={onConfirmTrainStaffer}>
+                        <Button
+                            colorScheme="green"
+                            disabled={fullGameState.gameState.state !== "active"}
+                            isLoading={isLoading}
+                            onClick={onConfirmTrainStaffer}
+                        >
                             Train staffer
                         </Button>
                     </ModalFooter>

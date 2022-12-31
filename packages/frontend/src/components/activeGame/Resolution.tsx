@@ -34,7 +34,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolu
 
     const maybeRenderTotalVotesCast = () => {
         if (votesOnResolution.length === 0) {
-            return <div>No votes cast yet.</div>;
+            return <div className={classNames(styles.totalVotes, styles.description)}>No votes cast yet</div>;
         }
 
         const totalYes = votesOnResolution.filter((vote) => vote.vote === "passed").length;
@@ -84,7 +84,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolu
     const renderFooter = () => {
         if (resolution.state === "active") {
             return (
-                <>
+                <div className={styles.payoutContainer}>
                     <div>
                         <span className={styles.description}>PC per vote</span>
                         <span className={styles.politicalCapitalPayout}>
@@ -99,7 +99,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolu
                         {tallyOnEvent !== undefined ? getFakeDate(tallyOnEvent.resolvesOn) : "Pending"}
                     </div>
                     {maybeRenderTotalVotesCast()}
-                </>
+                </div>
             );
         }
 
