@@ -9,6 +9,7 @@ import * as React from "react";
 import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { getStafferCategory } from "../../utility/categorizeStaffers";
+import { isStafferBusy } from "../../utility/isStafferBusy";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { MinimalResolveEvent } from "../activeGame/ResolveEvent";
 import styles from "./StafferCard.module.scss";
@@ -35,7 +36,7 @@ export const StafferCard: React.FC<{ staffer: IActiveStaffer; isPlayerStaffer?: 
         );
     })();
 
-    const isBusy = maybeActiveEvents.length > 0;
+    const isBusy = isStafferBusy(staffer, resolveEvents, playerRid);
 
     const maybeRenderEvents = () => {
         if (maybeActiveEvents.length === 0) {

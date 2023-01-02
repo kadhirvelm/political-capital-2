@@ -94,11 +94,19 @@ const gameState = createSlice({
                 state.fullGameState!.activePlayersVotes[vote.activeResolutionRid][vote.activeStafferRid].push(vote);
             });
         },
+        payPoliticalCapital: (state, action: PayloadAction<{ cost: number; playerRid: IPlayerRid }>) => {
+            if (state.fullGameState === undefined) {
+                return state;
+            }
+
+            state.fullGameState.activePlayers[action.payload.playerRid].politicalCapital -= action.payload.cost;
+        },
         setGameState: (state, action: PayloadAction<IFullGameState>) => {
             state.fullGameState = action.payload;
         },
     },
 });
 
-export const { handleGameMessage, addVotes, addGameEventToStaffer, setGameState } = gameState.actions;
+export const { handleGameMessage, addVotes, addGameEventToStaffer, payPoliticalCapital, setGameState } =
+    gameState.actions;
 export const LocalGameStateReducer = gameState.reducer;

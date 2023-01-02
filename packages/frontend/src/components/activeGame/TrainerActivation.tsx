@@ -20,6 +20,7 @@ import {
     IActiveStafferRid,
     IBasicStaffer,
     IEvent,
+    IGameClock,
     IGameStateRid,
     IPlayerRid,
     IStartTrainingStaffer,
@@ -31,12 +32,14 @@ import classNames from "classnames";
 import * as React from "react";
 import { batch } from "react-redux";
 import { getGameModifiers } from "../../selectors/gameModifiers";
+import { getAvailableToTrainStaffer } from "../../selectors/staffers";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addGameEventToStaffer, IUserFacingResolveEvents } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { getStafferCategory } from "../../utility/categorizeStaffers";
 import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
+import { getFakeDate } from "../common/ServerStatus";
 import { ResolveEvent } from "./ResolveEvent";
 import styles from "./TrainerActivation.module.scss";
 
@@ -48,6 +51,13 @@ export const TrainerActivation: React.FC<{
     const toast = useToast();
     const dispatch = usePoliticalCapitalDispatch();
 
+    const currentPoliticalCapital = usePoliticalCapitalSelector(
+        (s) => s.localGameState.fullGameState?.activePlayers[trainerRequest.playerRid]?.politicalCapital ?? 0,
+    );
+    const currentDate = usePoliticalCapitalSelector(
+        (s) => s.localGameState.fullGameState?.gameState.gameClock ?? (0 as IGameClock),
+    );
+
     const [isLoading, setIsLoading] = React.useState(false);
     const [upgradeStafferToLevel, setUpgradeStafferToLevel] = React.useState<
         { activeStaffer: IActiveStaffer; toLevel: IStartTrainingStaffer["toLevel"] } | undefined
@@ -58,6 +68,7 @@ export const TrainerActivation: React.FC<{
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
+    const availableToTrain = usePoliticalCapitalSelector(getAvailableToTrainStaffer(trainerRequest.trainerRid));
 
     if (fullGameState === undefined || resolveEvents === undefined) {
         return null;
@@ -90,6 +101,76 @@ export const TrainerActivation: React.FC<{
     const upgradeStafferCurried = (activeStaffer: IActiveStaffer, toLevel: IStartTrainingStaffer["toLevel"]) => () =>
         setUpgradeStafferToLevel({ activeStaffer, toLevel });
 
+    const maybeRenderStaffersToTrain = () => {
+        if (availableToTrain.length === 0) {
+            return <div className={styles.noTraineesAvailable}>No staffers available</div>;
+        }
+
+        return availableToTrain.map((staffer) => {
+            const upgradesInto = StafferLadderIndex[staffer.stafferDetails.type] ?? [];
+            const stafferCategory = getStafferCategory(staffer);
+
+            return (
+                <div className={styles.singleTrainee} key={staffer.activeStafferRid}>
+                    <div
+                        className={classNames(styles.currentPosition, {
+                            [styles.voting]: stafferCategory === "voting",
+                            [styles.generator]: stafferCategory === "generator",
+                            [styles.support]: stafferCategory === "support",
+                        })}
+                    >
+                        <div>{staffer.stafferDetails.displayName}</div>
+                        <div>{DEFAULT_STAFFER[staffer.stafferDetails.type].displayName}</div>
+                        <div className={styles.description}>
+                            {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}
+                        </div>
+                    </div>
+                    <div className={styles.upgradeInto}>
+                        {upgradesInto.map((upgradeStaffer) => {
+                            const defaultStaffer = DEFAULT_STAFFER[upgradeStaffer];
+                            const newStafferCategory = getStafferCategory(defaultStaffer);
+
+                            const finalCost = roundToHundred(
+                                defaultStaffer.costToAcquire *
+                                    resolvedGameModifiers.staffers[upgradeStaffer].costToAcquire,
+                            );
+                            const finalTime = Math.round(
+                                defaultStaffer.timeToAcquire *
+                                    resolvedGameModifiers.staffers[upgradeStaffer].timeToAcquire,
+                            );
+
+                            const isDisabled = resolvedGameModifiers.staffers[upgradeStaffer].disableTraining;
+
+                            return (
+                                <div className={styles.withArrow} key={upgradeStaffer}>
+                                    <ArrowForwardIcon className={styles.arrow} />
+                                    <div
+                                        className={classNames(styles.newPosition, {
+                                            [styles.disabled]: isDisabled,
+                                            [styles.voting]: newStafferCategory === "voting" && !isDisabled,
+                                            [styles.generator]: newStafferCategory === "generator" && !isDisabled,
+                                            [styles.support]: newStafferCategory === "support" && !isDisabled,
+                                        })}
+                                        onClick={
+                                            isDisabled ? undefined : upgradeStafferCurried(staffer, upgradeStaffer)
+                                        }
+                                    >
+                                        <div>
+                                            {defaultStaffer.displayName} ({finalCost} PC, {finalTime} days)
+                                        </div>
+                                        <div className={styles.description}>
+                                            {descriptionOfStaffer(resolvedGameModifiers)[upgradeStaffer]}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        });
+    };
+
     const maybeRenderTrainStaffer = () => {
         if (currentlyTraining.length >= trainer.trainingCapacity) {
             return (
@@ -99,122 +180,66 @@ export const TrainerActivation: React.FC<{
             );
         }
 
-        const availableToTrain = fullGameState.activePlayersStaffers[trainerRequest.playerRid].filter((staffer) => {
-            const isNotSelf = staffer.activeStafferRid !== trainerRequest.trainerRid;
-            const isNotBusy =
-                (resolveEvents.players[trainerRequest.playerRid]?.staffers[staffer.activeStafferRid]?.filter(
-                    (event) => event.state === "active" || event.state === "pending",
-                )?.length ?? 0) === 0;
-            const hasUpgrades = (StafferLadderIndex[staffer.stafferDetails.type] ?? []).length > 0;
-
-            return isNotSelf && isNotBusy && hasUpgrades && staffer.state === "active";
-        });
-
         return (
             <div className={styles.train}>
                 <div className={styles.trainStaffer}>Available staffers to train</div>
-                <div className={styles.allTrainingPossibilities}>
-                    {availableToTrain.map((staffer) => {
-                        const upgradesInto = StafferLadderIndex[staffer.stafferDetails.type] ?? [];
-                        const stafferCategory = getStafferCategory(staffer);
-
-                        return (
-                            <div className={styles.singleTrainee} key={staffer.activeStafferRid}>
-                                <div
-                                    className={classNames(styles.currentPosition, {
-                                        [styles.voting]: stafferCategory === "voting",
-                                        [styles.generator]: stafferCategory === "generator",
-                                        [styles.support]: stafferCategory === "support",
-                                    })}
-                                >
-                                    <div>{staffer.stafferDetails.displayName}</div>
-                                    <div>{DEFAULT_STAFFER[staffer.stafferDetails.type].displayName}</div>
-                                    <div className={styles.description}>
-                                        {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}
-                                    </div>
-                                </div>
-                                <div className={styles.upgradeInto}>
-                                    {upgradesInto.map((upgradeStaffer) => {
-                                        const defaultStaffer = DEFAULT_STAFFER[upgradeStaffer];
-                                        const newStafferCategory = getStafferCategory(defaultStaffer);
-
-                                        const finalCost = roundToHundred(
-                                            defaultStaffer.costToAcquire *
-                                                resolvedGameModifiers.staffers[upgradeStaffer].costToAcquire,
-                                        );
-                                        const finalTime = Math.round(
-                                            defaultStaffer.timeToAcquire *
-                                                resolvedGameModifiers.staffers[upgradeStaffer].timeToAcquire,
-                                        );
-
-                                        const isDisabled =
-                                            resolvedGameModifiers.staffers[upgradeStaffer].disableTraining;
-
-                                        return (
-                                            <div className={styles.withArrow} key={upgradeStaffer}>
-                                                <ArrowForwardIcon className={styles.arrow} />
-                                                <div
-                                                    className={classNames(styles.newPosition, {
-                                                        [styles.disabled]: isDisabled,
-                                                        [styles.voting]: newStafferCategory === "voting" && !isDisabled,
-                                                        [styles.generator]:
-                                                            newStafferCategory === "generator" && !isDisabled,
-                                                        [styles.support]:
-                                                            newStafferCategory === "support" && !isDisabled,
-                                                    })}
-                                                    onClick={
-                                                        isDisabled
-                                                            ? undefined
-                                                            : upgradeStafferCurried(staffer, upgradeStaffer)
-                                                    }
-                                                >
-                                                    <div>
-                                                        {defaultStaffer.displayName} ({finalCost} PC, {finalTime} days)
-                                                    </div>
-                                                    <div className={styles.description}>
-                                                        {descriptionOfStaffer(resolvedGameModifiers)[upgradeStaffer]}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                <div className={styles.allTrainingPossibilities}>{maybeRenderStaffersToTrain()}</div>
             </div>
         );
     };
 
-    const maybeRenderTrainStafferBody = () => {
+    const politicalCapitalCost = (() => {
         if (upgradeStafferToLevel === undefined) {
             return undefined;
         }
 
         const toLevelStaffer = DEFAULT_STAFFER[upgradeStafferToLevel.toLevel];
-
-        const finalCost = roundToHundred(
+        return roundToHundred(
             toLevelStaffer.costToAcquire * resolvedGameModifiers.staffers[toLevelStaffer.type].costToAcquire,
         );
+    })();
+
+    const maybeRenderTrainStafferBody = () => {
+        if (upgradeStafferToLevel === undefined || politicalCapitalCost === undefined) {
+            return undefined;
+        }
+
+        const toLevelStaffer = DEFAULT_STAFFER[upgradeStafferToLevel.toLevel];
+
         const finalTime = Math.round(
             toLevelStaffer.timeToAcquire * resolvedGameModifiers.staffers[toLevelStaffer.type].timeToAcquire,
         );
+        const finalPoliticalCapital = roundToHundred(currentPoliticalCapital - politicalCapitalCost);
 
         return (
-            <div className={styles.modalSentence}>
-                <div className={styles.description}>Confirm asking</div>
-                <div>{trainer.displayName}</div>
-                <div className={styles.description}>to train</div>
-                <div>{upgradeStafferToLevel.activeStaffer.stafferDetails.displayName}</div>
-                <div className={styles.description}>
-                    from {DEFAULT_STAFFER[upgradeStafferToLevel.activeStaffer.stafferDetails.type].displayName}
+            <div className={styles.modalBody}>
+                <div className={styles.modalSentence}>
+                    <div>{trainer.displayName}</div>
+                    <div className={styles.description}>to train</div>
+                    <div>{upgradeStafferToLevel.activeStaffer.stafferDetails.displayName}</div>
                 </div>
-                <div>to {toLevelStaffer.displayName}</div>
-                <div className={styles.description}>costing</div>
-                <div>{finalCost} political capital</div>
-                <div className={styles.description}>and </div>
-                <div>{finalTime} days to complete.</div>
+                <div className={styles.modalSentence}>
+                    <div className={styles.description}>from</div>
+                    <div>{DEFAULT_STAFFER[upgradeStafferToLevel.activeStaffer.stafferDetails.type].displayName}</div>
+                    <div className={styles.description}>to</div>
+                    <div>{toLevelStaffer.displayName}</div>
+                </div>
+                <div className={styles.modalSentence}>
+                    <div className={styles.description}>Costs</div>
+                    <div className={styles.cost}>{politicalCapitalCost} political capital</div>
+                    <div className={styles.description}>and </div>
+                    <div>{finalTime} days to finish</div>
+                </div>
+                <div className={styles.result}>
+                    <div className={styles.modalSentence}>
+                        <div className={styles.description}>Remaining</div>
+                        <div>{finalPoliticalCapital} political capital</div>
+                    </div>
+                    <div className={styles.modalSentence}>
+                        <div className={styles.description}>Available on</div>
+                        <div>{getFakeDate((currentDate + finalTime) as IGameClock)}</div>
+                    </div>
+                </div>
             </div>
         );
     };
@@ -263,6 +288,14 @@ export const TrainerActivation: React.FC<{
         closeModal();
     };
 
+    const canAfford = (() => {
+        if (politicalCapitalCost === undefined) {
+            return false;
+        }
+
+        return currentPoliticalCapital - politicalCapitalCost >= 0;
+    })();
+
     return (
         <div>
             {maybeRenderCurrentlyTraining()}
@@ -276,7 +309,7 @@ export const TrainerActivation: React.FC<{
                     <ModalFooter>
                         <Button
                             colorScheme="green"
-                            disabled={fullGameState.gameState.state !== "active"}
+                            disabled={fullGameState.gameState.state !== "active" || !canAfford}
                             isLoading={isLoading}
                             onClick={onConfirmTrainStaffer}
                         >

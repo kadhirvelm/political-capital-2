@@ -197,6 +197,31 @@ export async function trainStaffer(
         return undefined;
     }
 
+    if (isVoter(attemptToTrainStaffer)) {
+        const currentResolution = await ActiveResolution.findOne({
+            where: { gameStateRid: payload.gameStateRid, state: "active" },
+        });
+        const maybeVotesByStaffer =
+            currentResolution == null
+                ? undefined
+                : await ActiveResolutionVote.findAll({
+                      where: {
+                          gameStateRid: payload.gameStateRid,
+                          activeResolutionRid: currentResolution.activeResolutionRid,
+                          activeStafferRid: attemptToTrainStaffer.activeStafferRid,
+                      },
+                  });
+
+        const isAllowedToBeTrained = maybeVotesByStaffer === undefined || maybeVotesByStaffer.length === 0;
+
+        if (!isAllowedToBeTrained) {
+            response.status(400).send({
+                error: `This staffer has voted in the current resolution and is busy. Please wait until the current resolution has been tallied and try again.`,
+            });
+            return undefined;
+        }
+    }
+
     const startTrainingEvent: IStartTrainingStaffer = {
         ...payload.trainRequest,
         type: "start-training-staffer",

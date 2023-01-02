@@ -1,0 +1,30 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables.scss";
+
+.summaryContainer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}
+
+.summaryText {
+    color: $gray;
+    padding-right: 7px;
+}
+
+.singleSummary {
+    display: flex;
+    align-items: center;
+}
+
+.value {
+    display: flex;
+    margin-right: 3px;
+}

@@ -18,6 +18,7 @@ import {
     IActiveStafferRid,
     IBasicStaffer,
     IEvent,
+    IGameClock,
     IGameStateRid,
     IPlayerRid,
     IPossibleStaffer,
@@ -26,13 +27,15 @@ import {
 } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
+import { batch } from "react-redux";
 import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
-import { addGameEventToStaffer, IUserFacingResolveEvents } from "../../store/gameState";
+import { addGameEventToStaffer, IUserFacingResolveEvents, payPoliticalCapital } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { getStafferCategory, getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
 import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
+import { getFakeDate } from "../common/ServerStatus";
 import styles from "./RecruiterActivation.module.scss";
 import { ResolveEvent } from "./ResolveEvent";
 
@@ -43,6 +46,13 @@ export const RecruiterActivation: React.FC<{
 }> = ({ recruitRequest, recruiter, resolveGameEvents }) => {
     const toast = useToast();
     const dispatch = usePoliticalCapitalDispatch();
+
+    const currentPoliticalCapital = usePoliticalCapitalSelector(
+        (s) => s.localGameState.fullGameState?.activePlayers[recruitRequest.playerRid]?.politicalCapital ?? 0,
+    );
+    const currentDate = usePoliticalCapitalSelector(
+        (s) => s.localGameState.fullGameState?.gameState.gameClock ?? (0 as IGameClock),
+    );
 
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
     const isPaused = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState?.gameState.state !== "active");
@@ -144,28 +154,49 @@ export const RecruiterActivation: React.FC<{
         );
     };
 
-    const maybeRenderJobPostingBody = () => {
+    const politicalCapitalCost = (() => {
         if (confirmStaffer === undefined) {
             return undefined;
         }
 
-        const finalCost = roundToHundred(
+        return roundToHundred(
             confirmStaffer.costToAcquire * resolvedGameModifiers.staffers[confirmStaffer.type].costToAcquire,
         );
+    })();
+
+    const maybeRenderJobPostingBody = () => {
+        if (confirmStaffer === undefined || politicalCapitalCost === undefined) {
+            return undefined;
+        }
+
         const finalTime = Math.round(
             confirmStaffer.timeToAcquire * resolvedGameModifiers.staffers[confirmStaffer.type].timeToAcquire,
-        );
+        ) as IGameClock;
+        const finalPoliticalCapital = roundToHundred(currentPoliticalCapital - politicalCapitalCost);
 
         return (
-            <div className={styles.modalSentence}>
-                <div className={styles.description}>Confirm asking</div>
-                <div>{recruiter.displayName}</div>
-                <div className={styles.description}>to send out a job posting for a</div>
-                <div>{confirmStaffer.displayName}</div>
-                <div className={styles.description}>costing</div>
-                <div>{finalCost} political capital</div>
-                <div className={styles.description}>and </div>
-                <div>{finalTime} days to hire.</div>
+            <div className={styles.modalBody}>
+                <div className={styles.modalSentence}>
+                    <div>{recruiter.displayName}</div>
+                    <div className={styles.description}>to hire</div>
+                    <div>{confirmStaffer.displayName}</div>
+                </div>
+                <div className={styles.modalSentence}>
+                    <div className={styles.description}>Costs</div>
+                    <div className={styles.cost}>{politicalCapitalCost} political capital</div>
+                    <div className={styles.description}>and</div>
+                    <div>{finalTime} days to hire</div>
+                </div>
+                <div className={styles.result}>
+                    <div className={styles.modalSentence}>
+                        <div className={styles.description}>Remaining</div>
+                        <div>{finalPoliticalCapital} political capital</div>
+                    </div>
+                    <div className={styles.modalSentence}>
+                        <div className={styles.description}>Available on</div>
+                        <div>{getFakeDate((currentDate + finalTime) as IGameClock)}</div>
+                    </div>
+                </div>
             </div>
         );
     };
@@ -193,15 +224,30 @@ export const RecruiterActivation: React.FC<{
             return undefined;
         }
 
-        dispatch(
-            addGameEventToStaffer({
-                activeStafferRid: recruitRequest.recruiterRid,
-                playerRid: recruitRequest.playerRid,
-                resolveGameEvent: newRecruitStaffer.pendingEvent,
-            }),
-        );
+        const subtractPoliticalCapital =
+            confirmStaffer.costToAcquire * resolvedGameModifiers.staffers[confirmStaffer.type].costToAcquire;
+
+        batch(() => {
+            dispatch(payPoliticalCapital({ cost: subtractPoliticalCapital, playerRid: recruitRequest.playerRid }));
+
+            dispatch(
+                addGameEventToStaffer({
+                    activeStafferRid: recruitRequest.recruiterRid,
+                    playerRid: recruitRequest.playerRid,
+                    resolveGameEvent: newRecruitStaffer.pendingEvent,
+                }),
+            );
+        });
         closeModal();
     };
+
+    const canAfford = (() => {
+        if (politicalCapitalCost === undefined) {
+            return false;
+        }
+
+        return currentPoliticalCapital - politicalCapitalCost >= 0;
+    })();
 
     return (
         <div>
@@ -216,7 +262,7 @@ export const RecruiterActivation: React.FC<{
                     <ModalFooter>
                         <Button
                             colorScheme="green"
-                            disabled={isPaused}
+                            disabled={isPaused || !canAfford}
                             isLoading={isLoading}
                             onClick={onConfirmSendingOutJobPosting}
                         >

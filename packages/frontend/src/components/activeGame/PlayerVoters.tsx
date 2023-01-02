@@ -38,6 +38,9 @@ export const PlayerVoters: React.FC<{
     const votesAlreadyCastOnResolution = usePoliticalCapitalSelector(
         (s) => s.localGameState.fullGameState?.activePlayersVotes?.[activeResolutionRid],
     );
+    const activeResolution = usePoliticalCapitalSelector((s) =>
+        s.localGameState.fullGameState?.activeResolutions.find((r) => r.activeResolutionRid === activeResolutionRid),
+    );
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     const [isLoading, setIsLoading] = React.useState(false);
@@ -194,7 +197,7 @@ export const PlayerVoters: React.FC<{
                                     {maybeExistingVote === undefined && (
                                         <Button
                                             isLoading={isLoading}
-                                            disabled={isPaused}
+                                            disabled={isPaused || activeResolution?.state !== "active"}
                                             onClick={onCastVote(voter.staffer.activeStafferRid)}
                                         >
                                             Cast votes

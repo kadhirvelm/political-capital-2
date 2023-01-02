@@ -9,12 +9,16 @@ import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { PlayerParty } from "./PlayerParty";
 import styles from "./EveryoneElse.module.scss";
+import { getLeaderboard } from "../../selectors/leaderboard";
+import { PartySummary } from "./PartySummary";
+import { roundToHundred } from "../../utility/roundTo";
 
 export const EveryoneElse: React.FC<{}> = () => {
     const [viewingPlayerRid, setViewingPlayerRid] = React.useState<IPlayerRid | undefined>(undefined);
 
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
+    const leaderboard = usePoliticalCapitalSelector(getLeaderboard);
 
     if (player === undefined || fullGameState === undefined) {
         return null;
@@ -22,7 +26,7 @@ export const EveryoneElse: React.FC<{}> = () => {
 
     const maybeRenderPlayerParty = () => {
         if (viewingPlayerRid === undefined) {
-            return <div className={styles.noneSelected}>Select a player to view their party</div>;
+            return undefined;
         }
 
         return <PlayerParty playerRid={viewingPlayerRid} />;
@@ -39,7 +43,30 @@ export const EveryoneElse: React.FC<{}> = () => {
     const viewPlayerParty = (playerRid: IPlayerRid | undefined) => () => setViewingPlayerRid(playerRid);
 
     return (
-        <div>
+        <div className={styles.overallContainer}>
+            <div className={styles.leaderboard}>
+                <div className={styles.leaderboardTable}>
+                    {leaderboard.map((leaderboardPlayer, index) => (
+                        <div className={styles.singleRow} key={leaderboardPlayer.player.playerRid}>
+                            <div className={styles.details}>
+                                <div className={styles.name}>
+                                    {index + 1}. {leaderboardPlayer.player.name}
+                                    {leaderboardPlayer.player.playerRid === player.playerRid ? (
+                                        <div>(you)</div>
+                                    ) : undefined}
+                                </div>
+                                <div>
+                                    {roundToHundred(leaderboardPlayer.activePlayer.politicalCapital).toLocaleString()}{" "}
+                                    political capital
+                                </div>
+                            </div>
+
+                            <PartySummary playerRid={leaderboardPlayer.player.playerRid} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <div className={styles.detailedPartyView}>Detailed party view</div>
             <div className={styles.selector}>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />} className={styles.selectorButton}>

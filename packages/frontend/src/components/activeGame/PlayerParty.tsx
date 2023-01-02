@@ -8,8 +8,10 @@ import { IActiveStaffer, IPlayerRid, isRecruit, isTrainer } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { getStaffersOfCategory, IStafferCategory } from "../../utility/categorizeStaffers";
+import { roundToHundred } from "../../utility/roundTo";
 import { StafferCard } from "../common/StafferCard";
 import { ActivateStaffer } from "./ActivateStaffer";
+import { PartySummary } from "./PartySummary";
 import styles from "./PlayerParty.module.scss";
 
 export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) => {
@@ -48,8 +50,8 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
                                     rightIcon={<ChevronRightIcon />}
                                     onClick={activateStaffer(staffer)}
                                 >
-                                    {isRecruit(staffer) && "Hire "}
-                                    {isTrainer(staffer) && "Train "}
+                                    {isRecruit(staffer) && "Hire"}
+                                    {isTrainer(staffer) && "Train"}
                                 </Button>
                             )}
                         </div>
@@ -95,12 +97,13 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
             <div className={styles.resourcesContainer}>
                 <div className={styles.singleResource}>
                     <div>Political capital</div>
-                    <div>{activePlayer.politicalCapital}</div>
+                    <div>{roundToHundred(activePlayer.politicalCapital).toLocaleString()}</div>
                 </div>
-                <div className={styles.singleResource}>
+                {/* <div className={styles.singleResource}>
                     <div>Approval rating</div>
                     <div>{activePlayer.approvalRating}</div>
-                </div>
+                </div> */}
+                <PartySummary playerRid={playerRid} />
             </div>
             {renderBody()}
         </div>

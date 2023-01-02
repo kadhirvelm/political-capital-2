@@ -91,7 +91,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolu
                             {roundToHundred(
                                 resolution.resolutionDetails.politicalCapitalPayout *
                                     resolvedGameModifiers.game.payoutPerResolution,
-                            )}
+                            ).toLocaleString()}
                         </span>
                     </div>
                     <div className={styles.tallyContainer}>

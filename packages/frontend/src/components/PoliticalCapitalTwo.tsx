@@ -31,7 +31,7 @@ export const PoliticalCapitalTwo: React.FC<{}> = () => {
 
     const renderGameState = () => {
         if (currentGameState === "loading") {
-            return <div>Loading…</div>;
+            return <div className={styles.loading}>Loading…</div>;
         }
 
         if (currentGameState === "lobby") {

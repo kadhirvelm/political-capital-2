@@ -34,8 +34,8 @@ export async function updateGameStates() {
 }
 
 export function startGameClockTicker() {
-    // Ticks every 10 seconds
-    cron.schedule("*/10 * * * * *", () => {
+    // Ticks every 5 seconds
+    cron.schedule("*/5 * * * * *", () => {
         updateGameStates();
     });
 }

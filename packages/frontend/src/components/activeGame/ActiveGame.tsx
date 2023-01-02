@@ -6,6 +6,7 @@ import { HamburgerIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, MenuDivider, MenuItem, MenuList } from "@chakra-ui/react";
 import { ActiveGameFrontend, IGameState } from "@pc2/api";
 import * as React from "react";
+import { getUnusedCapacity } from "../../selectors/staffers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import styles from "./ActiveGame.module.scss";
 import { ActiveResolution } from "./ActiveResolution";
@@ -21,6 +22,8 @@ export const ActiveGame: React.FC<{}> = () => {
 
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
+    const notification = usePoliticalCapitalSelector(getUnusedCapacity);
+
     if (player === undefined || fullGameState === undefined) {
         return null;
     }
@@ -54,7 +57,7 @@ export const ActiveGame: React.FC<{}> = () => {
         }
 
         if (currentView === "everyone-else") {
-            return "Everyone else";
+            return "Leaderboard";
         }
 
         if (currentView === "game-modifiers") {
@@ -100,7 +103,7 @@ export const ActiveGame: React.FC<{}> = () => {
                     <MenuList>
                         <MenuItem onClick={changeCurrentView("active-resolution")}>Active resolution</MenuItem>
                         <MenuItem onClick={changeCurrentView("your-party")}>Your party</MenuItem>
-                        <MenuItem onClick={changeCurrentView("everyone-else")}>Everyone else</MenuItem>
+                        <MenuItem onClick={changeCurrentView("everyone-else")}>Leaderboard</MenuItem>
                         <MenuItem onClick={changeCurrentView("game-modifiers")}>Game modifiers</MenuItem>
                         <MenuDivider />
                         <MenuItem onClick={changeCurrentView("staffers-ladders")}>Staffer ladders</MenuItem>
@@ -108,6 +111,18 @@ export const ActiveGame: React.FC<{}> = () => {
                         {renderPauseOrResumeButton()}
                     </MenuList>
                 </Menu>
+                <div className={styles.quickSelection}>
+                    <div className={styles.vote} onClick={changeCurrentView("active-resolution")}>
+                        <div>Vote</div>
+                        <div className={styles.number}>{notification.voting}</div>
+                        {notification.voting > 0 && <div className={styles.hasActions} />}
+                    </div>
+                    <div className={styles.support} onClick={changeCurrentView("your-party")}>
+                        <div>Support</div>
+                        <div className={styles.number}>{notification.hiring + notification.training}</div>
+                        {notification.hiring + notification.training > 0 && <div className={styles.hasActions} />}
+                    </div>
+                </div>
             </div>
             <div className={styles.title}>{renderCurrentViewTitle()}</div>
             {renderCurrentView()}

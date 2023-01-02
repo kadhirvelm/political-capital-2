@@ -4,6 +4,50 @@
 
 @import "../../styles/variables.scss";
 
+.overallContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid $gray;
+    border-radius: 3px;
+}
+
+.leaderboardTable {
+    display: flex;
+    flex-direction: column;
+
+    > :nth-child(even) {
+        background: rgba($gray, 0.1);
+    }
+}
+
+.singleRow {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.name {
+    display: flex;
+}
+
+.details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.detailedPartyView {
+    display: flex;
+    margin: 10px 0;
+    color: $gray;
+}
+
 .selector {
     display: flex;
     padding-bottom: 15px;
@@ -17,8 +61,4 @@
 .selectedText {
     display: flex;
     justify-content: flex-start;
-}
-
-.noneSelected {
-    color: $gray;
 }

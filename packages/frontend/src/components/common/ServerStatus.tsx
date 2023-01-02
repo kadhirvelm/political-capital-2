@@ -22,7 +22,7 @@ export const ServerStatus: React.FC<{}> = () => {
 
     React.useEffect(() => {
         const interval = setInterval(() => {
-            setProgressCounter(new Date().getSeconds() % 10);
+            setProgressCounter(new Date().getSeconds() % 5);
         }, 1000);
 
         return () => {
@@ -47,7 +47,7 @@ export const ServerStatus: React.FC<{}> = () => {
                     <CircularProgress
                         className={styles.progressCounter}
                         min={0}
-                        max={9}
+                        max={4}
                         value={progressCounter}
                         size="20px"
                     />

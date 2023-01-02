@@ -35,6 +35,12 @@
     margin-top: 20px;
 }
 
+.noTraineesAvailable {
+    display: flex;
+    padding-top: 10px;
+    color: $gray;
+}
+
 .trainStaffer {
     margin-bottom: 10px;
 }
@@ -100,11 +106,29 @@
     background: rgba($orange, 0.15);
 }
 
+.modalBody {
+    display: flex;
+    flex-direction: column;
+}
+
 .modalSentence {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
 
     > :not(:last-child) {
-        margin-right: 3px;
+        margin-right: 5px;
     }
+}
+
+.cost {
+    color: $red;
+}
+
+.result {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -1px $gray;
+    margin-top: 10px;
+    padding-top: 10px;
 }

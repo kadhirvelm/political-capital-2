@@ -76,7 +76,7 @@ export const Lobby: React.FC<{}> = () => {
 
         const areAllPlayersReady = Object.values(fullGameState?.activePlayers ?? {}).every((p) => p.isReady);
         const canThisPlayerStart =
-            Object.values(fullGameState.activePlayers ?? {})?.[0]?.playerRid === player.playerRid;
+            Object.values(fullGameState.activePlayers ?? {})?.slice(-1)[0]?.playerRid === player.playerRid;
 
         if (!areAllPlayersReady || !canThisPlayerStart) {
             return undefined;

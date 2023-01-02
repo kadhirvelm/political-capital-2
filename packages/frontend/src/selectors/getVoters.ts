@@ -3,6 +3,7 @@
  */
 
 import {
+    getTotalAllowedVotes,
     IActiveResolutionRid,
     IActiveResolutionVote,
     IActiveStaffer,
@@ -41,7 +42,26 @@ export const getVoters = createSelector(
                     (event) => event.state === "active",
                 ),
                 staffer,
-            }));
+            }))
+            .slice()
+            .sort((a, b) => {
+                if (a.activeEvent === undefined && b.activeEvent !== undefined) {
+                    return -1;
+                }
+
+                if (a.activeEvent !== undefined && b.activeEvent === undefined) {
+                    return 1;
+                }
+
+                const aVotes = getTotalAllowedVotes(a.staffer);
+                const bVotes = getTotalAllowedVotes(b.staffer);
+
+                return aVotes === bVotes
+                    ? a.staffer.stafferDetails.displayName.localeCompare(b.staffer.stafferDetails.displayName)
+                    : aVotes > bVotes
+                    ? -1
+                    : 1;
+            });
     },
 );
 
