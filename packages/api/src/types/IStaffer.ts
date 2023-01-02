@@ -31,39 +31,56 @@ export interface ITrainer {
 
 export interface IIntern extends IBasicStaffer {
     upgradedFrom: [];
-    costToAcquire: 1;
-    timeToAcquire: 6;
+    costToAcquire: 0;
+    timeToAcquire: 15;
     type: "intern";
 }
 
 export interface INewHire extends IBasicStaffer, IGenerator {
     upgradedFrom: ["intern"];
-    costToAcquire: 1;
-    timeToAcquire: 6;
-    payout: 0.25;
+    costToAcquire: 0;
+    timeToAcquire: 15;
+    payout: 0.15;
     type: "newHire";
+}
+
+export interface ISeasonedStaffer extends IBasicStaffer, IGenerator {
+    upgradedFrom: ["newHire"];
+    costToAcquire: 10;
+    timeToAcquire: 36;
+    payout: 0.25;
+    type: "seasonedStaffer";
+}
+
+export interface IPoliticalCommentator extends IBasicStaffer, IGenerator, IVoter {
+    upgradedFrom: ["seasonedStaffer"];
+    costToAcquire: 20;
+    timeToAcquire: 36;
+    payout: 0.5;
+    votes: 2;
+    type: "politicalCommentator";
 }
 
 export interface IRepresentative extends IBasicStaffer, IVoter {
     upgradedFrom: [];
-    costToAcquire: 2;
-    timeToAcquire: 12;
+    costToAcquire: 5;
+    timeToAcquire: 36;
     votes: 1;
     type: "representative";
 }
 
 export interface ISeniorRepresentative extends IBasicStaffer, IVoter {
     upgradedFrom: ["representative"];
-    costToAcquire: 4;
-    timeToAcquire: 12;
+    costToAcquire: 10;
+    timeToAcquire: 36;
     votes: 2;
     type: "seniorRepresentative";
 }
 
 export interface IIndependentRepresentative extends IBasicStaffer, IVoter {
     upgradedFrom: ["representative"];
-    costToAcquire: 4;
-    timeToAcquire: 12;
+    costToAcquire: 10;
+    timeToAcquire: 36;
     votes: 1;
     isIndependent: true;
     type: "independentRepresentative";
@@ -71,24 +88,24 @@ export interface IIndependentRepresentative extends IBasicStaffer, IVoter {
 
 export interface ISenator extends IBasicStaffer, IVoter {
     upgradedFrom: ["seniorRepresentative"];
-    costToAcquire: 6;
-    timeToAcquire: 20;
+    costToAcquire: 20;
+    timeToAcquire: 36;
     votes: 3;
     type: "senator";
 }
 
 export interface ISeasonedSenator extends IBasicStaffer, IVoter {
     upgradedFrom: ["senator"];
-    costToAcquire: 8;
-    timeToAcquire: 20;
+    costToAcquire: 40;
+    timeToAcquire: 36;
     votes: 4;
     type: "seasonedSenator";
 }
 
 export interface IIndependentSenator extends IBasicStaffer, IVoter {
     upgradedFrom: ["senator"];
-    costToAcquire: 6;
-    timeToAcquire: 20;
+    costToAcquire: 20;
+    timeToAcquire: 36;
     votes: 3;
     isIndependent: true;
     type: "independentSenator";
@@ -96,48 +113,48 @@ export interface IIndependentSenator extends IBasicStaffer, IVoter {
 
 export interface IPhoneBanker extends IBasicStaffer, IGenerator {
     upgradedFrom: [];
-    costToAcquire: 1;
-    timeToAcquire: 6;
-    payout: 0.5;
+    costToAcquire: 5;
+    timeToAcquire: 15;
+    payout: 0.3;
     type: "phoneBanker";
 }
 
 export interface ISocialMediaManager extends IBasicStaffer, IGenerator {
     upgradedFrom: ["phoneBanker", "newHire"];
-    costToAcquire: 4;
-    timeToAcquire: 12;
-    payout: 1;
+    costToAcquire: 10;
+    timeToAcquire: 30;
+    payout: 0.5;
     type: "socialMediaManager";
 }
 
 export interface IRecruiter extends IBasicStaffer, IRecruit {
     upgradedFrom: [];
-    costToAcquire: 1;
-    timeToAcquire: 6;
+    costToAcquire: 5;
+    timeToAcquire: 15;
     recruitCapacity: 1;
     type: "recruiter";
 }
 
 export interface IHrManager extends IBasicStaffer, IRecruit {
     upgradedFrom: ["recruiter", "newHire"];
-    costToAcquire: 2;
-    timeToAcquire: 12;
+    costToAcquire: 10;
+    timeToAcquire: 30;
     recruitCapacity: 2;
     type: "hrManager";
 }
 
 export interface IPartTimeInstructor extends IBasicStaffer, ITrainer {
     upgradedFrom: [];
-    costToAcquire: 1;
-    timeToAcquire: 6;
+    costToAcquire: 5;
+    timeToAcquire: 15;
     trainingCapacity: 1;
     type: "partTimeInstructor";
 }
 
 export interface ICoach extends IBasicStaffer, ITrainer {
     upgradedFrom: ["partTimeInstructor", "newHire"];
-    costToAcquire: 2;
-    timeToAcquire: 12;
+    costToAcquire: 10;
+    timeToAcquire: 30;
     trainingCapacity: 2;
     type: "coach";
 }

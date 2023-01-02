@@ -7,6 +7,8 @@
 import {
     IIntern,
     INewHire,
+    ISeasonedStaffer,
+    IPoliticalCommentator,
     IRepresentative,
     ISeniorRepresentative,
     IIndependentRepresentative,
@@ -25,6 +27,8 @@ import { IVisit } from "./IVisit";
 export interface IAllStaffers {
     intern: IIntern;
     newHire: INewHire;
+    seasonedStaffer: ISeasonedStaffer;
+    politicalCommentator: IPoliticalCommentator;
     representative: IRepresentative;
     seniorRepresentative: ISeniorRepresentative;
     independentRepresentative: IIndependentRepresentative;
@@ -46,39 +50,56 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     intern: {
         displayName: "Intern",
         upgradedFrom: [],
-        costToAcquire: 1,
-        timeToAcquire: 6,
+        costToAcquire: 0,
+        timeToAcquire: 15,
         type: "intern",
     },
     newHire: {
         displayName: "New hire",
         upgradedFrom: ["intern"],
-        costToAcquire: 1,
-        timeToAcquire: 6,
-        payout: 0.25,
+        costToAcquire: 0,
+        timeToAcquire: 15,
+        payout: 0.15,
         type: "newHire",
+    },
+    seasonedStaffer: {
+        displayName: "Seasoned staffer",
+        upgradedFrom: ["newHire"],
+        costToAcquire: 10,
+        timeToAcquire: 36,
+        payout: 0.25,
+        type: "seasonedStaffer",
+    },
+    politicalCommentator: {
+        displayName: "Political commentator",
+        upgradedFrom: ["seasonedStaffer"],
+        costToAcquire: 20,
+        timeToAcquire: 36,
+        payout: 0.5,
+        votes: 2,
+        type: "politicalCommentator",
     },
     representative: {
         displayName: "Representative",
         upgradedFrom: [],
-        costToAcquire: 2,
-        timeToAcquire: 12,
+        costToAcquire: 5,
+        timeToAcquire: 36,
         votes: 1,
         type: "representative",
     },
     seniorRepresentative: {
         displayName: "Senior representative",
         upgradedFrom: ["representative"],
-        costToAcquire: 4,
-        timeToAcquire: 12,
+        costToAcquire: 10,
+        timeToAcquire: 36,
         votes: 2,
         type: "seniorRepresentative",
     },
     independentRepresentative: {
         displayName: "Independent representative",
         upgradedFrom: ["representative"],
-        costToAcquire: 4,
-        timeToAcquire: 12,
+        costToAcquire: 10,
+        timeToAcquire: 36,
         votes: 1,
         isIndependent: true,
         type: "independentRepresentative",
@@ -86,24 +107,24 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     senator: {
         displayName: "Senator",
         upgradedFrom: ["seniorRepresentative"],
-        costToAcquire: 6,
-        timeToAcquire: 20,
+        costToAcquire: 20,
+        timeToAcquire: 36,
         votes: 3,
         type: "senator",
     },
     seasonedSenator: {
         displayName: "Seasoned senator",
         upgradedFrom: ["senator"],
-        costToAcquire: 8,
-        timeToAcquire: 20,
+        costToAcquire: 40,
+        timeToAcquire: 36,
         votes: 4,
         type: "seasonedSenator",
     },
     independentSenator: {
         displayName: "Independent senator",
         upgradedFrom: ["senator"],
-        costToAcquire: 6,
-        timeToAcquire: 20,
+        costToAcquire: 20,
+        timeToAcquire: 36,
         votes: 3,
         isIndependent: true,
         type: "independentSenator",
@@ -111,48 +132,48 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     phoneBanker: {
         displayName: "Phone banker",
         upgradedFrom: [],
-        costToAcquire: 1,
-        timeToAcquire: 6,
-        payout: 0.5,
+        costToAcquire: 5,
+        timeToAcquire: 15,
+        payout: 0.3,
         type: "phoneBanker",
     },
     socialMediaManager: {
         displayName: "Social media manager",
         upgradedFrom: ["phoneBanker", "newHire"],
-        costToAcquire: 4,
-        timeToAcquire: 12,
-        payout: 1,
+        costToAcquire: 10,
+        timeToAcquire: 30,
+        payout: 0.5,
         type: "socialMediaManager",
     },
     recruiter: {
         displayName: "Recruiter",
         upgradedFrom: [],
-        costToAcquire: 1,
-        timeToAcquire: 6,
+        costToAcquire: 5,
+        timeToAcquire: 15,
         recruitCapacity: 1,
         type: "recruiter",
     },
     hrManager: {
         displayName: "Hr manager",
         upgradedFrom: ["recruiter", "newHire"],
-        costToAcquire: 2,
-        timeToAcquire: 12,
+        costToAcquire: 10,
+        timeToAcquire: 30,
         recruitCapacity: 2,
         type: "hrManager",
     },
     partTimeInstructor: {
         displayName: "Part time instructor",
         upgradedFrom: [],
-        costToAcquire: 1,
-        timeToAcquire: 6,
+        costToAcquire: 5,
+        timeToAcquire: 15,
         trainingCapacity: 1,
         type: "partTimeInstructor",
     },
     coach: {
         displayName: "Coach",
         upgradedFrom: ["partTimeInstructor", "newHire"],
-        costToAcquire: 2,
-        timeToAcquire: 12,
+        costToAcquire: 10,
+        timeToAcquire: 30,
         trainingCapacity: 2,
         type: "coach",
     },
@@ -165,6 +186,14 @@ export namespace IStaffer {
 
     export const isNewHire = (staffer: IPossibleStaffer): staffer is INewHire => {
         return staffer.type === "newHire";
+    };
+
+    export const isSeasonedStaffer = (staffer: IPossibleStaffer): staffer is ISeasonedStaffer => {
+        return staffer.type === "seasonedStaffer";
+    };
+
+    export const isPoliticalCommentator = (staffer: IPossibleStaffer): staffer is IPoliticalCommentator => {
+        return staffer.type === "politicalCommentator";
     };
 
     export const isRepresentative = (staffer: IPossibleStaffer): staffer is IRepresentative => {
@@ -222,6 +251,14 @@ export namespace IStaffer {
 
         if (isNewHire(value)) {
             return visitor.newHire(value);
+        }
+
+        if (isSeasonedStaffer(value)) {
+            return visitor.seasonedStaffer(value);
+        }
+
+        if (isPoliticalCommentator(value)) {
+            return visitor.politicalCommentator(value);
         }
 
         if (isRepresentative(value)) {

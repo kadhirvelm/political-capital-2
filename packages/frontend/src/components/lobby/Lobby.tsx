@@ -115,6 +115,11 @@ export const Lobby: React.FC<{}> = () => {
                 </div>
                 <div className={styles.playersContainer}>
                     {Object.values(fullGameState.activePlayers).map((activePlayer) => {
+                        const maybePlayer = indexedPlayers?.[activePlayer.playerRid];
+                        if (maybePlayer === undefined) {
+                            return undefined;
+                        }
+
                         return (
                             <div className={styles.singlePlayer} key={activePlayer.playerRid}>
                                 <div
@@ -127,7 +132,7 @@ export const Lobby: React.FC<{}> = () => {
                                 </div>
                                 <div className={styles.name}>
                                     <div>
-                                        {indexedPlayers[activePlayer.playerRid].name}
+                                        {indexedPlayers?.[activePlayer.playerRid]?.name}
                                         {activePlayer.playerRid === player.playerRid && " (you)"}
                                     </div>
                                     {player.playerRid === activePlayer.playerRid && (

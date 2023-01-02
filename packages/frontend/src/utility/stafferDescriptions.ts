@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IAllStaffers } from "@pc2/api";
+import { DEFAULT_STAFFER, IAllStaffers } from "@pc2/api";
 import { IResolvedGameModifiers } from "../selectors/gameModifiers";
 import { roundToThousand } from "./roundTo";
 
@@ -14,45 +14,56 @@ export const descriptionOfStaffer = (gameModifiers: IResolvedGameModifiers): IDe
     return {
         intern: "A college intern, doesn't provide much value - yet",
         newHire: `Provides ${roundToThousand(
-            0.25 * gameModifiers.staffers.newHire.effectiveness,
+            DEFAULT_STAFFER.newHire.payout * gameModifiers.staffers.newHire.effectiveness,
         )} political capital every day`,
+        seasonedStaffer: `Provides ${roundToThousand(
+            DEFAULT_STAFFER.seasonedStaffer.payout * gameModifiers.staffers.newHire.effectiveness,
+        )} political capital every day`,
+        politicalCommentator: `Provides ${roundToThousand(
+            DEFAULT_STAFFER.politicalCommentator.payout * gameModifiers.staffers.newHire.effectiveness,
+        )} political capital every day and provides ${DEFAULT_STAFFER.politicalCommentator.votes} votes on resolutions`,
         representative: `Provides ${Math.floor(
-            1 * gameModifiers.staffers.representative.effectiveness,
+            DEFAULT_STAFFER.representative.votes * gameModifiers.staffers.representative.effectiveness,
         )} vote on resolutions`,
         seniorRepresentative: `Provides ${Math.floor(
-            2 * gameModifiers.staffers.seniorRepresentative.effectiveness,
+            DEFAULT_STAFFER.seniorRepresentative.votes * gameModifiers.staffers.seniorRepresentative.effectiveness,
         )} votes on resolutions`,
         independentRepresentative: `Provides ${Math.floor(
-            1 * gameModifiers.staffers.independentRepresentative.effectiveness,
+            DEFAULT_STAFFER.independentRepresentative.votes *
+                gameModifiers.staffers.independentRepresentative.effectiveness,
         )} vote to pass, and ${Math.floor(
-            2 * gameModifiers.staffers.independentRepresentative.effectiveness,
+            DEFAULT_STAFFER.independentRepresentative.votes *
+                gameModifiers.staffers.independentRepresentative.effectiveness,
         )} vote to fail on resolutions`,
-        senator: `Provides ${Math.floor(3 * gameModifiers.staffers.senator.effectiveness)} votes on resolutions`,
+        senator: `Provides ${Math.floor(
+            DEFAULT_STAFFER.senator.votes * gameModifiers.staffers.senator.effectiveness,
+        )} votes on resolutions`,
         seasonedSenator: `Provides ${Math.floor(
-            4 * gameModifiers.staffers.seasonedSenator.effectiveness,
+            DEFAULT_STAFFER.seasonedSenator.votes * gameModifiers.staffers.seasonedSenator.effectiveness,
         )} votes on resolutions`,
         independentSenator: `Provides ${Math.floor(
-            3 * gameModifiers.staffers.independentSenator.effectiveness,
+            DEFAULT_STAFFER.independentSenator.votes * gameModifiers.staffers.independentSenator.effectiveness,
         )} votes to pass, and ${Math.floor(
-            3 * gameModifiers.staffers.independentSenator.effectiveness,
+            DEFAULT_STAFFER.independentSenator.votes * gameModifiers.staffers.independentSenator.effectiveness,
         )} votes to fail on resolutions`,
         phoneBanker: `Generates ${roundToThousand(
-            0.5 * gameModifiers.staffers.phoneBanker.effectiveness,
+            DEFAULT_STAFFER.phoneBanker.payout * gameModifiers.staffers.phoneBanker.effectiveness,
         )} political capital every day`,
         socialMediaManager: `Generates ${roundToThousand(
-            0.5 * gameModifiers.staffers.socialMediaManager.effectiveness,
+            DEFAULT_STAFFER.socialMediaManager.payout * gameModifiers.staffers.socialMediaManager.effectiveness,
         )} political capital every day`,
         recruiter: `Recruits ${Math.floor(
-            1 * gameModifiers.staffers.recruiter.effectiveness,
+            DEFAULT_STAFFER.recruiter.recruitCapacity * gameModifiers.staffers.recruiter.effectiveness,
         )} staffer to your party at a time`,
         hrManager: `Recruits up to ${Math.floor(
-            2 * gameModifiers.staffers.hrManager.effectiveness,
+            DEFAULT_STAFFER.hrManager.recruitCapacity * gameModifiers.staffers.hrManager.effectiveness,
         )} staffers to your party at a time`,
         partTimeInstructor: `Trains ${Math.floor(
-            1 * gameModifiers.staffers.partTimeInstructor.effectiveness,
+            DEFAULT_STAFFER.partTimeInstructor.trainingCapacity *
+                gameModifiers.staffers.partTimeInstructor.effectiveness,
         )} staffer in your party at a time`,
         coach: `Trains up to ${Math.floor(
-            2 * gameModifiers.staffers.coach.effectiveness,
+            DEFAULT_STAFFER.coach.trainingCapacity * gameModifiers.staffers.coach.effectiveness,
         )} staffers in your party at a time`,
     };
 };

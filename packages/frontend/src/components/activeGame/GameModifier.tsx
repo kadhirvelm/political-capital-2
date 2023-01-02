@@ -91,7 +91,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
             return (
                 <div key="generator">
                     {maybeRenderAnd()}
-                    {allGenerators.join(", and ")}
+                    {allGenerators.map((s) => s.displayName).join(", and ")}
                 </div>
             );
         }
@@ -100,7 +100,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
             return (
                 <div key="recruit">
                     {maybeRenderAnd()}
-                    {allRecruits.join(", and ")}
+                    {allRecruits.map((s) => s.displayName).join(", and ")}
                 </div>
             );
         }
@@ -109,7 +109,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
             return (
                 <div key="trainer">
                     {maybeRenderAnd()}
-                    {allTrainers.join(", and ")}
+                    {allTrainers.map((s) => s.displayName).join(", and ")}
                 </div>
             );
         }

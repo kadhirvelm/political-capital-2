@@ -30,4 +30,7 @@ export interface IResolutionEffect {
     type: "resolution-effect";
 }
 
+// Type of resolution that ends the game early
+// Change the amount of time for resolutions based on number of players
+
 export type IGameModifier = IStafferEffect | IResolutionEffect;
