@@ -85,24 +85,31 @@ export const PlayerVoters: React.FC<{
 
     const renderNormalVotes = (voter: IActiveStaffer, totalVotes: number) => {
         const stafferVote = castVotes[voter.activeStafferRid] ?? "abstain";
+        const maybeExistingVote = getStafferExistingVote(voter.activeStafferRid);
 
         return (
             <div className={styles.voteOptionContainer}>
                 <div
                     className={classNames(styles.vote, { [styles.yesVote]: stafferVote === "passed" })}
-                    onClick={onSwitchVote(voter.activeStafferRid, "passed")}
+                    onClick={
+                        maybeExistingVote === undefined ? onSwitchVote(voter.activeStafferRid, "passed") : undefined
+                    }
                 >
                     {totalVotes} Yes
                 </div>
                 <div
                     className={classNames(styles.vote, { [styles.abstain]: stafferVote === "abstain" })}
-                    onClick={onSwitchVote(voter.activeStafferRid, "abstain")}
+                    onClick={
+                        maybeExistingVote === undefined ? onSwitchVote(voter.activeStafferRid, "abstain") : undefined
+                    }
                 >
                     Abstain
                 </div>
                 <div
                     className={classNames(styles.vote, { [styles.noVote]: stafferVote === "failed" })}
-                    onClick={onSwitchVote(voter.activeStafferRid, "failed")}
+                    onClick={
+                        maybeExistingVote === undefined ? onSwitchVote(voter.activeStafferRid, "failed") : undefined
+                    }
                 >
                     {totalVotes} No
                 </div>

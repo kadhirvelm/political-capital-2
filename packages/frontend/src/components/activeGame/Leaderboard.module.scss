@@ -5,6 +5,8 @@
 @import "../../styles/variables.scss";
 
 .overallContainer {
+    @extend %fadeIn;
+
     display: flex;
     flex-direction: column;
 }

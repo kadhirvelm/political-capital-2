@@ -8,7 +8,8 @@ import { IActiveStaffer, IPlayerRid, isRecruit, isTrainer } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { getStaffersOfCategory, IStafferCategory } from "../../utility/categorizeStaffers";
-import { roundToHundred } from "../../utility/roundTo";
+import { summaryStaffers } from "../../utility/partySummarizer";
+import { roundToHundred, roundToThousand } from "../../utility/roundTo";
 import { StafferCard } from "../common/StafferCard";
 import { ActivateStaffer } from "./ActivateStaffer";
 import { PartySummary } from "./PartySummary";
@@ -21,6 +22,8 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
     const isViewingSelf = player?.playerRid === playerRid;
 
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
+    const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
+
     if (fullGameState === undefined) {
         return null;
     }
@@ -66,18 +69,28 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
             return <ActivateStaffer activateStaffer={activatingStaffer} onBack={onBack} />;
         }
 
+        const { votingCapacity, generator, hiring, training } = summaryStaffers(
+            playerStaffers,
+            resolveEvents,
+            playerRid,
+        );
+
         return (
             <div className={styles.staffers}>
                 <div>
-                    <div className={styles.categoryTitle}>Support</div>
+                    <div className={styles.categoryTitle}>
+                        Support - {hiring} Hiring, {training} Training
+                    </div>
                     {renderCategory("support")}
                 </div>
                 <div>
-                    <div className={styles.categoryTitle}>Voters</div>
+                    <div className={styles.categoryTitle}>Voters - {votingCapacity} votes</div>
                     {renderCategory("voting")}
                 </div>
                 <div>
-                    <div className={styles.categoryTitle}>Generators</div>
+                    <div className={styles.categoryTitle}>
+                        Generators - {roundToThousand(generator).toLocaleString()} PC/day
+                    </div>
                     {renderCategory("generator")}
                 </div>
                 <div>
@@ -93,7 +106,7 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
     };
 
     return (
-        <div>
+        <div className={styles.overallContainer}>
             <div className={styles.resourcesContainer}>
                 <div className={styles.singleResource}>
                     <div>Political capital</div>

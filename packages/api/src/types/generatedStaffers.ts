@@ -90,7 +90,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     seniorRepresentative: {
         displayName: "Senior representative",
         upgradedFrom: ["representative"],
-        costToAcquire: 10,
+        costToAcquire: 8,
         timeToAcquire: 48,
         votes: 2,
         type: "seniorRepresentative",
@@ -98,7 +98,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     independentRepresentative: {
         displayName: "Independent representative",
         upgradedFrom: ["representative"],
-        costToAcquire: 10,
+        costToAcquire: 8,
         timeToAcquire: 48,
         votes: 1,
         isIndependent: true,
@@ -107,7 +107,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     senator: {
         displayName: "Senator",
         upgradedFrom: ["seniorRepresentative"],
-        costToAcquire: 10,
+        costToAcquire: 6,
         timeToAcquire: 48,
         votes: 3,
         type: "senator",
@@ -115,7 +115,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     seasonedSenator: {
         displayName: "Seasoned senator",
         upgradedFrom: ["senator"],
-        costToAcquire: 10,
+        costToAcquire: 4,
         timeToAcquire: 48,
         votes: 4,
         type: "seasonedSenator",
@@ -123,7 +123,7 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     independentSenator: {
         displayName: "Independent senator",
         upgradedFrom: ["senator"],
-        costToAcquire: 10,
+        costToAcquire: 4,
         timeToAcquire: 48,
         votes: 3,
         isIndependent: true,

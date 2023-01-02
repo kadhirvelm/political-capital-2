@@ -63,7 +63,7 @@ export const ActiveResolution: React.FC<{}> = () => {
 
         return (
             <div className={styles.seePreviousResolutions} onClick={viewPreviousResolutions}>
-                <span>See previous resolutions</span>
+                <span>See all resolutions</span>
                 <ArrowForwardIcon />
             </div>
         );
@@ -98,5 +98,5 @@ export const ActiveResolution: React.FC<{}> = () => {
         );
     };
 
-    return <div>{renderBody()}</div>;
+    return <div className={styles.overallContainer}>{renderBody()}</div>;
 };

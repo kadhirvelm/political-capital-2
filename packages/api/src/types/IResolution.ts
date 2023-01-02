@@ -53,7 +53,7 @@ const EARLY: IBasicResolution[] = [
         gameModifier: {
             type: "staffer-effect",
             staffersAffected: ["representative"],
-            effectiveness: 0.5,
+            effectiveness: 1,
         },
         stage: "early",
     },

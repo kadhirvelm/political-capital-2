@@ -11,11 +11,11 @@ import { usePoliticalCapitalSelector } from "../../store/createStore";
 import styles from "./ActiveGame.module.scss";
 import { ActiveResolution } from "./ActiveResolution";
 import { AllGameModifiers } from "./AllGameModifiers";
-import { EveryoneElse } from "./EveryoneElse";
+import { Leaderboard } from "./Leaderboard";
 import { PlayerParty } from "./PlayerParty";
 import { StafferLadders } from "./StafferLadders";
 
-type ICurrentView = "active-resolution" | "your-party" | "everyone-else" | "game-modifiers" | "staffers-ladders";
+type ICurrentView = "active-resolution" | "your-party" | "leaderboard" | "game-modifiers" | "staffers-ladders";
 
 export const ActiveGame: React.FC<{}> = () => {
     const [currentView, setCurrentView] = React.useState<ICurrentView>("active-resolution");
@@ -56,7 +56,7 @@ export const ActiveGame: React.FC<{}> = () => {
             return "Your party";
         }
 
-        if (currentView === "everyone-else") {
+        if (currentView === "leaderboard") {
             return "Leaderboard";
         }
 
@@ -78,8 +78,8 @@ export const ActiveGame: React.FC<{}> = () => {
             return <PlayerParty playerRid={player.playerRid} />;
         }
 
-        if (currentView === "everyone-else") {
-            return <EveryoneElse />;
+        if (currentView === "leaderboard") {
+            return <Leaderboard />;
         }
 
         if (currentView === "game-modifiers") {
@@ -103,7 +103,7 @@ export const ActiveGame: React.FC<{}> = () => {
                     <MenuList>
                         <MenuItem onClick={changeCurrentView("active-resolution")}>Active resolution</MenuItem>
                         <MenuItem onClick={changeCurrentView("your-party")}>Your party</MenuItem>
-                        <MenuItem onClick={changeCurrentView("everyone-else")}>Leaderboard</MenuItem>
+                        <MenuItem onClick={changeCurrentView("leaderboard")}>Leaderboard</MenuItem>
                         <MenuItem onClick={changeCurrentView("game-modifiers")}>Game modifiers</MenuItem>
                         <MenuDivider />
                         <MenuItem onClick={changeCurrentView("staffers-ladders")}>Staffer ladders</MenuItem>

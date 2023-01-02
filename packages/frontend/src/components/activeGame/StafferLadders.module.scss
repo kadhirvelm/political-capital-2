@@ -5,6 +5,8 @@
 @import "../../styles/variables.scss";
 
 .staffersContainer {
+    @extend %fadeIn;
+
     display: flex;
     flex-direction: column;
     gap: 15px;

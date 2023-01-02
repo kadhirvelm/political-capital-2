@@ -17,7 +17,7 @@ export const AllGameModifiers: React.FC<{}> = () => {
     }
 
     return (
-        <div>
+        <div className={styles.overallContainer}>
             <div className={styles.allModifiers}>Current modifiers</div>
             <div>
                 {allGameModifiers.map(({ accordingResolution, modifier }) => (

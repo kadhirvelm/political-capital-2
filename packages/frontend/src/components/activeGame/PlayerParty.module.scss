@@ -4,6 +4,13 @@
 
 @import "../../styles/variables.scss";
 
+.overallContainer {
+    @extend %fadeIn;
+
+    display: flex;
+    flex-direction: column
+}
+
 .resourcesContainer {
     display: flex;
     flex-direction: column;

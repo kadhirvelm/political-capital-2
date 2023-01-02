@@ -8,12 +8,12 @@ import { IPlayerRid } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { PlayerParty } from "./PlayerParty";
-import styles from "./EveryoneElse.module.scss";
+import styles from "./Leaderboard.module.scss";
 import { getLeaderboard } from "../../selectors/leaderboard";
 import { PartySummary } from "./PartySummary";
 import { roundToHundred } from "../../utility/roundTo";
 
-export const EveryoneElse: React.FC<{}> = () => {
+export const Leaderboard: React.FC<{}> = () => {
     const [viewingPlayerRid, setViewingPlayerRid] = React.useState<IPlayerRid | undefined>(undefined);
 
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
