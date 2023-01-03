@@ -12,10 +12,14 @@ import {
     IGameModifier,
     IStafferEffect,
 } from "@pc2/api";
+import classNames from "classnames";
 import * as React from "react";
 import styles from "./GameModifier.module.scss";
 
-export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameModifier }) => {
+export const GameModifier: React.FC<{ gameModifier?: IGameModifier; isGlobalScreen?: boolean }> = ({
+    gameModifier,
+    isGlobalScreen,
+}) => {
     if (gameModifier === undefined) {
         return null;
     }
@@ -31,7 +35,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
     const renderPercent = (percent: number) => {
         if (percent > 0) {
             return (
-                <div className={styles.modifierSentence}>
+                <div className={classNames(styles.modifierSentence, { [styles.isGlobalScreen]: isGlobalScreen })}>
                     <span>by</span>
                     <div className={styles.positive}>{percent}%</div>
                 </div>
@@ -39,7 +43,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
         }
 
         return (
-            <div className={styles.modifierSentence}>
+            <div className={classNames(styles.modifierSentence, { [styles.isGlobalScreen]: isGlobalScreen })}>
                 <span>by</span>
                 <div className={styles.negative}>{percent}%</div>
             </div>
@@ -53,7 +57,7 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier }> = ({ gameM
 
         const percent = numberChange * 100;
         return (
-            <div className={styles.modifierSentence}>
+            <div className={classNames(styles.modifierSentence, { [styles.isGlobalScreen]: isGlobalScreen })}>
                 <div>{renderAdjective(percent)}</div>
                 <div>{description}</div>
                 <div>{renderPercent(percent)}</div>

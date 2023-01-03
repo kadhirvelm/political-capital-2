@@ -4,6 +4,8 @@
 
 export type IPlayerRid = string & { _brand: "playerRid" };
 
+export type IGlobalScreenIdentifier = string & { _brand: "globalScreenIdentifier" };
+
 export type IGameStateRid = string & { _brand: "gameStateRid" };
 
 export type IGameClock = number & { _brand: "game-clock-count" };

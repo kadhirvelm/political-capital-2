@@ -3,6 +3,7 @@
  */
 
 import { IActiveGameService } from "../services/activeGameService";
+import { IGlobalScreenIdentifier } from "../types/BrandedIDs";
 import { IVisit } from "../types/IVisit";
 import { IPlayer } from "../types/politicalCapitalTwo";
 
@@ -40,16 +41,26 @@ export interface IRegisterPlayer {
     type: "register-player";
 }
 
+export interface IRegisterGlobalScreen {
+    globalScreenIdentifier: IGlobalScreenIdentifier;
+    type: "register-global-screen";
+}
+
 interface IAllToPlayerMessages {
     registerPlayer: IRegisterPlayer;
+    registerGlobalScreen: IRegisterGlobalScreen;
     unknown: never;
 }
 
-export type IPossibleFromPlayerMessages = IRegisterPlayer;
+export type IPossibleFromPlayerMessages = IAllToPlayerMessages[keyof IAllToPlayerMessages];
 
 export namespace IFromPlayerMessages {
     export const isRegisterPlayer = (message: IPossibleFromPlayerMessages): message is IRegisterPlayer => {
         return message.type === "register-player";
+    };
+
+    export const isGlobalScreen = (message: IPossibleFromPlayerMessages): message is IRegisterGlobalScreen => {
+        return message.type === "register-global-screen";
     };
 
     export const visit = <ReturnValue>(
@@ -58,6 +69,10 @@ export namespace IFromPlayerMessages {
     ) => {
         if (isRegisterPlayer(value)) {
             return visitor.registerPlayer(value);
+        }
+
+        if (isGlobalScreen(value)) {
+            return visitor.registerGlobalScreen(value);
         }
 
         return visitor.unknown(value);

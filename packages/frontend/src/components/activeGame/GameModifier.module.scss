@@ -53,6 +53,12 @@
     align-items: center;
     flex-wrap: wrap;
 
+    &.isGlobalScreen {
+        > :not(:last-child) {
+            margin-right: 0.3vw;
+        }
+    }
+
     > :not(:last-child) {
         margin-right: 3px;
     }

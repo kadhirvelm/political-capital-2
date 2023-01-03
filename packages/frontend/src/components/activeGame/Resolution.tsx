@@ -13,7 +13,10 @@ import { getFakeDate } from "../common/ServerStatus";
 import { GameModifier } from "./GameModifier";
 import styles from "./Resolution.module.scss";
 
-export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolution }) => {
+export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScreen?: boolean }> = ({
+    resolution,
+    isGlobalScreen,
+}) => {
     const votesOnResolution = usePoliticalCapitalSelector((s) =>
         flatten(
             Object.values(s.localGameState.fullGameState?.activePlayersVotes[resolution.activeResolutionRid] ?? {}),
@@ -127,12 +130,15 @@ export const Resolution: React.FC<{ resolution: IActiveResolution }> = ({ resolu
     };
 
     return (
-        <Card variant="elevated">
+        <Card className={styles.cardContainer} variant="elevated">
             <CardBody>
                 <div className={styles.title}>{resolution.resolutionDetails.title}</div>
                 <div className={styles.description}>{resolution.resolutionDetails.description}</div>
                 <div className={styles.resolutionFooter}>
-                    <GameModifier gameModifier={resolution.resolutionDetails.gameModifier} />
+                    <GameModifier
+                        gameModifier={resolution.resolutionDetails.gameModifier}
+                        isGlobalScreen={isGlobalScreen}
+                    />
                     {renderFooter()}
                 </div>
             </CardBody>

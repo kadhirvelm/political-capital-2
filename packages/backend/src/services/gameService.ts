@@ -31,7 +31,7 @@ import { Op } from "sequelize";
 import { v4 } from "uuid";
 import { INITIAL_STAFFERS, TIME_BETWEEN_RESOLUTIONS_IN_DAYS } from "../constants/game";
 import { INITIAL_APPROVAL_RATING, INITIAL_POLITICAL_CAPITAL } from "../constants/initializePlayers";
-import { sendMessageToPlayer } from "./socketService";
+import { areThereActiveGlobalScreens, sendMessageToGlobalScreens, sendMessageToPlayer } from "./socketService";
 
 // This isn't strictly necessary, but given there's a second promise going out anyway, might as well optimize it
 async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<IFullGameState["resolveEvents"]> {
@@ -271,6 +271,32 @@ export async function sendGameStateToAllActivePlayers(gameStateRid: IGameStateRi
     });
 }
 
+export async function sendGameStateToAllActiveGlobalScreens(gameStateRid: IGameStateRid) {
+    if (!areThereActiveGlobalScreens()) {
+        return;
+    }
+
+    const gameState = await getGameState({ gameStateRid });
+    if (gameState === undefined) {
+        // eslint-disable-next-line no-console
+        console.error(`Cannot send an empty game state: ${gameStateRid}.`);
+        return;
+    }
+
+    sendMessageToGlobalScreens({ newGameState: gameState, type: "update-game-state" });
+}
+
+export async function getActiveGameState(): Promise<IActiveGameService["getActiveGameState"]["response"]> {
+    const availableGame = await GameState.findOne({ where: { state: { [Op.not]: ["complete"] } } });
+    if (availableGame == null) {
+        return {};
+    }
+
+    await sendGameStateToAllActiveGlobalScreens(availableGame.gameStateRid);
+
+    return {};
+}
+
 async function addPlayerToGame(gameStateRid: IGameStateRid, playerRid: IPlayerRid) {
     return Promise.all([
         ActivePlayer.create({
@@ -318,6 +344,7 @@ export async function createNewGame(
         }),
     ]);
 
+    sendGameStateToAllActiveGlobalScreens(newGameStateRid);
     await sendGameStateToAllActivePlayers(newGameStateRid);
 
     return {};
@@ -338,6 +365,7 @@ export async function joinActiveGame(
         await addPlayerToGame(availableGame.gameStateRid, payload.playerRid);
     }
 
+    sendGameStateToAllActiveGlobalScreens(availableGame.gameStateRid);
     await sendGameStateToAllActivePlayers(availableGame.gameStateRid);
 
     return {};
@@ -362,6 +390,7 @@ export async function changeReadyState(
         await maybeActivePlayer.save();
     }
 
+    sendGameStateToAllActiveGlobalScreens(maybeActivePlayer.gameStateRid);
     await sendGameStateToAllActivePlayers(maybeActivePlayer.gameStateRid);
 
     return {};
@@ -393,6 +422,7 @@ export async function changeActiveGameState(
     maybeActiveGame.state = payload.newState;
     await maybeActiveGame.save();
 
+    sendGameStateToAllActiveGlobalScreens(maybeActiveGame.gameStateRid);
     await sendGameStateToAllActivePlayers(maybeActiveGame.gameStateRid);
 
     return {};

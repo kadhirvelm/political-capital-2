@@ -6,6 +6,7 @@ import { IGameClock } from "@pc2/api";
 import { ActivePlayer, GameState, ProcessPlayerQueue } from "@pc2/distributed-compute";
 import cron from "node-cron";
 import { TOTAL_DAYS_IN_GAME } from "../constants/game";
+import { sendGameStateToAllActiveGlobalScreens } from "../services/gameService";
 import { resolveGameEvents } from "./resolveGameEvents";
 
 export async function updateGameStates() {
@@ -30,6 +31,8 @@ export async function updateGameStates() {
                 gameClock: activeGame.gameClock,
             });
         });
+
+        sendGameStateToAllActiveGlobalScreens(activeGame.gameStateRid);
     });
 }
 

@@ -1,0 +1,26 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../styles/variables.scss";
+
+.globalScreen {
+    display: flex;
+    flex: 1;
+    position: relative;
+}
+
+.leftSide {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1vw;
+    font-size: 1.5vw;
+}
+
+.rightSide {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1vw;
+}

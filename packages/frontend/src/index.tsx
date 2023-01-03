@@ -9,12 +9,25 @@ import { Provider } from "react-redux";
 import { Store } from "./store/createStore";
 
 import "./index.scss";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { GlobalScreen } from "./components/GlobalScreen";
+
+const router = createBrowserRouter([
+    {
+        path: "/global-screen",
+        element: <GlobalScreen />,
+    },
+    {
+        path: "*",
+        element: <PoliticalCapitalTwo />,
+    },
+]);
 
 const root = createRoot(document.getElementById("root")!);
 root.render(
     <Provider store={Store}>
         <ChakraProvider>
-            <PoliticalCapitalTwo />
+            <RouterProvider router={router} />
         </ChakraProvider>
     </Provider>,
 );

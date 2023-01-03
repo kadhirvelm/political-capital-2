@@ -4,6 +4,11 @@
 
 @import "../../styles/variables.scss";
 
+.cardContainer {
+    display: flex;
+    flex: 1;
+}
+
 .description {
     color: $gray;
 }

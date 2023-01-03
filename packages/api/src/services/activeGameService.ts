@@ -3,7 +3,13 @@
  */
 
 import { implementEndpoints, IService } from "../common/generics";
-import { IActiveResolutionRid, IActiveStafferRid, IGameStateRid, IPlayerRid } from "../types/BrandedIDs";
+import {
+    IActiveResolutionRid,
+    IActiveStafferRid,
+    IGameStateRid,
+    IGlobalScreenIdentifier,
+    IPlayerRid,
+} from "../types/BrandedIDs";
 import {
     IActivePlayer,
     IActiveResolution,
@@ -76,6 +82,12 @@ export interface IActiveGameService extends IService {
         };
         response: IFullGameState;
     };
+    getActiveGameState: {
+        payload: {
+            globalScreenIdentifier: IGlobalScreenIdentifier;
+        };
+        response: {};
+    };
 }
 
 const { backend, frontend } = implementEndpoints<IActiveGameService>({
@@ -97,6 +109,10 @@ const { backend, frontend } = implementEndpoints<IActiveGameService>({
     },
     getGameState: {
         slug: "/game-service/get-game-state",
+        method: "post",
+    },
+    getActiveGameState: {
+        slug: "/game-service/get-active-game-state",
         method: "post",
     },
 });

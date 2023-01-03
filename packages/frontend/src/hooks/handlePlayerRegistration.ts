@@ -75,13 +75,13 @@ export function useHandlePlayerAndSocketRegistration() {
 
             toast({
                 title: "Disconnected",
-                description: "Connection to the server was lost, attempting to reconnect in 5 seconds.",
+                description: "Connection to the server was lost, attempting to reconnect in 3 seconds.",
                 status: "error",
                 duration: 2000,
             });
 
             dispatch(disconnectedFromServer());
-            await sleep(5);
+            await sleep(3);
             registerNewSocket();
         };
 

@@ -16,7 +16,7 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
-    if (player === undefined || fullGameState === undefined || event === undefined) {
+    if (fullGameState === undefined || event === undefined) {
         return null;
     }
 
@@ -32,6 +32,10 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
                 </div>
             ),
             finishHiringStaffer: (finishHiring) => {
+                if (player === undefined) {
+                    return undefined;
+                }
+
                 const hiringStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
                     (staffer) => staffer.activeStafferRid === finishHiring.activeStafferRid,
                 );
@@ -52,6 +56,10 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
                 );
             },
             startTrainingStaffer: (startTraining) => {
+                if (player === undefined) {
+                    return undefined;
+                }
+
                 const trainingStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
                     (staffer) => staffer.activeStafferRid === startTraining.activeStafferRid,
                 );
@@ -72,6 +80,10 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
                 );
             },
             finishTrainingStaffer: (finishTraining) => {
+                if (player === undefined) {
+                    return undefined;
+                }
+
                 const trainingStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
                     (staffer) => staffer.activeStafferRid === finishTraining.activeStafferRid,
                 );
