@@ -4,7 +4,7 @@
 
 import { IAllStaffers } from "@pc2/api";
 
-export const TIME_BETWEEN_RESOLUTIONS_IN_DAYS = 12;
+export const TIME_BETWEEN_RESOLUTIONS_IN_DAYS = 6;
 
 export const TIME_FOR_EACH_RESOLUTION_IN_DAYS = 36;
 

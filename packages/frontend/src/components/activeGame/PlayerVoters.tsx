@@ -27,7 +27,7 @@ import { ResolveEvent } from "./ResolveEvent";
 
 export const PlayerVoters: React.FC<{
     gameStateRid: IGameStateRid;
-    activeResolutionRid: IActiveResolutionRid;
+    activeResolutionRid: IActiveResolutionRid | undefined;
 }> = ({ gameStateRid, activeResolutionRid }) => {
     const toast = useToast();
     const dispatch = usePoliticalCapitalDispatch();
@@ -35,9 +35,13 @@ export const PlayerVoters: React.FC<{
     const isPaused = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState?.gameState.state !== "active");
     const voters = usePoliticalCapitalSelector(getVoters);
     const votesCastByPlayerVoters = usePoliticalCapitalSelector(getVotesAlreadyCast(activeResolutionRid));
-    const votesAlreadyCastOnResolution = usePoliticalCapitalSelector(
-        (s) => s.localGameState.fullGameState?.activePlayersVotes?.[activeResolutionRid],
-    );
+    const votesAlreadyCastOnResolution = usePoliticalCapitalSelector((s) => {
+        if (activeResolutionRid === undefined) {
+            return undefined;
+        }
+
+        return s.localGameState.fullGameState?.activePlayersVotes?.[activeResolutionRid];
+    });
     const activeResolution = usePoliticalCapitalSelector((s) =>
         s.localGameState.fullGameState?.activeResolutions.find((r) => r.activeResolutionRid === activeResolutionRid),
     );
@@ -118,6 +122,10 @@ export const PlayerVoters: React.FC<{
     };
 
     const onCastVote = (activeStafferRid: IActiveStafferRid) => async () => {
+        if (activeResolutionRid === undefined) {
+            return;
+        }
+
         const vote = castVotes[activeStafferRid] ?? "abstain";
 
         setIsLoading(true);

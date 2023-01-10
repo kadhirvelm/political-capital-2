@@ -4,6 +4,7 @@
 
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
+    Avatar,
     Button,
     Modal,
     ModalBody,
@@ -119,8 +120,18 @@ export const TrainerActivation: React.FC<{
                             [styles.support]: stafferCategory === "support",
                         })}
                     >
-                        <div>{staffer.stafferDetails.displayName}</div>
-                        <div>{DEFAULT_STAFFER[staffer.stafferDetails.type].displayName}</div>
+                        <div className={styles.nameContainer}>
+                            <Avatar
+                                size="md"
+                                name={staffer.stafferDetails.displayName}
+                                showBorder
+                                src={`https://robohash.org/${staffer.stafferDetails.displayName}?set=set${staffer.avatarSet}`}
+                            />
+                            <div>{staffer.stafferDetails.displayName}</div>
+                            <div className={styles.positionType}>
+                                ({DEFAULT_STAFFER[staffer.stafferDetails.type].displayName})
+                            </div>
+                        </div>
                         <div className={styles.description}>
                             {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}
                         </div>

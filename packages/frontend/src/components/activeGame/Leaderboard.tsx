@@ -42,6 +42,35 @@ export const Leaderboard: React.FC<{}> = () => {
 
     const viewPlayerParty = (playerRid: IPlayerRid | undefined) => () => setViewingPlayerRid(playerRid);
 
+    const maybeRenderExploreParty = () => {
+        if (fullGameState.gameState.state !== "complete") {
+            return undefined;
+        }
+
+        return (
+            <>
+                <div className={styles.detailedPartyView}>Detailed party view</div>
+                <div className={styles.selector}>
+                    <Menu>
+                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} className={styles.selectorButton}>
+                            <div className={styles.selectedText}>{viewingPlayer?.name ?? "Select a player"}</div>
+                        </MenuButton>
+                        <MenuList>
+                            <MenuItem onClick={viewPlayerParty(undefined)}>Select a player</MenuItem>
+                            {Object.values(fullGameState.players)
+                                .filter((p) => p.playerRid !== player.playerRid)
+                                .map((p) => (
+                                    <MenuItem key={p.playerRid} onClick={viewPlayerParty(p.playerRid)}>
+                                        {p.name}
+                                    </MenuItem>
+                                ))}
+                        </MenuList>
+                    </Menu>
+                </div>
+            </>
+        );
+    };
+
     return (
         <div className={styles.overallContainer}>
             <div className={styles.leaderboard}>
@@ -55,35 +84,23 @@ export const Leaderboard: React.FC<{}> = () => {
                                         <div>(you)</div>
                                     ) : undefined}
                                 </div>
-                                <div>
-                                    {roundToHundred(leaderboardPlayer.activePlayer.politicalCapital).toLocaleString()}{" "}
-                                    political capital
-                                </div>
+                                {fullGameState.gameState.state === "complete" && (
+                                    <div>
+                                        {roundToHundred(
+                                            leaderboardPlayer.activePlayer.politicalCapital,
+                                        ).toLocaleString()}{" "}
+                                        political capital
+                                    </div>
+                                )}
                             </div>
-
-                            <PartySummary playerRid={leaderboardPlayer.player.playerRid} />
+                            {fullGameState.gameState.state === "complete" && (
+                                <PartySummary playerRid={leaderboardPlayer.player.playerRid} />
+                            )}
                         </div>
                     ))}
                 </div>
             </div>
-            <div className={styles.detailedPartyView}>Detailed party view</div>
-            <div className={styles.selector}>
-                <Menu>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} className={styles.selectorButton}>
-                        <div className={styles.selectedText}>{viewingPlayer?.name ?? "Select a player"}</div>
-                    </MenuButton>
-                    <MenuList>
-                        <MenuItem onClick={viewPlayerParty(undefined)}>Select a player</MenuItem>
-                        {Object.values(fullGameState.players)
-                            .filter((p) => p.playerRid !== player.playerRid)
-                            .map((p) => (
-                                <MenuItem key={p.playerRid} onClick={viewPlayerParty(p.playerRid)}>
-                                    {p.name}
-                                </MenuItem>
-                            ))}
-                    </MenuList>
-                </Menu>
-            </div>
+            {maybeRenderExploreParty()}
             {maybeRenderPlayerParty()}
         </div>
     );

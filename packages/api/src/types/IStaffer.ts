@@ -32,14 +32,14 @@ export interface ITrainer {
 export interface IIntern extends IBasicStaffer {
     upgradedFrom: [];
     costToAcquire: 0;
-    timeToAcquire: 24;
+    timeToAcquire: 21;
     type: "intern";
 }
 
 export interface INewHire extends IBasicStaffer, IGenerator {
     upgradedFrom: ["intern"];
     costToAcquire: 0;
-    timeToAcquire: 24;
+    timeToAcquire: 21;
     payout: 0.15;
     type: "newHire";
 }
@@ -47,7 +47,7 @@ export interface INewHire extends IBasicStaffer, IGenerator {
 export interface ISeasonedStaffer extends IBasicStaffer, IGenerator {
     upgradedFrom: ["newHire"];
     costToAcquire: 10;
-    timeToAcquire: 48;
+    timeToAcquire: 42;
     payout: 0.25;
     type: "seasonedStaffer";
 }
@@ -55,7 +55,7 @@ export interface ISeasonedStaffer extends IBasicStaffer, IGenerator {
 export interface IPoliticalCommentator extends IBasicStaffer, IGenerator, IVoter {
     upgradedFrom: ["seasonedStaffer"];
     costToAcquire: 10;
-    timeToAcquire: 48;
+    timeToAcquire: 42;
     payout: 0.5;
     votes: 2;
     type: "politicalCommentator";
@@ -64,7 +64,7 @@ export interface IPoliticalCommentator extends IBasicStaffer, IGenerator, IVoter
 export interface IRepresentative extends IBasicStaffer, IVoter {
     upgradedFrom: [];
     costToAcquire: 10;
-    timeToAcquire: 48;
+    timeToAcquire: 42;
     votes: 1;
     type: "representative";
 }
@@ -72,7 +72,7 @@ export interface IRepresentative extends IBasicStaffer, IVoter {
 export interface ISeniorRepresentative extends IBasicStaffer, IVoter {
     upgradedFrom: ["representative"];
     costToAcquire: 8;
-    timeToAcquire: 48;
+    timeToAcquire: 42;
     votes: 2;
     type: "seniorRepresentative";
 }
@@ -80,7 +80,7 @@ export interface ISeniorRepresentative extends IBasicStaffer, IVoter {
 export interface IIndependentRepresentative extends IBasicStaffer, IVoter {
     upgradedFrom: ["representative"];
     costToAcquire: 8;
-    timeToAcquire: 48;
+    timeToAcquire: 42;
     votes: 1;
     isIndependent: true;
     type: "independentRepresentative";
@@ -89,7 +89,7 @@ export interface IIndependentRepresentative extends IBasicStaffer, IVoter {
 export interface ISenator extends IBasicStaffer, IVoter {
     upgradedFrom: ["seniorRepresentative"];
     costToAcquire: 6;
-    timeToAcquire: 48;
+    timeToAcquire: 42;
     votes: 3;
     type: "senator";
 }
@@ -97,7 +97,7 @@ export interface ISenator extends IBasicStaffer, IVoter {
 export interface ISeasonedSenator extends IBasicStaffer, IVoter {
     upgradedFrom: ["senator"];
     costToAcquire: 4;
-    timeToAcquire: 48;
+    timeToAcquire: 42;
     votes: 4;
     type: "seasonedSenator";
 }
@@ -105,7 +105,7 @@ export interface ISeasonedSenator extends IBasicStaffer, IVoter {
 export interface IIndependentSenator extends IBasicStaffer, IVoter {
     upgradedFrom: ["senator"];
     costToAcquire: 4;
-    timeToAcquire: 48;
+    timeToAcquire: 42;
     votes: 3;
     isIndependent: true;
     type: "independentSenator";

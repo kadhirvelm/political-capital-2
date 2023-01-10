@@ -25,6 +25,18 @@
     display: flex;
     flex-direction: column;
     padding: 10px;
+
+    &.first {
+        background: rgba($yellow, 0.75);
+    }
+
+    &.second {
+        background: rgba($gray, 0.4);
+    }
+
+    &.third {
+        background: rgba($brown, 0.4);
+    }
 }
 
 .details {

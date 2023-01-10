@@ -2,6 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
+import classNames from "classnames";
 import * as React from "react";
 import { getLeaderboard } from "../../selectors/leaderboard";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
@@ -18,7 +19,14 @@ export const GlobalLeaderboard: React.FC<{}> = () => {
         <div className={styles.leaderboard}>
             <div className={styles.leaderboardTable}>
                 {leaderboard.map((leaderboardPlayer, index) => (
-                    <div className={styles.singleRow} key={leaderboardPlayer.player.playerRid}>
+                    <div
+                        className={classNames(styles.singleRow, {
+                            [styles.first]: index === 0,
+                            [styles.second]: index === 1,
+                            [styles.third]: index === 2,
+                        })}
+                        key={leaderboardPlayer.player.playerRid}
+                    >
                         <div className={styles.details}>
                             <div className={styles.name}>
                                 {index + 1}. {leaderboardPlayer.player.name}

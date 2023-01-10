@@ -72,19 +72,6 @@ export const ActiveResolution: React.FC<{}> = () => {
         );
     };
 
-    const maybeRenderVotes = () => {
-        if (activeResolution === undefined) {
-            return undefined;
-        }
-
-        return (
-            <PlayerVoters
-                gameStateRid={fullGameState.gameState.gameStateRid}
-                activeResolutionRid={activeResolution.activeResolutionRid}
-            />
-        );
-    };
-
     const renderBody = () => {
         if (isViewingPreviousResolutions) {
             return <PreviousResolutions onBack={onBackFromPreviousResolutions} />;
@@ -95,7 +82,10 @@ export const ActiveResolution: React.FC<{}> = () => {
                 {maybeRenderNextResolution()}
                 {maybeRenderMostRecentResolution()}
                 {maybeRenderSeeResolutionHistory()}
-                {maybeRenderVotes()}
+                <PlayerVoters
+                    gameStateRid={fullGameState.gameState.gameStateRid}
+                    activeResolutionRid={activeResolution?.activeResolutionRid}
+                />
             </>
         );
     };

@@ -21,6 +21,12 @@ export const getLeaderboard = createSelector(
                 };
             })
             .slice()
-            .sort((a, b) => (a.activePlayer.politicalCapital > b.activePlayer.politicalCapital ? -1 : 1));
+            .sort((a, b) => {
+                if (a.activePlayer.politicalCapital === b.activePlayer.politicalCapital) {
+                    return a.player.name.localeCompare(b.player.name);
+                }
+
+                return a.activePlayer.politicalCapital > b.activePlayer.politicalCapital ? -1 : 1;
+            });
     },
 );

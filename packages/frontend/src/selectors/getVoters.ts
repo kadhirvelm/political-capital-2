@@ -65,12 +65,12 @@ export const getVoters = createSelector(
     },
 );
 
-export const getVotesAlreadyCast = (activeResolutionRid: IActiveResolutionRid) =>
+export const getVotesAlreadyCast = (activeResolutionRid: IActiveResolutionRid | undefined) =>
     createSelector(
         getVoters,
         (state: State) => state.localGameState.fullGameState,
         (playerVoters: IVoterAndActiveEvent[], fullGameState: IFullGameState | undefined) => {
-            if (fullGameState === undefined) {
+            if (fullGameState === undefined || activeResolutionRid === undefined) {
                 return [];
             }
 
