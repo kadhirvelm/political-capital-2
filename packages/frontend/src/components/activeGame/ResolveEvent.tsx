@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { DEFAULT_STAFFER, IEvent } from "@pc2/api";
+import { DEFAULT_STAFFER, IActiveStafferRid, IEvent } from "@pc2/api";
 import * as React from "react";
 import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
@@ -11,7 +11,10 @@ import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
 import styles from "./ResolveEvent.module.scss";
 
-export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefined }> = ({ event }) => {
+export const ResolveEvent: React.FC<{
+    event: IUserFacingResolveEvents | undefined;
+    activeStafferRid?: IActiveStafferRid;
+}> = ({ event }) => {
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
@@ -24,7 +27,7 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
         return IEvent.visit(event.eventDetails, {
             startHiringStaffer: (startHiring) => (
                 <div>
-                    <div className={styles.title}>Send out a job posting for a</div>
+                    <div className={styles.title}>Start recruiting</div>
                     <div>{DEFAULT_STAFFER[startHiring.stafferType].displayName}</div>
                     <div className={styles.description}>
                         {descriptionOfStaffer(resolvedGameModifiers)[startHiring.stafferType]}
@@ -42,7 +45,7 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
 
                 return (
                     <div>
-                        <div className={styles.title}>Sign contract with</div>
+                        <div className={styles.title}>Finish recruiting</div>
                         <div>{hiringStaffer?.stafferDetails.displayName}</div>
                         <div>
                             {hiringStaffer !== undefined &&
@@ -120,7 +123,10 @@ export const ResolveEvent: React.FC<{ event: IUserFacingResolveEvents | undefine
     );
 };
 
-export const MinimalResolveEvent: React.FC<{ event: IUserFacingResolveEvents }> = ({ event }) => {
+export const MinimalResolveEvent: React.FC<{
+    event: IUserFacingResolveEvents;
+    activeStafferRid?: IActiveStafferRid;
+}> = ({ event, activeStafferRid }) => {
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
@@ -137,6 +143,19 @@ export const MinimalResolveEvent: React.FC<{ event: IUserFacingResolveEvents }> 
                 </>
             ),
             finishHiringStaffer: (finishHiring) => {
+                if (finishHiring.activeStafferRid === activeStafferRid) {
+                    const recruiterStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
+                        (staffer) => staffer.activeStafferRid === finishHiring.recruiterRid,
+                    );
+
+                    return (
+                        <>
+                            <div>Being recruited by</div>
+                            <div>{recruiterStaffer?.stafferDetails.displayName}</div>
+                        </>
+                    );
+                }
+
                 const hiringStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
                     (staffer) => staffer.activeStafferRid === finishHiring.activeStafferRid,
                 );
@@ -155,6 +174,19 @@ export const MinimalResolveEvent: React.FC<{ event: IUserFacingResolveEvents }> 
                 );
             },
             startTrainingStaffer: (startTraining) => {
+                if (startTraining.activeStafferRid === activeStafferRid) {
+                    const trainerStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
+                        (staffer) => staffer.activeStafferRid === startTraining.trainerRid,
+                    );
+
+                    return (
+                        <>
+                            <div>Being trained by</div>
+                            <div>{trainerStaffer?.stafferDetails.displayName}</div>
+                        </>
+                    );
+                }
+
                 const trainingStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
                     (staffer) => staffer.activeStafferRid === startTraining.activeStafferRid,
                 );
@@ -171,6 +203,19 @@ export const MinimalResolveEvent: React.FC<{ event: IUserFacingResolveEvents }> 
                 );
             },
             finishTrainingStaffer: (finishTraining) => {
+                if (finishTraining.activeStafferRid === activeStafferRid) {
+                    const trainerStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
+                        (staffer) => staffer.activeStafferRid === finishTraining.trainerRid,
+                    );
+
+                    return (
+                        <>
+                            <div>Being trained by</div>
+                            <div>{trainerStaffer?.stafferDetails.displayName}</div>
+                        </>
+                    );
+                }
+
                 const trainingStaffer = fullGameState.activePlayersStaffers[player.playerRid].find(
                     (staffer) => staffer.activeStafferRid === finishTraining.activeStafferRid,
                 );

@@ -5,6 +5,7 @@
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { IEvent } from "@pc2/api";
 import * as React from "react";
+import { getActiveResolution } from "../../selectors/resolutions";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import styles from "./ActiveResolution.module.scss";
 import { PlayerVoters } from "./PlayerVoters";
@@ -17,25 +18,28 @@ export const ActiveResolution: React.FC<{}> = () => {
 
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
+    const activeResolution = usePoliticalCapitalSelector(getActiveResolution);
 
     if (fullGameState === undefined || resolveEvents === undefined) {
         return null;
     }
 
-    const resolutionsSorted = fullGameState.activeResolutions
-        .slice()
-        .sort((a, b) => (a.createdOn > b.createdOn ? -1 : 1));
-
     const maybeRenderNextResolution = () => {
-        const maybeVoteOnResolution = resolutionsSorted[0];
-        if (maybeVoteOnResolution !== undefined && maybeVoteOnResolution.state === "active") {
+        if (activeResolution !== undefined) {
             return undefined;
         }
 
         const nextResolutionEvent = resolveEvents.game
             .slice()
             .sort((a, b) => (a.resolvesOn > b.resolvesOn ? -1 : 1))
-            .find((event) => IEvent.isNewResolution(event.eventDetails));
+            .find(
+                (event) =>
+                    IEvent.isNewResolution(event.eventDetails) && event.resolvesOn > fullGameState.gameState.gameClock,
+            );
+
+        if (nextResolutionEvent === undefined) {
+            return undefined;
+        }
 
         return (
             <div className={styles.resolveEventsContainer}>
@@ -45,19 +49,18 @@ export const ActiveResolution: React.FC<{}> = () => {
     };
 
     const maybeRenderMostRecentResolution = () => {
-        const maybeRenderResolution = resolutionsSorted[0];
-        if (maybeRenderResolution === undefined) {
+        if (activeResolution === undefined) {
             return undefined;
         }
 
-        return <Resolution resolution={maybeRenderResolution} />;
+        return <Resolution resolution={activeResolution} />;
     };
 
     const viewPreviousResolutions = () => setIsViewingPreviousResolutions(true);
     const onBackFromPreviousResolutions = () => setIsViewingPreviousResolutions(false);
 
     const maybeRenderSeeResolutionHistory = () => {
-        if (resolutionsSorted.length <= 1) {
+        if (fullGameState.activeResolutions.length <= 1) {
             return undefined;
         }
 
@@ -70,22 +73,21 @@ export const ActiveResolution: React.FC<{}> = () => {
     };
 
     const maybeRenderVotes = () => {
-        const maybeVoteOnResolution = resolutionsSorted[0];
-        if (maybeVoteOnResolution === undefined) {
+        if (activeResolution === undefined) {
             return undefined;
         }
 
         return (
             <PlayerVoters
                 gameStateRid={fullGameState.gameState.gameStateRid}
-                activeResolutionRid={maybeVoteOnResolution.activeResolutionRid}
+                activeResolutionRid={activeResolution.activeResolutionRid}
             />
         );
     };
 
     const renderBody = () => {
         if (isViewingPreviousResolutions) {
-            return <PreviousResolutions resolutionsSorted={resolutionsSorted} onBack={onBackFromPreviousResolutions} />;
+            return <PreviousResolutions onBack={onBackFromPreviousResolutions} />;
         }
 
         return (

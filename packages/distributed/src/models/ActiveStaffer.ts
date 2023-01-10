@@ -33,6 +33,11 @@ export class ActiveStaffer extends Model<IActiveStaffer> {
     declare stafferDetails: IActiveStaffer["stafferDetails"];
 
     @Column({
+        type: DataTypes.INTEGER,
+    })
+    declare avatarSet: IActiveStaffer["avatarSet"];
+
+    @Column({
         type: DataTypes.STRING,
     })
     declare state: IActiveStaffer["state"];

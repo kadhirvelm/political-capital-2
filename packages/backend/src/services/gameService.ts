@@ -298,7 +298,7 @@ export async function getActiveGameState(): Promise<IActiveGameService["getActiv
     return {};
 }
 
-async function addPlayerToGame(gameStateRid: IGameStateRid, playerRid: IPlayerRid) {
+async function addPlayerToGame(gameStateRid: IGameStateRid, playerRid: IPlayerRid, isGameActive: boolean = false) {
     return Promise.all([
         ActivePlayer.create({
             gameStateRid,
@@ -306,7 +306,7 @@ async function addPlayerToGame(gameStateRid: IGameStateRid, playerRid: IPlayerRi
             politicalCapital: INITIAL_POLITICAL_CAPITAL,
             approvalRating: INITIAL_APPROVAL_RATING,
             lastUpdatedGameClock: 0 as IGameClock,
-            isReady: false,
+            isReady: isGameActive ? true : false,
         }),
         ...INITIAL_STAFFERS.map((staffer) =>
             ActiveStaffer.create({
@@ -314,6 +314,7 @@ async function addPlayerToGame(gameStateRid: IGameStateRid, playerRid: IPlayerRi
                 playerRid,
                 activeStafferRid: v4() as IActiveStafferRid,
                 stafferDetails: getStafferOfType(staffer),
+                avatarSet: _.random(1, 5) as IActiveStaffer["avatarSet"],
                 state: "active",
             }),
         ),
@@ -363,7 +364,7 @@ export async function joinActiveGame(
         where: { playerRid: payload.playerRid, gameStateRid: availableGame.gameStateRid },
     });
     if (maybeExistingActivePlayer == null) {
-        await addPlayerToGame(availableGame.gameStateRid, payload.playerRid);
+        await addPlayerToGame(availableGame.gameStateRid, payload.playerRid, availableGame.state === "active");
     }
 
     sendGameStateToAllActiveGlobalScreens(availableGame.gameStateRid);

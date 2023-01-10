@@ -9,6 +9,7 @@ import {
     getPayoutForStaffer,
     getPayoutPerResolutionModifier,
     getTimeToAcquireModifier,
+    IActiveStaffer,
     IActiveStafferRid,
     IEvent,
     IFinishHiringStaffer,
@@ -34,6 +35,7 @@ import {
 } from "../models";
 import { IProcessPlayerQueue, UpdatePlayerQueue } from "../queues";
 import { getStafferOfType } from "../utils/getStafferOfType";
+import _ from "lodash";
 
 async function getPayoutForPlayer(
     gameStateRid: IGameStateRid,
@@ -110,6 +112,7 @@ export async function handleStartHiringOrTraining(
                         playerRid,
                         activeStafferRid: newStafferRid,
                         stafferDetails: newStafferDetails,
+                        avatarSet: _.random(1, 5) as IActiveStaffer["avatarSet"],
                         state: "disabled",
                     }),
                     ResolveGameEvent.create({

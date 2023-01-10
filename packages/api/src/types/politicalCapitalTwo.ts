@@ -49,6 +49,7 @@ export interface IActiveStaffer {
     playerRid: IPlayerRid;
     activeStafferRid: IActiveStafferRid;
     stafferDetails: IPossibleStaffer;
+    avatarSet: 1 | 2 | 3 | 4 | 5;
     state: "active" | "disabled";
 }
 

@@ -93,6 +93,15 @@ export const ActiveGame: React.FC<{}> = () => {
 
     const changeCurrentView = (newView: ICurrentView) => () => setCurrentView(newView);
 
+    if (fullGameState.gameState.state === "complete") {
+        return (
+            <div className={styles.endGameContainer}>
+                <div className={styles.results}>Results</div>
+                <Leaderboard />
+            </div>
+        );
+    }
+
     return (
         <div className={styles.activeGameContainer}>
             <div className={styles.menu}>

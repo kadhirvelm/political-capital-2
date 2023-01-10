@@ -10,6 +10,8 @@ import { PartySummary } from "../activeGame/PartySummary";
 import styles from "./GlobalLeaderboard.module.scss";
 
 export const GlobalLeaderboard: React.FC<{}> = () => {
+    const gameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState?.gameState);
+
     const leaderboard = usePoliticalCapitalSelector(getLeaderboard);
 
     return (
@@ -21,12 +23,16 @@ export const GlobalLeaderboard: React.FC<{}> = () => {
                             <div className={styles.name}>
                                 {index + 1}. {leaderboardPlayer.player.name}
                             </div>
-                            <div>
-                                {roundToHundred(leaderboardPlayer.activePlayer.politicalCapital).toLocaleString()}{" "}
-                                political capital
-                            </div>
+                            {gameState?.state === "complete" && (
+                                <div>
+                                    {roundToHundred(leaderboardPlayer.activePlayer.politicalCapital).toLocaleString()}{" "}
+                                    political capital
+                                </div>
+                            )}
                         </div>
-                        <PartySummary playerRid={leaderboardPlayer.player.playerRid} />
+                        {gameState?.state === "complete" && (
+                            <PartySummary playerRid={leaderboardPlayer.player.playerRid} />
+                        )}
                     </div>
                 ))}
             </div>

@@ -19,6 +19,9 @@ module.exports = {
             stafferDetails: {
                 type: Sequelize.JSONB,
             },
+            avatarSet: {
+                type: Sequelize.INTEGER,
+            },
             state: {
                 allowNull: false,
                 type: Sequelize.STRING,

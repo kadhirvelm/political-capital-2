@@ -5,11 +5,14 @@
 import {
     getTotalAllowedRecruits,
     getTotalAllowedTrainees,
+    IActiveResolution,
     IActiveStaffer,
     IEvent,
+    IFullGameState,
     IPlayerRid,
     isRecruit,
     isTrainer,
+    isVoter,
 } from "@pc2/api";
 import { IUserFacingIndexedResolveEvents } from "../store/gameState";
 
@@ -17,6 +20,8 @@ export function isStafferBusy(
     staffer: IActiveStaffer,
     resolveEvents: IUserFacingIndexedResolveEvents | undefined,
     playerRid: IPlayerRid | undefined,
+    fullGameState: IFullGameState | undefined,
+    activeResolution: IActiveResolution | undefined,
 ): boolean {
     if (playerRid === undefined) {
         return false;
@@ -47,6 +52,13 @@ export function isStafferBusy(
         );
 
         return totalTraining <= trainingEvents.length || activeEvents.length - trainingEvents.length > 0;
+    }
+
+    if (isVoter(staffer) && fullGameState !== undefined && activeResolution !== undefined) {
+        const maybeVotesOnThisResolution =
+            fullGameState.activePlayersVotes[activeResolution.activeResolutionRid]?.[staffer.activeStafferRid];
+
+        return maybeVotesOnThisResolution !== undefined && maybeVotesOnThisResolution.length > 0;
     }
 
     return hasActiveEvent;
