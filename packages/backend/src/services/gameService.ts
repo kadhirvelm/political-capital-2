@@ -21,6 +21,7 @@ import {
     ActiveStaffer,
     GameState,
     getStafferOfType,
+    HistoricalGameState,
     PassedGameModifier,
     Player,
     ResolveGameEvent,
@@ -426,4 +427,17 @@ export async function changeActiveGameState(
     await sendGameStateToAllActivePlayers(maybeActiveGame.gameStateRid);
 
     return {};
+}
+
+export async function getHistoricalGame(
+    payload: IActiveGameService["getHistoricalGame"]["payload"],
+): Promise<IActiveGameService["getHistoricalGame"]["response"]> {
+    const [allHistoricalGame, activePlayers] = await Promise.all([
+        HistoricalGameState.findAll({ where: { gameStateRid: payload.gameStateRid } }),
+        ActivePlayer.findAll({ where: { gameStateRid: payload.gameStateRid } }),
+    ]);
+
+    const players = await Player.findAll({ where: { playerRid: activePlayers.map((p) => p.playerRid) } });
+
+    return { historicalGame: allHistoricalGame, players };
 }

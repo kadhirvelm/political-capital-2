@@ -76,7 +76,7 @@ export const PlayerVoters: React.FC<{
 
     const onSwitchVote = (activeStafferRid: IActiveStafferRid, newVote: IActiveResolutionVote["vote"]) => () => {
         const maybeExistingVote = getStafferExistingVote(activeStafferRid);
-        if (maybeExistingVote !== undefined) {
+        if (maybeExistingVote !== undefined || newVote === "abstain") {
             return;
         }
 
@@ -97,14 +97,14 @@ export const PlayerVoters: React.FC<{
                 >
                     {totalVotes} Yes
                 </div>
-                <div
+                {/* <div
                     className={classNames(styles.vote, { [styles.abstain]: stafferVote === "abstain" })}
                     onClick={
                         maybeExistingVote === undefined ? onSwitchVote(voter.activeStafferRid, "abstain") : undefined
                     }
                 >
                     Abstain
-                </div>
+                </div> */}
                 <div
                     className={classNames(styles.vote, { [styles.noVote]: stafferVote === "failed" })}
                     onClick={
@@ -145,14 +145,14 @@ export const PlayerVoters: React.FC<{
         }
 
         const totalYes = votesCastByPlayerVoters.filter((vote) => vote.vote === "passed").length;
-        const totalAbstain = votesCastByPlayerVoters.filter((vote) => vote.vote === "abstain").length;
+        // const totalAbstain = votesCastByPlayerVoters.filter((vote) => vote.vote === "abstain").length;
         const totalNo = votesCastByPlayerVoters.filter((vote) => vote.vote === "failed").length;
 
         return (
             <div className={styles.alreadyCastVotes}>
                 <div>{"("}</div>
                 <div>{totalYes} Yes,</div>
-                <div>{totalAbstain} Abstain,</div>
+                {/* <div>{totalAbstain} Abstain,</div> */}
                 <div>{totalNo} No</div>
                 <div>{")"}</div>
             </div>
@@ -174,6 +174,8 @@ export const PlayerVoters: React.FC<{
 
                     const totalVotes = getTotalAllowedVotes(voter.staffer);
                     const maybeExistingVote = getStafferExistingVote(voter.staffer.activeStafferRid);
+
+                    const stafferVote = castVotes[voter.staffer.activeStafferRid] ?? "abstain";
 
                     return (
                         <div
@@ -204,7 +206,11 @@ export const PlayerVoters: React.FC<{
                                     {maybeExistingVote === undefined && (
                                         <Button
                                             isLoading={isLoading}
-                                            disabled={isPaused || activeResolution?.state !== "active"}
+                                            disabled={
+                                                isPaused ||
+                                                activeResolution?.state !== "active" ||
+                                                stafferVote === "abstain"
+                                            }
                                             onClick={onCastVote(voter.staffer.activeStafferRid)}
                                         >
                                             Cast votes

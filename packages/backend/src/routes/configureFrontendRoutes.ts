@@ -15,6 +15,14 @@ export function configureFrontendRoutes(app: Express.Express) {
             res.sendFile(join(process.cwd(), "packages/frontend/build/index.html"));
         });
     } else {
+        app.get("/new-resolution.mp3", (_, res) => {
+            res.sendFile(join(process.cwd(), "static/new-resolution.mp3"));
+        });
+
+        app.get("/tally-resolution.mp3", (_, res) => {
+            res.sendFile(join(process.cwd(), "static/tally-resolution.mp3"));
+        });
+
         app.use(Express.static(join(process.cwd(), "../frontend/build"), { extensions: ["html"] }));
         app.use(Express.static(join(process.cwd(), "../frontend/public")));
         app.use(Express.static(join(process.cwd(), "../frontend/static")));

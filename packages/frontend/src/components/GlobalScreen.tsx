@@ -4,14 +4,18 @@
 
 import * as React from "react";
 import { useHandleGlobalScreenRegistration } from "../hooks/handleGlobalScreenRegistration";
+import { usePlayGlobalSound } from "../hooks/playGlobalSound";
 import { usePoliticalCapitalSelector } from "../store/createStore";
 import styles from "./GlobalScreen.module.scss";
 import { CurrentResolution } from "./globalScreen/CurrentResolution";
+import { EndGameState } from "./globalScreen/EndGameState";
 import { GameClock } from "./globalScreen/GameClock";
 import { GlobalLeaderboard } from "./globalScreen/GlobalLeaderboard";
 
 export const GlobalScreen: React.FC<{}> = () => {
     useHandleGlobalScreenRegistration();
+    usePlayGlobalSound();
+
     const activeGame = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
     const height = window.innerHeight;
@@ -23,6 +27,10 @@ export const GlobalScreen: React.FC<{}> = () => {
 
     if (activeGame === undefined) {
         return null;
+    }
+
+    if (activeGame.gameState.state === "complete") {
+        return <EndGameState />;
     }
 
     return (

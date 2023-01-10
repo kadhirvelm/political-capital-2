@@ -65,3 +65,9 @@ export interface IPassedGameModifier {
     modifier: IGameModifier;
     createdOn: IGameClock;
 }
+
+export interface IHistoricalGameState {
+    gameStateRid: IGameStateRid;
+    gameClock: IGameClock;
+    snapshot: Array<{ playerRid: IPlayerRid; politicalCapital: number }>;
+}

@@ -11,6 +11,7 @@ import {
     joinActiveGame,
     changeReadyState,
     getActiveGameState,
+    getHistoricalGame,
 } from "../services/gameService";
 import { getPlayer, registerNewPlayer, updatePlayer } from "../services/playerService";
 import { recruitStaffer, trainStaffer, castVote } from "../services/politicalCapitalTwoService";
@@ -34,6 +35,7 @@ export function configureAllRoutes(app: Express.Express) {
         changeActiveGameState,
         getGameState,
         getActiveGameState,
+        getHistoricalGame,
     });
 
     PoliticalCapitalTwoServiceBackend(app, {

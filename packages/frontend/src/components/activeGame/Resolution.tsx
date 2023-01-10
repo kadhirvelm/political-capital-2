@@ -40,11 +40,15 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
             return <div className={classNames(styles.totalVotes, styles.description)}>No votes cast yet</div>;
         }
 
+        if (resolution.state === "active") {
+            return <div className={classNames(styles.totalVotes, styles.description)}>Some votes have been cast</div>;
+        }
+
         const totalYes = votesOnResolution.filter((vote) => vote.vote === "passed").length;
-        const totalAbstain = votesOnResolution.filter((vote) => vote.vote === "abstain").length;
+        // const totalAbstain = votesOnResolution.filter((vote) => vote.vote === "abstain").length;
         const totalNo = votesOnResolution.filter((vote) => vote.vote === "failed").length;
 
-        const willPass = totalYes > totalNo;
+        // const willPass = totalYes > totalNo;
 
         return (
             <div className={styles.totalVotes}>
@@ -61,17 +65,17 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
                     <div className={styles.divider} />
                     <div>{totalYes}</div>
                 </div>
-                <div className={styles.singleVoteCategory}>
+                {/* <div className={styles.singleVoteCategory}>
                     <div className={styles.abstain}>Abstain</div>
                     <div className={styles.divider} />
                     <div>{totalAbstain}</div>
-                </div>
+                </div> */}
                 <div className={styles.singleVoteCategory}>
                     <div className={styles.no}>No</div>
                     <div className={styles.divider} />
                     <div>{totalNo}</div>
                 </div>
-                {resolution.state === "active" && (
+                {/* {resolution.state === "active" && (
                     <div className={styles.onTrackTo}>
                         <div className={styles.description}>On track to</div>
                         <div className={styles.divider} />
@@ -79,7 +83,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
                             {willPass ? "Pass" : "Fail"}
                         </div>
                     </div>
-                )}
+                )} */}
             </div>
         );
     };

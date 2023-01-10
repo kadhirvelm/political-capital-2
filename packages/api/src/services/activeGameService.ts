@@ -16,6 +16,7 @@ import {
     IActiveResolutionVote,
     IActiveStaffer,
     IGameState,
+    IHistoricalGameState,
     IPassedGameModifier,
     IPlayer,
     IResolveGameEvent,
@@ -88,6 +89,15 @@ export interface IActiveGameService extends IService {
         };
         response: {};
     };
+    getHistoricalGame: {
+        payload: {
+            gameStateRid: IGameStateRid;
+        };
+        response: {
+            historicalGame: IHistoricalGameState[];
+            players: IPlayer[];
+        };
+    };
 }
 
 const { backend, frontend } = implementEndpoints<IActiveGameService>({
@@ -113,6 +123,10 @@ const { backend, frontend } = implementEndpoints<IActiveGameService>({
     },
     getActiveGameState: {
         slug: "/game-service/get-active-game-state",
+        method: "post",
+    },
+    getHistoricalGame: {
+        slug: "/game-service/get-historical-game",
         method: "post",
     },
 });

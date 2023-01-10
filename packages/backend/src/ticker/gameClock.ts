@@ -8,6 +8,7 @@ import cron from "node-cron";
 import { TOTAL_DAYS_IN_GAME } from "../constants/game";
 import { sendGameStateToAllActiveGlobalScreens } from "../services/gameService";
 import { resolveGameEvents } from "./resolveGameEvents";
+import { takeGameSnapshot } from "./takeGameSnapshot";
 
 export async function updateGameStates() {
     const activeGames = await GameState.findAll({ where: { state: "active" } });
@@ -19,6 +20,8 @@ export async function updateGameStates() {
         }
 
         await activeGame.save();
+
+        await takeGameSnapshot(activeGame);
 
         await resolveGameEvents(activeGame);
 
