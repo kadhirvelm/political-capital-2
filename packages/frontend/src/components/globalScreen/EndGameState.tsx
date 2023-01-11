@@ -3,7 +3,7 @@
  */
 
 import { useToast } from "@chakra-ui/react";
-import { ActiveGameFrontend, IGameStateRid, IHistoricalGameState, IPlayer } from "@pc2/api";
+import { ActiveGameFrontend, IHistoricalGameState, IPlayer } from "@pc2/api";
 import { keyBy } from "lodash-es";
 import * as React from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
@@ -56,13 +56,13 @@ export const EndGameState: React.FC<{}> = () => {
     const activeGame = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
     const fetchHistoricalGameState = async () => {
-        // if (activeGame === undefined) {
-        //     return;
-        // }
+        if (activeGame === undefined) {
+            return;
+        }
 
         const historicalGame = checkIsError(
             await ActiveGameFrontend.getHistoricalGame({
-                gameStateRid: "73fdd563-11d2-4f9f-a848-24eeb573e16d" as IGameStateRid, // activeGame.gameState.gameStateRid,
+                gameStateRid: activeGame.gameState.gameStateRid,
             }),
             toast,
         );
@@ -75,24 +75,22 @@ export const EndGameState: React.FC<{}> = () => {
     };
 
     React.useEffect(() => {
-        // if (activeGame?.gameState.state !== "complete" || historicalGameState !== undefined) {
-        //     return;
-        // }
+        if (activeGame?.gameState.state !== "complete" || historicalGameState !== undefined) {
+            return;
+        }
 
         fetchHistoricalGameState();
     }, [activeGame?.gameState.state]);
 
-    // if (activeGame === undefined || activeGame?.gameState.state !== "complete") {
-    //     return null;
-    // }
+    if (activeGame === undefined || activeGame?.gameState.state !== "complete") {
+        return null;
+    }
 
     if (historicalGameState === undefined || players === undefined) {
         return <div>Loading</div>;
     }
 
     const { series, uniquePlayers } = createLines(historicalGameState, players);
-
-    console.log({ series, uniquePlayers });
 
     return (
         <div className={styles.overallContainer}>

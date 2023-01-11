@@ -83,7 +83,7 @@ const MIDDLE: IBasicResolution[] = [
         politicalCapitalPayout: 20,
         gameModifier: {
             type: "staffer-effect",
-            staffersAffected: ["intern", "phoneBanker", "recruit", "adjunctInstructor"],
+            staffersAffected: ["recruiter", "adjunctInstructor", "representative"],
             costToAcquire: -0.15,
             timeToAcquire: -0.15,
         },
@@ -116,11 +116,6 @@ const MIDDLE: IBasicResolution[] = [
         title: "The citizens demand change",
         description: "The citizens are demanding change in the government and are turning to new voices.",
         politicalCapitalPayout: 20,
-        gameModifier: {
-            type: "staffer-effect",
-            staffersAffected: ["representative"],
-            effectiveness: 1,
-        },
         stage: "middle",
     },
     {
