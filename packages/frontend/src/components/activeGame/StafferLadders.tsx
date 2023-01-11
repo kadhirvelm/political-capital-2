@@ -15,32 +15,55 @@ export const StafferLadders: React.FC<{}> = () => {
 
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
-    const renderSingleStafferLevel = (staffer: IPossibleStaffer) => {
-        const parents = allStaffers.filter((s) => (s.upgradedFrom as Array<keyof IAllStaffers>).includes(staffer.type));
+    const renderSingleStafferLevel = (
+        staffer: IPossibleStaffer,
+        hasParent: boolean,
+        isFirstLine: boolean,
+        isLastLine: boolean,
+    ) => {
+        const children = allStaffers.filter((s) =>
+            (s.upgradedFrom as Array<keyof IAllStaffers>).includes(staffer.type),
+        );
         const stafferCategory = getStafferCategory(staffer);
 
         return (
-            <div className={styles.singleLevel}>
-                <div
-                    className={classNames(styles.singleLevelDetails, {
-                        [styles.voter]: stafferCategory === "voter",
-                        [styles.generator]: stafferCategory === "generator",
-                        [styles.trainer]: stafferCategory === "trainer",
-                        [styles.recruit]: stafferCategory === "recruit",
-                        [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
-                    })}
-                >
-                    <div>
-                        {staffer.displayName} ({staffer.costToAcquire} PC, {staffer.timeToAcquire} days)
+            <div className={styles.withIndicator}>
+                {hasParent && (
+                    <div
+                        className={classNames(styles.topHalf, {
+                            [styles.firstLine]: isFirstLine,
+                            [styles.lastLine]: isLastLine,
+                        })}
+                    >
+                        <div className={styles.topHalfLine} />
                     </div>
-                    <div className={styles.description}>
-                        {descriptionOfStaffer(resolvedGameModifiers)[staffer.type]}
+                )}
+                <div className={styles.singleLevel}>
+                    <div
+                        className={classNames(styles.singleLevelDetails, {
+                            [styles.voter]: stafferCategory === "voter",
+                            [styles.generator]: stafferCategory === "generator",
+                            [styles.trainer]: stafferCategory === "trainer",
+                            [styles.recruit]: stafferCategory === "recruit",
+                            [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
+                        })}
+                    >
+                        <div>
+                            {staffer.displayName} ({staffer.costToAcquire} PC, {staffer.timeToAcquire} days)
+                        </div>
+                        <div className={styles.description}>
+                            {descriptionOfStaffer(resolvedGameModifiers)[staffer.type]}
+                        </div>
+                        {staffer.limitPerParty !== undefined && (
+                            <div className={styles.description}>Limited to {staffer.limitPerParty} per party </div>
+                        )}
                     </div>
-                    {staffer.limitPerParty !== undefined && (
-                        <div className={styles.description}>Limited to {staffer.limitPerParty} per party </div>
-                    )}
+                    <div className={styles.singleLevelParents}>
+                        {children.map((c, index) =>
+                            renderSingleStafferLevel(c, true, index === 0, index === children.length - 1),
+                        )}
+                    </div>
                 </div>
-                <div className={styles.singleLevelParents}>{parents.map(renderSingleStafferLevel)}</div>
             </div>
         );
     };
@@ -56,7 +79,7 @@ export const StafferLadders: React.FC<{}> = () => {
                 <div className={classNames(styles.recruit, styles.tagContainer)}>Recruiter</div>
                 <div className={classNames(styles.shadowGovernment, styles.tagContainer)}>Shadow government</div>
             </div>
-            {lowestLevelStaffers.map(renderSingleStafferLevel)}
+            {lowestLevelStaffers.map((s) => renderSingleStafferLevel(s, false, true, false))}
         </div>
     );
 };
