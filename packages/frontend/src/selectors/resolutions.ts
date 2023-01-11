@@ -17,7 +17,7 @@ export const getActiveResolution = createSelector(
             .slice()
             .sort((a, b) => (a.createdOn > b.createdOn ? -1 : 1));
 
-        if (resolutionsSorted.length === 0 || resolutionsSorted[0].state !== "active") {
+        if (resolutionsSorted.length === 0) {
             return undefined;
         }
 

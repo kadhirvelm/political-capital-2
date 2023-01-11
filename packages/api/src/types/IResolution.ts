@@ -67,44 +67,10 @@ const ALL: IBasicResolution[] = [
 
 const EARLY: IBasicResolution[] = [
     {
-        title: "The citizens demand change",
-        description: "The citizens are demanding change in the government and are turning to new voices.",
-        politicalCapitalPayout: 20,
-        gameModifier: {
-            type: "staffer-effect",
-            staffersAffected: ["representative"],
-            effectiveness: 1,
-        },
-        stage: "early",
-    },
-    {
         title: "More money for cookies",
         description:
             "After waves of historic natural disasters rock the country, the citizens want to see the government taking charge. Specifically, they want to see more chocolate chip cookies. Or was it water and power? No, it was cookies...probably?",
         politicalCapitalPayout: 10,
-        stage: "early",
-    },
-    {
-        title: "Trainers represent",
-        description:
-            "The citizens of other countries seem to be more educated than us. We should do something about that.",
-        politicalCapitalPayout: 20,
-        gameModifier: {
-            type: "staffer-effect",
-            staffersAffected: ["trainer"],
-            effectiveness: 0.5,
-        },
-        stage: "early",
-    },
-    {
-        title: "Political propaganda",
-        description: "We need to get the message out! What message you ask? Don't.",
-        politicalCapitalPayout: 20,
-        gameModifier: {
-            type: "staffer-effect",
-            staffersAffected: ["generator"],
-            effectiveness: 0.5,
-        },
         stage: "early",
     },
 ];
@@ -117,9 +83,43 @@ const MIDDLE: IBasicResolution[] = [
         politicalCapitalPayout: 20,
         gameModifier: {
             type: "staffer-effect",
-            staffersAffected: ["intern", "phoneBanker", "recruit", "partTimeInstructor"],
+            staffersAffected: ["intern", "phoneBanker", "recruit", "adjunctInstructor"],
             costToAcquire: -0.15,
             timeToAcquire: -0.15,
+        },
+        stage: "middle",
+    },
+    {
+        title: "Trainers represent",
+        description:
+            "The citizens of other countries seem to be more educated than us. We should do something about that.",
+        politicalCapitalPayout: 20,
+        gameModifier: {
+            type: "staffer-effect",
+            staffersAffected: ["trainer"],
+            effectiveness: 0.5,
+        },
+        stage: "middle",
+    },
+    {
+        title: "Political propaganda",
+        description: "We need to get the message out! What message you ask? Don't.",
+        politicalCapitalPayout: 20,
+        gameModifier: {
+            type: "staffer-effect",
+            staffersAffected: ["generator"],
+            effectiveness: 0.5,
+        },
+        stage: "middle",
+    },
+    {
+        title: "The citizens demand change",
+        description: "The citizens are demanding change in the government and are turning to new voices.",
+        politicalCapitalPayout: 20,
+        gameModifier: {
+            type: "staffer-effect",
+            staffersAffected: ["representative"],
+            effectiveness: 1,
         },
         stage: "middle",
     },

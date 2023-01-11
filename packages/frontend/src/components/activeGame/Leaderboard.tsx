@@ -44,10 +44,12 @@ export const Leaderboard: React.FC<{}> = () => {
 
     const viewPlayerParty = (playerRid: IPlayerRid | undefined) => () => setViewingPlayerRid(playerRid);
 
-    const hasPoliticalSpy = playerPoliticalParty.find((p) => p.stafferDetails.type === "politicalSpy");
+    const hasPoliticalSpy =
+        playerPoliticalParty.find((p) => p.stafferDetails.type === "politicalSpy")?.state === "active";
     const canViewPlayerParties = hasPoliticalSpy || fullGameState.gameState.state === "complete";
 
-    const hasInformationBroker = playerPoliticalParty.find((p) => p.stafferDetails.type === "informationBroker");
+    const hasInformationBroker =
+        playerPoliticalParty.find((p) => p.stafferDetails.type === "informationBroker")?.state === "active";
     const canViewPoliticalCapital = hasInformationBroker || fullGameState.gameState.state === "complete";
 
     const maybeRenderExploreParty = () => {

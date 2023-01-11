@@ -27,11 +27,11 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
-    if (resolveEvents === undefined || fullGameState === undefined || player === undefined) {
+    if (resolveEvents === undefined || fullGameState === undefined) {
         return null;
     }
 
-    const playerParty = fullGameState.activePlayersStaffers[player.playerRid];
+    const playerParty = player !== undefined ? fullGameState.activePlayersStaffers[player.playerRid] : [];
 
     const tallyOnEvent = resolveEvents.game.find(
         (event) =>
@@ -44,7 +44,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
             return <div className={classNames(styles.totalVotes, styles.description)}>No votes cast yet</div>;
         }
 
-        const hasInformant = playerParty.find((p) => p.stafferDetails.type === "informant");
+        const hasInformant = playerParty.find((p) => p.stafferDetails.type === "informant")?.state === "active";
         const canViewResolution = hasInformant || resolution.state !== "active";
 
         if (!canViewResolution) {

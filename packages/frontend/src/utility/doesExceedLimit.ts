@@ -29,11 +29,17 @@ export function doesExceedLimit(
         .filter((event) => {
             if (type === "recruiting") {
                 return (
-                    event.eventDetails.type === "start-hiring-staffer" && event.eventDetails.stafferType === stafferType
+                    event.eventDetails.type === "start-hiring-staffer" &&
+                    event.eventDetails.stafferType === stafferType &&
+                    event.resolvesOn > fullGameState.gameState.gameClock
                 );
             }
 
-            return event.eventDetails.type === "start-training-staffer" && event.eventDetails.toLevel === stafferType;
+            return (
+                event.eventDetails.type === "start-training-staffer" &&
+                event.eventDetails.toLevel === stafferType &&
+                event.resolvesOn > fullGameState.gameState.gameClock
+            );
         });
 
     return existingStaffers.length + existingRequestsForStafferInEvents.length >= maybeLimitPerParty;

@@ -4,12 +4,15 @@
 
 import { IEvent } from "@pc2/api";
 import * as React from "react";
+import { getActiveResolution } from "../../selectors/resolutions";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { Resolution } from "../activeGame/Resolution";
 import { ResolveEvent } from "../activeGame/ResolveEvent";
 import styles from "./CurrentResolution.module.scss";
 
 export const CurrentResolution: React.FC<{}> = () => {
+    const activeResolution = usePoliticalCapitalSelector(getActiveResolution);
+
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
 
@@ -17,20 +20,18 @@ export const CurrentResolution: React.FC<{}> = () => {
         return null;
     }
 
-    const resolutionsSorted = fullGameState.activeResolutions
-        .slice()
-        .sort((a, b) => (a.createdOn > b.createdOn ? -1 : 1));
-
     const maybeRenderNextResolution = () => {
-        const maybeVoteOnResolution = resolutionsSorted[0];
-        if (maybeVoteOnResolution !== undefined && maybeVoteOnResolution.state === "active") {
+        if (activeResolution !== undefined && activeResolution.state === "active") {
             return undefined;
         }
 
         const nextResolutionEvent = resolveEvents.game
             .slice()
             .sort((a, b) => (a.resolvesOn > b.resolvesOn ? -1 : 1))
-            .find((event) => IEvent.isNewResolution(event.eventDetails));
+            .find(
+                (event) =>
+                    IEvent.isNewResolution(event.eventDetails) && event.resolvesOn > fullGameState.gameState.gameClock,
+            );
 
         return (
             <div className={styles.resolveEvent}>
@@ -40,12 +41,11 @@ export const CurrentResolution: React.FC<{}> = () => {
     };
 
     const maybeRenderMostRecentResolution = () => {
-        const maybeRenderResolution = resolutionsSorted[0];
-        if (maybeRenderResolution === undefined) {
+        if (activeResolution === undefined) {
             return undefined;
         }
 
-        return <Resolution resolution={maybeRenderResolution} isGlobalScreen={true} />;
+        return <Resolution resolution={activeResolution} isGlobalScreen={true} />;
     };
 
     return (

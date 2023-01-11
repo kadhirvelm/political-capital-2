@@ -10,7 +10,7 @@ type IDescriptionOfStaffer = {
     [key in Exclude<keyof IAllStaffers, "unknown">]: string;
 };
 
-const getEffectivenessNumber = (
+export const getEffectivenessNumber = (
     gameModifiers: IResolvedGameModifiers,
     stafferType: Exclude<keyof IAllStaffers, "unknown">,
 ): number => {

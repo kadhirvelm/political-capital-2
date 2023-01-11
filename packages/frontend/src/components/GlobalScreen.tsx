@@ -26,7 +26,7 @@ export const GlobalScreen: React.FC<{}> = () => {
     }
 
     if (activeGame === undefined) {
-        return null;
+        return <EndGameState />;
     }
 
     if (activeGame.gameState.state === "complete") {

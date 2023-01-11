@@ -44,12 +44,24 @@
     &.shadowGovernment.shadowGovernment {
         @extend %shadowGovernment;
 
+        .name {
+            box-shadow: 0 1px white;
+        }
+
+        .busyContainer {
+            box-shadow: 0 -1px white;
+        }
+
+        .footer {
+            box-shadow: 0 -1px white;
+        }
+
         &.description {
             color: white;
         }
 
         &.isBusy {
-            background: rgba($black, 0.05);
+            background: rgba($black, 0.4);
         }
     }
 }

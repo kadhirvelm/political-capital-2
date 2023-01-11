@@ -4,7 +4,6 @@
 
 import { Button, useToast } from "@chakra-ui/react";
 import {
-    getTotalAllowedVotes,
     IActiveResolutionRid,
     IActiveResolutionVote,
     IActiveStaffer,
@@ -20,7 +19,7 @@ import { getVoters, getVotesAlreadyCast } from "../../selectors/getVoters";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addVotes } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
-import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
+import { descriptionOfStaffer, getEffectivenessNumber } from "../../utility/stafferDescriptions";
 import { StafferName } from "../common/StafferName";
 import styles from "./PlayerVoters.module.scss";
 import { ResolveEvent } from "./ResolveEvent";
@@ -180,10 +179,11 @@ export const PlayerVoters: React.FC<{
                         return undefined;
                     }
 
-                    const totalVotes = getTotalAllowedVotes(voter.staffer);
+                    const totalVotes = getEffectivenessNumber(resolvedGameModifiers, voter.staffer.stafferDetails.type);
                     const maybeExistingVote = getStafferExistingVote(voter.staffer.activeStafferRid);
 
-                    const stafferVote = castVotes[voter.staffer.activeStafferRid] ?? "abstain";
+                    const canStafferVote =
+                        castVotes[voter.staffer.activeStafferRid] !== undefined || stafferDetails.isIndependent;
 
                     return (
                         <div
@@ -214,9 +214,7 @@ export const PlayerVoters: React.FC<{
                                         <Button
                                             isLoading={isLoading}
                                             disabled={
-                                                isPaused ||
-                                                activeResolution?.state !== "active" ||
-                                                stafferVote === "abstain"
+                                                isPaused || activeResolution?.state !== "active" || !canStafferVote
                                             }
                                             onClick={onCastVote(voter.staffer.activeStafferRid)}
                                         >

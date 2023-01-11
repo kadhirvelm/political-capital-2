@@ -25,7 +25,7 @@ export const ActiveResolution: React.FC<{}> = () => {
     }
 
     const maybeRenderNextResolution = () => {
-        if (activeResolution !== undefined) {
+        if (activeResolution !== undefined && activeResolution.state === "active") {
             return undefined;
         }
 
