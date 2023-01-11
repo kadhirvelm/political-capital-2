@@ -4,7 +4,6 @@
 
 import { Button, useToast } from "@chakra-ui/react";
 import {
-    DEFAULT_STAFFER,
     getTotalAllowedVotes,
     IActiveResolutionRid,
     IActiveResolutionVote,
@@ -22,6 +21,7 @@ import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../
 import { addVotes } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
+import { StafferName } from "../common/StafferName";
 import styles from "./PlayerVoters.module.scss";
 import { ResolveEvent } from "./ResolveEvent";
 
@@ -194,8 +194,7 @@ export const PlayerVoters: React.FC<{
                         >
                             <div className={styles.stafferDetails}>
                                 <div className={styles.nameAndType}>
-                                    <div>{voter.staffer.stafferDetails.displayName},</div>
-                                    <div>{DEFAULT_STAFFER[voter.staffer.stafferDetails.type].displayName}</div>
+                                    <StafferName staffer={voter.staffer} showType={true} />
                                 </div>
                                 <div className={styles.description}>
                                     {descriptionOfStaffer(resolvedGameModifiers)[voter.staffer.stafferDetails.type]}

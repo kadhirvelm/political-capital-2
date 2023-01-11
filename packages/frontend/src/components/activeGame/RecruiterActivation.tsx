@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import {
     DEFAULT_STAFFER,
+    getStafferCategory,
     IActiveStafferRid,
     IBasicStaffer,
     IEvent,
@@ -32,7 +33,8 @@ import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addGameEventToStaffer, IUserFacingResolveEvents, payPoliticalCapital } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
-import { getStafferCategory, getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
+import { getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
+import { doesExceedLimit } from "../../utility/doesExceedLimit";
 import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
@@ -54,11 +56,16 @@ export const RecruiterActivation: React.FC<{
         (s) => s.localGameState.fullGameState?.gameState.gameClock ?? (0 as IGameClock),
     );
 
+    const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
     const isPaused = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState?.gameState.state !== "active");
 
     const [isLoading, setIsLoading] = React.useState(false);
     const [confirmStaffer, setConfirmStaffer] = React.useState<IPossibleStaffer | undefined>(undefined);
+
+    if (fullGameState === undefined) {
+        return null;
+    }
 
     const closeModal = () => setConfirmStaffer(undefined);
     const openConfirmModal = (staffer: IPossibleStaffer) => () => setConfirmStaffer(staffer);
@@ -104,7 +111,7 @@ export const RecruiterActivation: React.FC<{
             .sort((a, b) => a.type.localeCompare(b.type));
 
         return (
-            <div className={styles.recruit}>
+            <div className={styles.recruitOptionsContainer}>
                 <div className={styles.jobPosting}>Send out a job posting for</div>
                 <div className={styles.allJobPostingsContainer}>
                     {availableToTrain.map((staffer) => {
@@ -118,15 +125,40 @@ export const RecruiterActivation: React.FC<{
                             staffer.timeToAcquire * resolvedGameModifiers.staffers[staffer.type].timeToAcquire,
                         );
 
-                        const isDisabled = resolvedGameModifiers.staffers[staffer.type].disableHiring;
+                        const isDisabled =
+                            resolvedGameModifiers.staffers[staffer.type].disableHiring ||
+                            doesExceedLimit(staffer.type, recruitRequest.playerRid, fullGameState, "recruiting");
+
+                        const maybeRenderDisabledExplanation = () => {
+                            if (!isDisabled) {
+                                return undefined;
+                            }
+
+                            if (resolvedGameModifiers.staffers[staffer.type].disableHiring) {
+                                return (
+                                    <div className={styles.disabledReason}>
+                                        A game modifier has prevented this staffer from being hired.
+                                    </div>
+                                );
+                            }
+
+                            return (
+                                <div className={styles.disabledReason}>
+                                    You have reached the limit for this type of staffer in your party. Staffers allowed:{" "}
+                                    {DEFAULT_STAFFER[staffer.type].limitPerParty}
+                                </div>
+                            );
+                        };
 
                         return (
                             <div
                                 className={classNames(styles.singleJobPosting, {
                                     [styles.disabled]: isDisabled,
-                                    [styles.voting]: stafferCategory === "voting" && !isDisabled,
+                                    [styles.voter]: stafferCategory === "voter" && !isDisabled,
                                     [styles.generator]: stafferCategory === "generator" && !isDisabled,
-                                    [styles.support]: stafferCategory === "support" && !isDisabled,
+                                    [styles.trainer]: stafferCategory === "trainer" && !isDisabled,
+                                    [styles.recruit]: stafferCategory === "recruit" && !isDisabled,
+                                    [styles.shadowGovernment]: stafferCategory === "shadowGovernment" && !isDisabled,
                                 })}
                                 key={staffer.type}
                                 onClick={isDisabled ? undefined : openConfirmModal(staffer)}
@@ -146,6 +178,12 @@ export const RecruiterActivation: React.FC<{
                                         </span>
                                     ))}
                                 </div>
+                                {maybeRenderDisabledExplanation()}
+                                {staffer.limitPerParty !== undefined && (
+                                    <div className={styles.description}>
+                                        Limited to {staffer.limitPerParty} per party{" "}
+                                    </div>
+                                )}
                             </div>
                         );
                     })}

@@ -24,6 +24,8 @@ export const Leaderboard: React.FC<{}> = () => {
         return null;
     }
 
+    const playerPoliticalParty = fullGameState.activePlayersStaffers[player.playerRid];
+
     const maybeRenderPlayerParty = () => {
         if (viewingPlayerRid === undefined) {
             return undefined;
@@ -42,8 +44,14 @@ export const Leaderboard: React.FC<{}> = () => {
 
     const viewPlayerParty = (playerRid: IPlayerRid | undefined) => () => setViewingPlayerRid(playerRid);
 
+    const hasPoliticalSpy = playerPoliticalParty.find((p) => p.stafferDetails.type === "politicalSpy");
+    const canViewPlayerParties = hasPoliticalSpy || fullGameState.gameState.state === "complete";
+
+    const hasInformationBroker = playerPoliticalParty.find((p) => p.stafferDetails.type === "informationBroker");
+    const canViewPoliticalCapital = hasInformationBroker || fullGameState.gameState.state === "complete";
+
     const maybeRenderExploreParty = () => {
-        if (fullGameState.gameState.state !== "complete") {
+        if (!canViewPlayerParties) {
             return undefined;
         }
 
@@ -84,7 +92,7 @@ export const Leaderboard: React.FC<{}> = () => {
                                         <div>(you)</div>
                                     ) : undefined}
                                 </div>
-                                {fullGameState.gameState.state === "complete" && (
+                                {canViewPoliticalCapital && (
                                     <div>
                                         {roundToHundred(
                                             leaderboardPlayer.activePlayer.politicalCapital,
@@ -93,9 +101,7 @@ export const Leaderboard: React.FC<{}> = () => {
                                     </div>
                                 )}
                             </div>
-                            {fullGameState.gameState.state === "complete" && (
-                                <PartySummary playerRid={leaderboardPlayer.player.playerRid} />
-                            )}
+                            {canViewPlayerParties && <PartySummary playerRid={leaderboardPlayer.player.playerRid} />}
                         </div>
                     ))}
                 </div>

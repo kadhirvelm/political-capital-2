@@ -2,18 +2,18 @@
  * Copyright (c) 2022 - KM
  */
 
-import { Avatar, Card } from "@chakra-ui/react";
-import { DEFAULT_STAFFER, IActiveStaffer, isVoter } from "@pc2/api";
+import { Card } from "@chakra-ui/react";
+import { DEFAULT_STAFFER, getStafferCategory, IActiveStaffer, isVoter } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
 import { getGameModifiers } from "../../selectors/gameModifiers";
 import { getActiveResolution } from "../../selectors/resolutions";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
-import { getStafferCategory } from "../../utility/categorizeStaffers";
 import { isStafferBusy } from "../../utility/isStafferBusy";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { MinimalResolveEvent } from "../activeGame/ResolveEvent";
 import styles from "./StafferCard.module.scss";
+import { StafferName } from "./StafferName";
 
 export const StafferCard: React.FC<{ staffer: IActiveStaffer; isPlayerStaffer?: boolean }> = ({
     staffer,
@@ -71,20 +71,16 @@ export const StafferCard: React.FC<{ staffer: IActiveStaffer; isPlayerStaffer?: 
     return (
         <Card
             className={classNames(styles.stafferCard, {
-                [styles.voting]: stafferCategory === "voting",
+                [styles.voter]: stafferCategory === "voter",
                 [styles.generator]: stafferCategory === "generator",
-                [styles.support]: stafferCategory === "support",
+                [styles.trainer]: stafferCategory === "trainer",
+                [styles.recruit]: stafferCategory === "recruit",
+                [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
                 [styles.isBusy]: isBusy,
             })}
         >
             <div className={styles.name}>
-                <Avatar
-                    size="md"
-                    name={staffer.stafferDetails.displayName}
-                    showBorder
-                    src={`https://robohash.org/${staffer.stafferDetails.displayName}?set=set${staffer.avatarSet}`}
-                />
-                {staffer.stafferDetails.displayName}
+                <StafferName staffer={staffer} />
             </div>
             <div className={styles.description}>
                 {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}

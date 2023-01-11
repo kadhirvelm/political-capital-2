@@ -1,0 +1,19 @@
+/**
+ * Copyright (c) 2023 - KM
+ */
+
+@import "../../styles/variables";
+
+.nameContainer {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    font-size: 18px;
+
+    > :first-child {
+        --avatar-border-color: $gray;
+        color: $gray;
+
+        margin-right: 10px;
+    }
+}

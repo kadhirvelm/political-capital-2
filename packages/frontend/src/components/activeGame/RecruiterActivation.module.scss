@@ -24,7 +24,7 @@
     gap: 10px;
 }
 
-.recruit {
+.recruitOptionsContainer {
     display: flex;
     flex-direction: column;
     margin-top: 10px;
@@ -51,6 +51,7 @@
     border: 1px solid rgba($gray, 0.25);
     border-radius: 3px;
     padding: 5px 10px;
+    gap: 5px;
 }
 
 .disabled {
@@ -58,16 +59,28 @@
     cursor: not-allowed;
 }
 
-.voting {
-    background: rgba($green, 0.15);
+.voter {
+    @extend %voter;
 }
 
 .generator {
-    background: rgba($blue, 0.15);
+    @extend %generator;
 }
 
-.support {
-    background: rgba($orange, 0.15);
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}
+
+.shadowGovernment {
+    @extend %shadowGovernment;
+
+    .description {
+        color: white;
+    }
 }
 
 .trainsInto {
@@ -79,6 +92,12 @@
     > :first-child {
         margin-right: 5px;
     }
+}
+
+.disabledReason {
+    display: flex;
+    margin-top: 10px;
+    color: $gray;
 }
 
 .modalBody {

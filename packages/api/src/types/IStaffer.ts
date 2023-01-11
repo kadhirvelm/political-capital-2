@@ -9,6 +9,7 @@ export interface IBasicStaffer {
     upgradedFrom: Array<keyof IAllStaffers>;
     costToAcquire: number;
     timeToAcquire: number;
+    limitPerParty?: number;
     type: keyof IAllStaffers;
 }
 
@@ -29,6 +30,10 @@ export interface ITrainer {
     trainingCapacity: number;
 }
 
+export interface IShadowGovernment {
+    shadowGovernment: true;
+}
+
 export interface IIntern extends IBasicStaffer {
     upgradedFrom: [];
     costToAcquire: 0;
@@ -47,18 +52,37 @@ export interface INewHire extends IBasicStaffer, IGenerator {
 export interface ISeasonedStaffer extends IBasicStaffer, IGenerator {
     upgradedFrom: ["newHire"];
     costToAcquire: 10;
-    timeToAcquire: 42;
+    timeToAcquire: 21;
     payout: 0.25;
+    limitPerParty: 2;
     type: "seasonedStaffer";
 }
 
-export interface IPoliticalCommentator extends IBasicStaffer, IGenerator, IVoter {
+export interface IPoliticalCommentator extends IBasicStaffer, IGenerator {
     upgradedFrom: ["seasonedStaffer"];
     costToAcquire: 10;
-    timeToAcquire: 42;
-    payout: 0.5;
-    votes: 2;
+    timeToAcquire: 21;
+    payout: 1.5;
+    limitPerParty: 1;
     type: "politicalCommentator";
+}
+
+export interface IHeadOfHr extends IBasicStaffer, IRecruit {
+    upgradedFrom: ["seasonedStaffer"];
+    costToAcquire: 10;
+    timeToAcquire: 21;
+    recruitCapacity: 3;
+    limitPerParty: 1;
+    type: "headOfHr";
+}
+
+export interface IProfessor extends IBasicStaffer, ITrainer {
+    upgradedFrom: ["seasonedStaffer"];
+    costToAcquire: 10;
+    timeToAcquire: 21;
+    trainingCapacity: 3;
+    limitPerParty: 1;
+    type: "professor";
 }
 
 export interface IRepresentative extends IBasicStaffer, IVoter {
@@ -120,7 +144,7 @@ export interface IPhoneBanker extends IBasicStaffer, IGenerator {
 }
 
 export interface ISocialMediaManager extends IBasicStaffer, IGenerator {
-    upgradedFrom: ["phoneBanker", "newHire"];
+    upgradedFrom: ["phoneBanker"];
     costToAcquire: 5;
     timeToAcquire: 36;
     payout: 0.8;
@@ -136,25 +160,69 @@ export interface IRecruiter extends IBasicStaffer, IRecruit {
 }
 
 export interface IHrManager extends IBasicStaffer, IRecruit {
-    upgradedFrom: ["recruiter", "newHire"];
+    upgradedFrom: ["recruiter"];
     costToAcquire: 5;
     timeToAcquire: 36;
     recruitCapacity: 2;
     type: "hrManager";
 }
 
-export interface IPartTimeInstructor extends IBasicStaffer, ITrainer {
+export interface IAdjunctInstructor extends IBasicStaffer, ITrainer {
     upgradedFrom: [];
     costToAcquire: 5;
     timeToAcquire: 36;
     trainingCapacity: 1;
-    type: "partTimeInstructor";
+    type: "adjunctInstructor";
 }
 
-export interface ICoach extends IBasicStaffer, ITrainer {
-    upgradedFrom: ["partTimeInstructor", "newHire"];
+export interface IProfessionalTrainer extends IBasicStaffer, ITrainer {
+    upgradedFrom: ["adjunctInstructor"];
     costToAcquire: 5;
     timeToAcquire: 36;
     trainingCapacity: 2;
-    type: "coach";
+    type: "professionalTrainer";
+}
+
+export interface IInitiate extends IBasicStaffer, IShadowGovernment {
+    upgradedFrom: [];
+    costToAcquire: 10;
+    timeToAcquire: 21;
+    shadowGovernment: true;
+    type: "initiate";
+}
+
+export interface IVeteranInitiate extends IBasicStaffer, IShadowGovernment {
+    upgradedFrom: ["initiate"];
+    costToAcquire: 10;
+    timeToAcquire: 21;
+    shadowGovernment: true;
+    limitPerParty: 1;
+    type: "veteranInitiate";
+}
+
+export interface IPoliticalSpy extends IBasicStaffer, IShadowGovernment {
+    upgradedFrom: ["veteranInitiate"];
+    costToAcquire: 5;
+    timeToAcquire: 36;
+    shadowGovernment: true;
+    limitPerParty: 1;
+    type: "politicalSpy";
+}
+
+export interface IInformationBroker extends IBasicStaffer, IShadowGovernment {
+    upgradedFrom: ["veteranInitiate"];
+    costToAcquire: 5;
+    timeToAcquire: 36;
+    shadowGovernment: true;
+    limitPerParty: 1;
+    type: "informationBroker";
+}
+
+export interface IInformant extends IBasicStaffer, IShadowGovernment {
+    upgradedFrom: ["veteranInitiate"];
+    costToAcquire: 20;
+    timeToAcquire: 36;
+    shadowGovernment: true;
+    limitPerParty: 1;
+    type: "informant";
 }

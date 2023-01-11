@@ -4,7 +4,6 @@
 
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
-    Avatar,
     Button,
     Modal,
     ModalBody,
@@ -17,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import {
     DEFAULT_STAFFER,
+    getStafferCategory,
     IActiveStaffer,
     IActiveStafferRid,
     IBasicStaffer,
@@ -37,10 +37,11 @@ import { getAvailableToTrainStaffer } from "../../selectors/staffers";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addGameEventToStaffer, IUserFacingResolveEvents } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
-import { getStafferCategory } from "../../utility/categorizeStaffers";
+import { doesExceedLimit } from "../../utility/doesExceedLimit";
 import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
+import { StafferName } from "../common/StafferName";
 import { ResolveEvent } from "./ResolveEvent";
 import styles from "./TrainerActivation.module.scss";
 
@@ -115,22 +116,15 @@ export const TrainerActivation: React.FC<{
                 <div className={styles.singleTrainee} key={staffer.activeStafferRid}>
                     <div
                         className={classNames(styles.currentPosition, {
-                            [styles.voting]: stafferCategory === "voting",
+                            [styles.voter]: stafferCategory === "voter",
                             [styles.generator]: stafferCategory === "generator",
-                            [styles.support]: stafferCategory === "support",
+                            [styles.trainer]: stafferCategory === "trainer",
+                            [styles.recruit]: stafferCategory === "recruit",
+                            [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
                         })}
                     >
                         <div className={styles.nameContainer}>
-                            <Avatar
-                                size="md"
-                                name={staffer.stafferDetails.displayName}
-                                showBorder
-                                src={`https://robohash.org/${staffer.stafferDetails.displayName}?set=set${staffer.avatarSet}`}
-                            />
-                            <div>{staffer.stafferDetails.displayName}</div>
-                            <div className={styles.positionType}>
-                                ({DEFAULT_STAFFER[staffer.stafferDetails.type].displayName})
-                            </div>
+                            <StafferName staffer={staffer} showType={true} />
                         </div>
                         <div className={styles.description}>
                             {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}
@@ -150,17 +144,43 @@ export const TrainerActivation: React.FC<{
                                     resolvedGameModifiers.staffers[upgradeStaffer].timeToAcquire,
                             );
 
-                            const isDisabled = resolvedGameModifiers.staffers[upgradeStaffer].disableTraining;
+                            const isDisabled =
+                                resolvedGameModifiers.staffers[upgradeStaffer].disableTraining ||
+                                doesExceedLimit(upgradeStaffer, trainerRequest.playerRid, fullGameState, "training");
+
+                            const maybeRenderDisabledExplanation = () => {
+                                if (!isDisabled) {
+                                    return undefined;
+                                }
+
+                                if (resolvedGameModifiers.staffers[upgradeStaffer].disableHiring) {
+                                    return (
+                                        <div className={styles.disabledReason}>
+                                            A game modifier has prevented this staffer from being hired.
+                                        </div>
+                                    );
+                                }
+
+                                return (
+                                    <div className={styles.disabledReason}>
+                                        You have reached the limit for this type of staffer in your party. Staffers
+                                        allowed: {DEFAULT_STAFFER[upgradeStaffer].limitPerParty}
+                                    </div>
+                                );
+                            };
 
                             return (
                                 <div className={styles.withArrow} key={upgradeStaffer}>
-                                    <ArrowForwardIcon className={styles.arrow} />
+                                    <ArrowForwardIcon className={styles.arrow} boxSize="1.7em" />
                                     <div
                                         className={classNames(styles.newPosition, {
                                             [styles.disabled]: isDisabled,
-                                            [styles.voting]: newStafferCategory === "voting" && !isDisabled,
+                                            [styles.voter]: newStafferCategory === "voter" && !isDisabled,
                                             [styles.generator]: newStafferCategory === "generator" && !isDisabled,
-                                            [styles.support]: newStafferCategory === "support" && !isDisabled,
+                                            [styles.trainer]: newStafferCategory === "trainer" && !isDisabled,
+                                            [styles.recruit]: newStafferCategory === "recruit" && !isDisabled,
+                                            [styles.shadowGovernment]:
+                                                newStafferCategory === "shadowGovernment" && !isDisabled,
                                         })}
                                         onClick={
                                             isDisabled ? undefined : upgradeStafferCurried(staffer, upgradeStaffer)
@@ -172,6 +192,12 @@ export const TrainerActivation: React.FC<{
                                         <div className={styles.description}>
                                             {descriptionOfStaffer(resolvedGameModifiers)[upgradeStaffer]}
                                         </div>
+                                        {maybeRenderDisabledExplanation()}
+                                        {defaultStaffer.limitPerParty !== undefined && (
+                                            <div className={styles.description}>
+                                                Limited to {defaultStaffer.limitPerParty} per party{" "}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             );

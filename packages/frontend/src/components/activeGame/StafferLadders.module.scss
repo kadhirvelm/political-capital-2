@@ -15,6 +15,7 @@
 .singleLevel {
     display: flex;
     flex-direction: column;
+    gap: 5px;
 }
 
 .singleLevelDetails {
@@ -33,36 +34,45 @@
 
 .description {
     color: $gray;
-    font-size: 12px;
 }
 
 .legend {
     display: flex;
-    gap: 15px;
-    padding-bottom: 5px;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding-bottom: 10px;
     box-shadow: 0 1px $gray;
 }
 
-.votingText {
-    color: $green;
+.tagContainer {
+    display: flex;
+    padding: 5px 10px;
+    border-radius: 3px;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid $gray;
 }
 
-.generatorText {
-    color: $blue;
-}
-
-.supportText {
-    color: $orange;
-}
-
-.voting {
-    background: rgba($green, 0.15);
+.voter {
+    @extend %voter;
 }
 
 .generator {
-    background: rgba($blue, 0.15);
+    @extend %generator;
 }
 
-.support {
-    background: rgba($orange, 0.15);
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}
+
+.shadowGovernment {
+    @extend %shadowGovernment;
+
+    .description {
+        color: white;
+    }
 }

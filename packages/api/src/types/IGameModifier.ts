@@ -4,9 +4,11 @@
 
 import { IPossibleStaffer } from "./generatedStaffers";
 
+export type IStafferCategory = "voter" | "generator" | "recruit" | "trainer" | "shadowGovernment";
+
 export interface IStafferEffect {
     /** The staffers that are affected. You can also specify categories in addition to specific staffer types. */
-    staffersAffected: Array<IPossibleStaffer["type"] | "voter" | "generator" | "recruit" | "trainer" | "everyone">;
+    staffersAffected: Array<IPossibleStaffer["type"] | IStafferCategory | "everyone">;
     /** Percent multiplier on the total political capital cost to acquire the staffer */
     costToAcquire?: number;
     /** Percent multiplier on the total time to acquire the staffer */

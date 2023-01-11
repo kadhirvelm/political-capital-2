@@ -5,6 +5,7 @@
 import {
     DEFAULT_STAFFER,
     getPayoutForStaffer,
+    getStafferCategory,
     getStafferDetails,
     getTotalAllowedRecruits,
     getTotalAllowedTrainees,
@@ -13,30 +14,13 @@ import {
     IActiveStaffer,
     isGenerator,
     isRecruit,
+    IStafferCategory,
     isTrainer,
     isVoter,
     StafferLadderIndex,
 } from "@pc2/api";
 
-export type IStafferCategory = "voting" | "generator" | "support" | "passive" | "none";
-
-export function getStafferCategory(staffer: IActiveOrPossibleStaffer): IStafferCategory {
-    if (getTotalAllowedVotes(staffer) > 0) {
-        return "voting";
-    }
-
-    if (getPayoutForStaffer(staffer) > 0) {
-        return "generator";
-    }
-
-    if (getTotalAllowedRecruits(staffer) > 0 || getTotalAllowedTrainees(staffer) > 0) {
-        return "support";
-    }
-
-    return "none";
-}
-
-export function getStaffersOfCategory(activeStaffers: IActiveStaffer[], category: IStafferCategory) {
+export function getStaffersOfCategory(activeStaffers: IActiveStaffer[], category: IStafferCategory | undefined) {
     return activeStaffers
         .slice()
         .filter((activeStaffer) => {
@@ -59,27 +43,21 @@ export function getStaffersOfCategory(activeStaffers: IActiveStaffer[], category
                 return aGeneration === bGeneration ? defaultCompare : aGeneration > bGeneration ? -1 : 1;
             }
 
-            const isATrainer = isTrainer(a);
-            const isBTrainer = isTrainer(b);
-
-            const isARecruit = isRecruit(a);
-            const isBRecruit = isRecruit(b);
-
-            if (isATrainer && isBTrainer) {
+            if (isTrainer(a)) {
                 const aCapacity = getTotalAllowedTrainees(a);
                 const bCapacity = getTotalAllowedTrainees(b);
 
                 return aCapacity === bCapacity ? defaultCompare : aCapacity > bCapacity ? -1 : 1;
             }
 
-            if (isARecruit && isBRecruit) {
+            if (isRecruit(a)) {
                 const aCapacity = getTotalAllowedRecruits(a);
                 const bCapacity = getTotalAllowedRecruits(b);
 
                 return aCapacity === bCapacity ? defaultCompare : aCapacity > bCapacity ? -1 : 1;
             }
 
-            return isATrainer ? -1 : 1;
+            return defaultCompare;
         });
 }
 

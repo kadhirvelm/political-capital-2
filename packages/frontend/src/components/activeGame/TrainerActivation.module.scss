@@ -59,12 +59,7 @@
 .nameContainer {
     display: flex;
     align-items: center;
-    font-size: 18px;
     margin-bottom: 5px;
-
-    > :first-child {
-        margin-right: 10px;
-    }
 }
 
 .positionType {
@@ -88,7 +83,7 @@
 
 .withArrow {
     display: flex;
-    align-items: baseline;
+    align-items: center;
 }
 
 .arrow {
@@ -102,6 +97,7 @@
     border-radius: 3px;
     border: 1px solid rgba($gray, 0.25);
     padding: 5px 10px;
+    gap: 5px;
 }
 
 .disabled {
@@ -109,16 +105,34 @@
     cursor: not-allowed;
 }
 
-.voting {
-    background: rgba($green, 0.15);
+.voter {
+    @extend %voter;
 }
 
 .generator {
-    background: rgba($blue, 0.15);
+    @extend %generator;
 }
 
-.support {
-    background: rgba($orange, 0.15);
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}
+
+.shadowGovernment {
+    @extend %shadowGovernment;
+
+    .description {
+        color: white;
+    }
+}
+
+.disabledReason {
+    display: flex;
+    margin-top: 10px;
+    color: $gray;
 }
 
 .modalBody {

@@ -14,6 +14,28 @@ $brown: #795548;
 
 $gray: #9E9E9E;
 $dark-gray: #424242;
+$black: #1B2631;
+
+%voter {
+    background: rgba($green, 0.15);
+}
+
+%generator {
+    background: rgba($blue, 0.15);
+}
+
+%trainer {
+    background: rgba($yellow, 0.15);
+}
+
+%recruit {
+    background: rgba($red, 0.15);
+}
+
+%shadowGovernment {
+    background: rgba($black, 0.75);
+    color: white;
+}
 
 $transition: cubic-bezier(0, .26, 0, .96);
 

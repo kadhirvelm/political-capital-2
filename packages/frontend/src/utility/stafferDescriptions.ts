@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { DEFAULT_STAFFER, IAllStaffers } from "@pc2/api";
+import { DEFAULT_STAFFER, IAllStaffers, isGenerator, isRecruit, isTrainer, isVoter } from "@pc2/api";
 import { IResolvedGameModifiers } from "../selectors/gameModifiers";
 import { roundToThousand } from "./roundTo";
 
@@ -10,60 +10,94 @@ type IDescriptionOfStaffer = {
     [key in Exclude<keyof IAllStaffers, "unknown">]: string;
 };
 
+const getEffectivenessNumber = (
+    gameModifiers: IResolvedGameModifiers,
+    stafferType: Exclude<keyof IAllStaffers, "unknown">,
+): number => {
+    const defaultStaffer = DEFAULT_STAFFER[stafferType];
+
+    if (isVoter(defaultStaffer)) {
+        return Math.floor(defaultStaffer.votes * gameModifiers.staffers[stafferType].effectiveness);
+    }
+
+    if (isGenerator(defaultStaffer)) {
+        return roundToThousand(defaultStaffer.payout * gameModifiers.staffers[stafferType].effectiveness);
+    }
+
+    if (isRecruit(defaultStaffer)) {
+        return Math.floor(defaultStaffer.recruitCapacity * gameModifiers.staffers[stafferType].effectiveness);
+    }
+
+    if (isTrainer(defaultStaffer)) {
+        return Math.floor(defaultStaffer.trainingCapacity * gameModifiers.staffers[stafferType].effectiveness);
+    }
+
+    return 0;
+};
+
 export const descriptionOfStaffer = (gameModifiers: IResolvedGameModifiers): IDescriptionOfStaffer => {
     return {
         intern: "A college intern, doesn't provide much value - yet",
-        newHire: `Provides ${roundToThousand(
-            DEFAULT_STAFFER.newHire.payout * gameModifiers.staffers.newHire.effectiveness,
-        )} political capital every day`,
-        seasonedStaffer: `Provides ${roundToThousand(
-            DEFAULT_STAFFER.seasonedStaffer.payout * gameModifiers.staffers.newHire.effectiveness,
-        )} political capital every day`,
-        politicalCommentator: `Provides ${roundToThousand(
-            DEFAULT_STAFFER.politicalCommentator.payout * gameModifiers.staffers.newHire.effectiveness,
-        )} political capital every day and provides ${DEFAULT_STAFFER.politicalCommentator.votes} votes on resolutions`,
-        representative: `Provides ${Math.floor(
-            DEFAULT_STAFFER.representative.votes * gameModifiers.staffers.representative.effectiveness,
-        )} vote on resolutions`,
-        seniorRepresentative: `Provides ${Math.floor(
-            DEFAULT_STAFFER.seniorRepresentative.votes * gameModifiers.staffers.seniorRepresentative.effectiveness,
+        newHire: `Provides ${getEffectivenessNumber(gameModifiers, "newHire")} political capital every day`,
+        seasonedStaffer: `Provides ${getEffectivenessNumber(
+            gameModifiers,
+            "seasonedStaffer",
+        )} political capital every day.`,
+        politicalCommentator: `Provides ${getEffectivenessNumber(
+            gameModifiers,
+            "politicalCommentator",
+        )} political capital every day.`,
+        headOfHr: `Recruits up to ${getEffectivenessNumber(
+            gameModifiers,
+            "headOfHr",
+        )} staffers to your party at a time.`,
+        professor: `Trains up to ${getEffectivenessNumber(
+            gameModifiers,
+            "professor",
+        )} staffers in your party at a time.`,
+        representative: `Provides ${getEffectivenessNumber(gameModifiers, "representative")} vote on resolutions`,
+        seniorRepresentative: `Provides ${getEffectivenessNumber(
+            gameModifiers,
+            "seniorRepresentative",
         )} votes on resolutions`,
-        independentRepresentative: `Provides ${Math.floor(
-            DEFAULT_STAFFER.independentRepresentative.votes *
-                gameModifiers.staffers.independentRepresentative.effectiveness,
-        )} vote to pass, and ${Math.floor(
-            DEFAULT_STAFFER.independentRepresentative.votes *
-                gameModifiers.staffers.independentRepresentative.effectiveness,
+        independentRepresentative: `Provides ${getEffectivenessNumber(
+            gameModifiers,
+            "independentRepresentative",
+        )} vote to pass, and ${getEffectivenessNumber(
+            gameModifiers,
+            "independentRepresentative",
         )} vote to fail on resolutions`,
-        senator: `Provides ${Math.floor(
-            DEFAULT_STAFFER.senator.votes * gameModifiers.staffers.senator.effectiveness,
-        )} votes on resolutions`,
-        seasonedSenator: `Provides ${Math.floor(
-            DEFAULT_STAFFER.seasonedSenator.votes * gameModifiers.staffers.seasonedSenator.effectiveness,
-        )} votes on resolutions`,
-        independentSenator: `Provides ${Math.floor(
-            DEFAULT_STAFFER.independentSenator.votes * gameModifiers.staffers.independentSenator.effectiveness,
-        )} votes to pass, and ${Math.floor(
-            DEFAULT_STAFFER.independentSenator.votes * gameModifiers.staffers.independentSenator.effectiveness,
+        senator: `Provides ${getEffectivenessNumber(gameModifiers, "senator")} votes on resolutions`,
+        seasonedSenator: `Provides ${getEffectivenessNumber(gameModifiers, "seasonedSenator")} votes on resolutions`,
+        independentSenator: `Provides ${getEffectivenessNumber(
+            gameModifiers,
+            "independentSenator",
+        )} votes to pass, and ${getEffectivenessNumber(
+            gameModifiers,
+            "independentSenator",
         )} votes to fail on resolutions`,
-        phoneBanker: `Generates ${roundToThousand(
-            DEFAULT_STAFFER.phoneBanker.payout * gameModifiers.staffers.phoneBanker.effectiveness,
+        phoneBanker: `Generates ${getEffectivenessNumber(gameModifiers, "phoneBanker")} political capital every day`,
+        socialMediaManager: `Generates ${getEffectivenessNumber(
+            gameModifiers,
+            "socialMediaManager",
         )} political capital every day`,
-        socialMediaManager: `Generates ${roundToThousand(
-            DEFAULT_STAFFER.socialMediaManager.payout * gameModifiers.staffers.socialMediaManager.effectiveness,
-        )} political capital every day`,
-        recruiter: `Recruits ${Math.floor(
-            DEFAULT_STAFFER.recruiter.recruitCapacity * gameModifiers.staffers.recruiter.effectiveness,
-        )} staffer to your party at a time`,
-        hrManager: `Recruits up to ${Math.floor(
-            DEFAULT_STAFFER.hrManager.recruitCapacity * gameModifiers.staffers.hrManager.effectiveness,
+        recruiter: `Recruits ${getEffectivenessNumber(gameModifiers, "recruiter")} staffer to your party at a time`,
+        hrManager: `Recruits up to ${getEffectivenessNumber(
+            gameModifiers,
+            "hrManager",
         )} staffers to your party at a time`,
-        partTimeInstructor: `Trains ${Math.floor(
-            DEFAULT_STAFFER.partTimeInstructor.trainingCapacity *
-                gameModifiers.staffers.partTimeInstructor.effectiveness,
+        adjunctInstructor: `Trains ${getEffectivenessNumber(
+            gameModifiers,
+            "adjunctInstructor",
         )} staffer in your party at a time`,
-        coach: `Trains up to ${Math.floor(
-            DEFAULT_STAFFER.coach.trainingCapacity * gameModifiers.staffers.coach.effectiveness,
+        professionalTrainer: `Trains up to ${getEffectivenessNumber(
+            gameModifiers,
+            "professionalTrainer",
         )} staffers in your party at a time`,
+        initiate: `An initiate into the shadow government still learning the ropes`,
+        veteranInitiate: `An adept member of the shadow government, ready to take on greater responsibility`,
+        politicalSpy: `Allows viewing of enemy political parties`,
+        informationBroker: `Allows viewing enemy political capital`,
+        informant: `Allows viewing the cast votes ahead of tallying`,
     };
 };

@@ -2,12 +2,11 @@
  * Copyright (c) 2022 - KM
  */
 
-import { DEFAULT_STAFFER, IAllStaffers, IPossibleStaffer } from "@pc2/api";
+import { DEFAULT_STAFFER, getStafferCategory, IAllStaffers, IPossibleStaffer } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
 import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
-import { getStafferCategory } from "../../utility/categorizeStaffers";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./StafferLadders.module.scss";
 
@@ -24,9 +23,11 @@ export const StafferLadders: React.FC<{}> = () => {
             <div className={styles.singleLevel}>
                 <div
                     className={classNames(styles.singleLevelDetails, {
-                        [styles.voting]: stafferCategory === "voting",
+                        [styles.voter]: stafferCategory === "voter",
                         [styles.generator]: stafferCategory === "generator",
-                        [styles.support]: stafferCategory === "support",
+                        [styles.trainer]: stafferCategory === "trainer",
+                        [styles.recruit]: stafferCategory === "recruit",
+                        [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
                     })}
                 >
                     <div>
@@ -35,6 +36,9 @@ export const StafferLadders: React.FC<{}> = () => {
                     <div className={styles.description}>
                         {descriptionOfStaffer(resolvedGameModifiers)[staffer.type]}
                     </div>
+                    {staffer.limitPerParty !== undefined && (
+                        <div className={styles.description}>Limited to {staffer.limitPerParty} per party </div>
+                    )}
                 </div>
                 <div className={styles.singleLevelParents}>{parents.map(renderSingleStafferLevel)}</div>
             </div>
@@ -46,9 +50,11 @@ export const StafferLadders: React.FC<{}> = () => {
     return (
         <div className={styles.staffersContainer}>
             <div className={styles.legend}>
-                <div className={styles.generatorText}>Generator</div>
-                <div className={styles.supportText}>Support</div>
-                <div className={styles.votingText}>Voting</div>
+                <div className={classNames(styles.voter, styles.tagContainer)}>Voter</div>
+                <div className={classNames(styles.generator, styles.tagContainer)}>Generator</div>
+                <div className={classNames(styles.trainer, styles.tagContainer)}>Trainer</div>
+                <div className={classNames(styles.recruit, styles.tagContainer)}>Recruiter</div>
+                <div className={classNames(styles.shadowGovernment, styles.tagContainer)}>Shadow government</div>
             </div>
             {lowestLevelStaffers.map(renderSingleStafferLevel)}
         </div>

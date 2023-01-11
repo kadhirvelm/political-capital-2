@@ -14,5 +14,5 @@ export const INITIAL_STAFFERS: Array<Exclude<keyof IAllStaffers, "unknown">> = [
     "representative",
     "representative",
     "recruiter",
-    "partTimeInstructor",
+    "adjunctInstructor",
 ];

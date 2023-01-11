@@ -4,10 +4,10 @@
 
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
-import { IActiveStaffer, IPlayerRid, isRecruit, isTrainer } from "@pc2/api";
+import { IActiveStaffer, IPlayerRid, isRecruit, IStafferCategory, isTrainer } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
-import { getStaffersOfCategory, IStafferCategory } from "../../utility/categorizeStaffers";
+import { getStaffersOfCategory } from "../../utility/categorizeStaffers";
 import { summaryStaffers } from "../../utility/partySummarizer";
 import { roundToHundred, roundToThousand } from "../../utility/roundTo";
 import { StafferCard } from "../common/StafferCard";
@@ -34,7 +34,7 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
     const onBack = () => setActivatingStaffer(undefined);
     const activateStaffer = (staffer: IActiveStaffer) => () => setActivatingStaffer(staffer);
 
-    const renderCategory = (category: IStafferCategory) => {
+    const renderCategory = (category: IStafferCategory | undefined) => {
         const staffersInCategory = getStaffersOfCategory(playerStaffers, category);
         if (staffersInCategory.length === 0) {
             return <div className={styles.noneFound}>None found</div>;
@@ -43,7 +43,8 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
         return (
             <div className={styles.staffersInCategory}>
                 {staffersInCategory.map((staffer) => {
-                    const canActivateCard = isViewingSelf && category === "support";
+                    const canActivateCard = isViewingSelf && (category === "recruit" || category === "trainer");
+
                     return (
                         <div className={styles.activateStafferContainer} key={staffer.activeStafferRid}>
                             <StafferCard staffer={staffer} isPlayerStaffer={player?.playerRid === playerRid} />
@@ -78,14 +79,16 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
         return (
             <div className={styles.staffers}>
                 <div>
-                    <div className={styles.categoryTitle}>
-                        Support - {hiring} Hiring, {training} Training
-                    </div>
-                    {renderCategory("support")}
+                    <div className={styles.categoryTitle}>Hiring - {hiring}</div>
+                    {renderCategory("recruit")}
+                </div>
+                <div>
+                    <div className={styles.categoryTitle}>Training - {training}</div>
+                    {renderCategory("trainer")}
                 </div>
                 <div>
                     <div className={styles.categoryTitle}>Voters - {votingCapacity} votes</div>
-                    {renderCategory("voting")}
+                    {renderCategory("voter")}
                 </div>
                 <div>
                     <div className={styles.categoryTitle}>
@@ -94,12 +97,12 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
                     {renderCategory("generator")}
                 </div>
                 <div>
-                    <div className={styles.categoryTitle}>Passive</div>
-                    {renderCategory("passive")}
+                    <div className={styles.categoryTitle}>Shadow government</div>
+                    {renderCategory("shadowGovernment")}
                 </div>
                 <div>
-                    <div className={styles.categoryTitle}>Other</div>
-                    {renderCategory("none")}
+                    <div className={styles.categoryTitle}>No category</div>
+                    {renderCategory(undefined)}
                 </div>
             </div>
         );

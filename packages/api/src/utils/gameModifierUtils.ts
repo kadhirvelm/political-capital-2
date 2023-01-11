@@ -2,9 +2,17 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IStafferEffect } from "../types/IGameModifier";
+import { IStafferCategory, IStafferEffect } from "../types/IGameModifier";
 import { IPassedGameModifier } from "../types/politicalCapitalTwo";
-import { getStafferDetails, IActiveOrPossibleStaffer, isGenerator, isRecruit, isTrainer, isVoter } from "./staffer";
+import {
+    getStafferDetails,
+    IActiveOrPossibleStaffer,
+    isGenerator,
+    isRecruit,
+    isShadowGovernment,
+    isTrainer,
+    isVoter,
+} from "./staffer";
 
 export function isStafferInCategory(
     activeStaffer: IActiveOrPossibleStaffer,
@@ -36,7 +44,35 @@ export function isStafferInCategory(
         return true;
     }
 
+    if (category === "shadowGovernment" && isShadowGovernment(stafferDetails)) {
+        return true;
+    }
+
     return false;
+}
+
+export function getStafferCategory(stafferDetails: IActiveOrPossibleStaffer): IStafferCategory | undefined {
+    if (isVoter(stafferDetails)) {
+        return "voter";
+    }
+
+    if (isGenerator(stafferDetails)) {
+        return "generator";
+    }
+
+    if (isTrainer(stafferDetails)) {
+        return "trainer";
+    }
+
+    if (isRecruit(stafferDetails)) {
+        return "recruit";
+    }
+
+    if (isShadowGovernment(stafferDetails)) {
+        return "shadowGovernment";
+    }
+
+    return undefined;
 }
 
 export function getRelevantModifiersToStaffer(

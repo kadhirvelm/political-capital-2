@@ -24,10 +24,14 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
     );
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
+    const player = usePoliticalCapitalSelector((s) => s.playerState.player);
+    const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
-    if (resolveEvents === undefined) {
+    if (resolveEvents === undefined || fullGameState === undefined || player === undefined) {
         return null;
     }
+
+    const playerParty = fullGameState.activePlayersStaffers[player.playerRid];
 
     const tallyOnEvent = resolveEvents.game.find(
         (event) =>
@@ -40,7 +44,10 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
             return <div className={classNames(styles.totalVotes, styles.description)}>No votes cast yet</div>;
         }
 
-        if (resolution.state === "active") {
+        const hasInformant = playerParty.find((p) => p.stafferDetails.type === "informant");
+        const canViewResolution = hasInformant || resolution.state !== "active";
+
+        if (!canViewResolution) {
             return <div className={classNames(styles.totalVotes, styles.description)}>Some votes have been cast</div>;
         }
 
@@ -48,7 +55,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
         // const totalAbstain = votesOnResolution.filter((vote) => vote.vote === "abstain").length;
         const totalNo = votesOnResolution.filter((vote) => vote.vote === "failed").length;
 
-        // const willPass = totalYes > totalNo;
+        const willPass = totalYes > totalNo;
 
         return (
             <div className={styles.totalVotes}>
@@ -75,7 +82,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
                     <div className={styles.divider} />
                     <div>{totalNo}</div>
                 </div>
-                {/* {resolution.state === "active" && (
+                {resolution.state === "active" && (
                     <div className={styles.onTrackTo}>
                         <div className={styles.description}>On track to</div>
                         <div className={styles.divider} />
@@ -83,7 +90,7 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
                             {willPass ? "Pass" : "Fail"}
                         </div>
                     </div>
-                )} */}
+                )}
             </div>
         );
     };

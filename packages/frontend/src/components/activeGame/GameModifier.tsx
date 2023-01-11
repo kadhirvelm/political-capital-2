@@ -6,6 +6,7 @@ import { MinusIcon } from "@chakra-ui/icons";
 import {
     allGenerators,
     allRecruits,
+    allShadowGovernment,
     allTrainers,
     allVoters,
     DEFAULT_STAFFER,
@@ -114,6 +115,15 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier; isGlobalScre
                 <div key="trainer">
                     {maybeRenderAnd()}
                     {allTrainers.map((s) => s.displayName).join(", and ")}
+                </div>
+            );
+        }
+
+        if (staffer === "shadowGovernment") {
+            return (
+                <div key="shadowGovernment">
+                    {maybeRenderAnd()}
+                    {allShadowGovernment.map((s) => s.displayName).join(", and ")}
                 </div>
             );
         }

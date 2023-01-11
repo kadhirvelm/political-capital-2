@@ -4,8 +4,9 @@
 
 import { DEFAULT_STAFFER, IPossibleStaffer } from "../types/generatedStaffers";
 import {
+    IAdjunctInstructor,
     IGenerator,
-    IPartTimeInstructor,
+    IInitiate,
     IPhoneBanker,
     IRecruit,
     IRecruiter,
@@ -51,7 +52,7 @@ export function getTotalAllowedTrainees(staffer: IActiveOrPossibleStaffer): numb
     return (stafferDetails as ITrainer).trainingCapacity ?? 0;
 }
 
-export function isTrainer(staffer: IActiveOrPossibleStaffer): staffer is IPartTimeInstructor {
+export function isTrainer(staffer: IActiveOrPossibleStaffer): staffer is IAdjunctInstructor {
     return (getStafferDetails(staffer) as ITrainer).trainingCapacity !== undefined;
 }
 
@@ -79,6 +80,10 @@ export function getPayoutForStaffer(staffer: IActiveOrPossibleStaffer): number {
 
 export function isGenerator(staffer: IActiveOrPossibleStaffer): staffer is IPhoneBanker {
     return (getStafferDetails(staffer) as IGenerator).payout !== undefined;
+}
+
+export function isShadowGovernment(staffer: IActiveOrPossibleStaffer): staffer is IInitiate {
+    return (getStafferDetails(staffer) as IInitiate).shadowGovernment === true;
 }
 
 export const allRecruits = (() => {
@@ -109,6 +114,14 @@ export const allVoters = (() => {
     const allStaffers = Object.values(DEFAULT_STAFFER);
     return allStaffers
         .filter(isVoter)
+        .slice()
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+})();
+
+export const allShadowGovernment = (() => {
+    const allStaffers = Object.values(DEFAULT_STAFFER);
+    return allStaffers
+        .filter(isShadowGovernment)
         .slice()
         .sort((a, b) => a.displayName.localeCompare(b.displayName));
 })();

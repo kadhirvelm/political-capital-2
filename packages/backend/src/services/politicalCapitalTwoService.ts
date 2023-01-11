@@ -9,7 +9,10 @@ import {
     getTotalAllowedTrainees,
     getTotalAllowedVotes,
     IActiveResolutionVote,
+    IAllStaffers,
     IGameClock,
+    IGameStateRid,
+    IPlayerRid,
     IPoliticalCapitalTwoService,
     IResolveGameEvent,
     isStafferHiringDisabled,
@@ -28,6 +31,42 @@ import {
 import Express from "express";
 import _ from "lodash";
 import { Op } from "sequelize";
+
+async function doesExceedLimitForPlayer(
+    gameStateRid: IGameStateRid,
+    playerRid: IPlayerRid,
+    stafferType: Exclude<keyof IAllStaffers, "unknown">,
+    type: "recruiting" | "training",
+) {
+    const maybeLimitPerParty = DEFAULT_STAFFER[stafferType].limitPerParty;
+    if (maybeLimitPerParty === undefined) {
+        return false;
+    }
+
+    const partialStartHiring: Partial<IStartHiringStaffer> = {
+        playerRid,
+        stafferType,
+        type: "start-hiring-staffer",
+    };
+
+    const partialStartTraining: Partial<IStartTrainingStaffer> = {
+        playerRid,
+        toLevel: stafferType,
+        type: "start-training-staffer",
+    };
+
+    const [existingStaffersOfType, soonToBeStaffersOfType] = await Promise.all([
+        ActiveStaffer.findAll({
+            where: { gameStateRid: gameStateRid, playerRid, stafferDetails: { type: stafferType } },
+        }),
+        type === "recruiting"
+            ? ResolveGameEvent.findAll({ where: { gameStateRid, eventDetails: partialStartHiring } })
+            : ResolveGameEvent.findAll({ where: { gameStateRid, eventDetails: partialStartTraining } }),
+    ]);
+
+    const totalStaffersOfType = existingStaffersOfType.length + soonToBeStaffersOfType.length;
+    return totalStaffersOfType >= maybeLimitPerParty;
+}
 
 export async function recruitStaffer(
     payload: IPoliticalCapitalTwoService["recruitStaffer"]["payload"],
@@ -80,6 +119,36 @@ export async function recruitStaffer(
     );
     if (isDisabled) {
         response.status(400).send({ error: `Due to the game modifiers, hiring this type of staffer is not allowed.` });
+        return undefined;
+    }
+
+    const maybeLimitPerParty = DEFAULT_STAFFER[payload.recruitRequest.stafferType].limitPerParty;
+    if (maybeLimitPerParty !== undefined) {
+        const existingStaffersOfType = await ActiveStaffer.findAll({
+            where: { gameStateRid: payload.gameStateRid, stafferDetails: { type: payload.recruitRequest.stafferType } },
+        });
+
+        if (existingStaffersOfType.length >= maybeLimitPerParty) {
+            response.status(400).send({
+                error: `This type of staffer is limited to ${maybeLimitPerParty}. You already have ${existingStaffersOfType.length} staffers of this type.`,
+            });
+            return undefined;
+        }
+    }
+
+    if (
+        await doesExceedLimitForPlayer(
+            payload.gameStateRid,
+            payload.recruitRequest.playerRid,
+            payload.recruitRequest.stafferType,
+            "recruiting",
+        )
+    ) {
+        response
+            .status(400)
+            .send({
+                error: `You have reached the limit for this kind of staffer, please try recruiting a different type.`,
+            });
         return undefined;
     }
 
@@ -220,6 +289,22 @@ export async function trainStaffer(
             });
             return undefined;
         }
+    }
+
+    if (
+        await doesExceedLimitForPlayer(
+            payload.gameStateRid,
+            payload.trainRequest.playerRid,
+            payload.trainRequest.toLevel,
+            "training",
+        )
+    ) {
+        response
+            .status(400)
+            .send({
+                error: `You have reached the limit for this kind of staffer, please try training to a different type.`,
+            });
+        return undefined;
     }
 
     const startTrainingEvent: IStartTrainingStaffer = {
