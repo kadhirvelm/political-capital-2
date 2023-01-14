@@ -2,10 +2,9 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IGameClock } from "@pc2/api";
+import { IGameClock, TOTAL_DAYS_IN_GAME } from "@pc2/api";
 import { ActivePlayer, GameState, ProcessPlayerQueue } from "@pc2/distributed-compute";
 import cron from "node-cron";
-import { TOTAL_DAYS_IN_GAME } from "../constants/game";
 import { sendGameStateToAllActiveGlobalScreens } from "../services/gameService";
 import { resolveGameEvents } from "./resolveGameEvents";
 import { takeGameSnapshot } from "./takeGameSnapshot";

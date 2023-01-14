@@ -14,6 +14,9 @@ import {
     IPassedGameModifier,
     IPossibleEvent,
     ITallyResolution,
+    TIME_BETWEEN_RESOLUTIONS_IN_DAYS,
+    TIME_FOR_EACH_RESOLUTION_IN_DAYS,
+    TOTAL_DAYS_IN_GAME,
 } from "@pc2/api";
 import {
     ActivePlayer,
@@ -26,11 +29,6 @@ import {
 import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
-import {
-    TIME_BETWEEN_RESOLUTIONS_IN_DAYS,
-    TIME_FOR_EACH_RESOLUTION_IN_DAYS,
-    TOTAL_DAYS_IN_GAME,
-} from "../constants/game";
 
 function getCurrentStage(gameClock: IGameClock): IBasicResolution["stage"] {
     const thirds = TOTAL_DAYS_IN_GAME * 0.3333;
