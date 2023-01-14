@@ -91,14 +91,6 @@ export function getTotalAllowedVotes(
     return Math.floor(stafferDetails.votes * getEffectivenessModifier(passedGameModifiers, staffer));
 }
 
-export function getPotentialPayoutForStaffer(staffer: IActiveOrPossibleStaffer,
-    passedGameModifiers: IPassedGameModifier[], days_left: number): number {
-    if (!isGenerator(staffer)){
-        return 0;
-    }
-    return Math.floor((getStafferDetails(staffer) as IGenerator).payout * days_left * getEffectivenessModifier(passedGameModifiers, staffer));
-}
-
 /**
  * Generator
  */
@@ -114,6 +106,14 @@ export function getTotalPayout(staffer: IActiveOrPossibleStaffer, passedGameModi
     }
 
     return stafferDetails.payout * getEffectivenessModifier(passedGameModifiers, stafferDetails);
+}
+
+export function getPotentialPayoutForStaffer(staffer: IActiveOrPossibleStaffer,
+    passedGameModifiers: IPassedGameModifier[], days_left: number): number {
+    if (!isGenerator(staffer)){
+        return 0;
+    }
+    return Math.floor((getStafferDetails(staffer) as IGenerator).payout * days_left * getEffectivenessModifier(passedGameModifiers, staffer));
 }
 
 /**
