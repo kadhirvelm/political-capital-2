@@ -2,15 +2,61 @@
  * Copyright (c) 2022 - KM
  */
 
-import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
-import { Button } from "@chakra-ui/react";
-import { ActiveGameFrontend } from "@pc2/api";
+import { AvatarGroup, Badge, Button } from "@chakra-ui/react";
+import { ActiveGameFrontend, IFullGameState, IPlayer } from "@pc2/api";
 import classNames from "classnames";
 import { keyBy } from "lodash-es";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
-import { StafferCard } from "../common/StafferCard";
+import { PlayerName, StafferName } from "../common/StafferName";
 import styles from "./Lobby.module.scss";
+
+const AllPlayers: React.FC<{ indexedPlayers: { [playerRid: string]: IPlayer }; fullGameState: IFullGameState }> = ({
+    indexedPlayers,
+    fullGameState,
+}) => {
+    return (
+        <div className={styles.playersContainer}>
+            {Object.values(fullGameState.activePlayers).map((activePlayer) => {
+                const maybePlayer = indexedPlayers?.[activePlayer.playerRid];
+                if (maybePlayer === undefined) {
+                    return undefined;
+                }
+
+                return (
+                    <div
+                        className={classNames(styles.singlePlayer, {
+                            [styles.ready]: activePlayer.isReady,
+                            [styles.notReady]: !activePlayer.isReady,
+                        })}
+                        key={activePlayer.playerRid}
+                    >
+                        <div className={styles.playerNameContainer}>
+                            <PlayerName player={maybePlayer} activePlayer={activePlayer} />
+                        </div>
+                        <div className={styles.playerDetails}>
+                            <div className={styles.playerNameAndReady}>
+                                <div className={styles.playerNameText}>
+                                    {indexedPlayers?.[activePlayer.playerRid]?.name}
+                                </div>
+                                {activePlayer.isReady ? (
+                                    <Badge colorScheme="green">Ready</Badge>
+                                ) : (
+                                    <Badge colorScheme="red">Not ready</Badge>
+                                )}
+                            </div>
+                            <AvatarGroup>
+                                {fullGameState.activePlayersStaffers[activePlayer.playerRid].map((staffer) => (
+                                    <StafferName staffer={staffer} avatarExclusive key={staffer.activeStafferRid} />
+                                ))}
+                            </AvatarGroup>
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
 
 export const Lobby: React.FC<{}> = () => {
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
@@ -42,20 +88,6 @@ export const Lobby: React.FC<{}> = () => {
         );
     };
 
-    const changePlayerReady = (isReady: boolean) => async () => {
-        if (fullGameState === undefined || player === undefined) {
-            return;
-        }
-
-        setIsLoading(true);
-        await ActiveGameFrontend.changeReadyState({
-            gameStateRid: fullGameState.gameState.gameStateRid,
-            playerRid: player.playerRid,
-            isReady,
-        });
-        setIsLoading(false);
-    };
-
     const startGame = async () => {
         if (fullGameState === undefined) {
             return undefined;
@@ -69,7 +101,7 @@ export const Lobby: React.FC<{}> = () => {
         setIsLoading(false);
     };
 
-    const maybeRenderStartGame = () => {
+    const maybeRenderPlayerActions = () => {
         if (fullGameState === undefined) {
             return undefined;
         }
@@ -83,7 +115,7 @@ export const Lobby: React.FC<{}> = () => {
         }
 
         return (
-            <div>
+            <div className={styles.playerActions}>
                 <Button colorScheme="green" onClick={startGame}>
                     Start game!
                 </Button>
@@ -91,12 +123,21 @@ export const Lobby: React.FC<{}> = () => {
         );
     };
 
-    const maybeRenderPlayerActions = () => {
-        if (fullGameState === undefined) {
-            return undefined;
+    const togglePlayerReady = (currentReadyState: boolean) => async () => {
+        if (fullGameState === undefined || player === undefined) {
+            return;
         }
 
-        return <div className={styles.playerActions}>{maybeRenderStartGame()}</div>;
+        const thisPlayer = fullGameState.activePlayers[player.playerRid];
+
+        setIsLoading(true);
+        await ActiveGameFrontend.changeReadyState({
+            gameStateRid: fullGameState.gameState.gameStateRid,
+            playerRid: player.playerRid,
+            isReady: !currentReadyState,
+            avatarSet: thisPlayer.avatarSet,
+        });
+        setIsLoading(false);
     };
 
     const maybeRenderPlayers = () => {
@@ -109,66 +150,13 @@ export const Lobby: React.FC<{}> = () => {
 
         return (
             <>
-                <div className={styles.tableHeaders}>
-                    <div className={styles.name}>Name</div>
-                    <div className={styles.staffers}>Staffers</div>
+                <div>
+                    <PlayerName player={player} activePlayer={thisPlayer} />
+                    <Button onClick={togglePlayerReady(thisPlayer.isReady)}>
+                        {thisPlayer.isReady ? "Unready" : "Ready up"}
+                    </Button>
                 </div>
-                <div className={styles.playersContainer}>
-                    {Object.values(fullGameState.activePlayers).map((activePlayer) => {
-                        const maybePlayer = indexedPlayers?.[activePlayer.playerRid];
-                        if (maybePlayer === undefined) {
-                            return undefined;
-                        }
-
-                        return (
-                            <div className={styles.singlePlayer} key={activePlayer.playerRid}>
-                                <div
-                                    className={classNames(styles.isReady, {
-                                        [styles.ready]: activePlayer.isReady,
-                                        [styles.notReady]: !activePlayer.isReady,
-                                    })}
-                                >
-                                    <div>{activePlayer.isReady ? <CheckIcon /> : <CloseIcon />}</div>
-                                </div>
-                                <div className={styles.name}>
-                                    <div>
-                                        {indexedPlayers?.[activePlayer.playerRid]?.name}
-                                        {activePlayer.playerRid === player.playerRid && " (you)"}
-                                    </div>
-                                    {player.playerRid === activePlayer.playerRid && (
-                                        <div className={styles.readyUpContainer}>
-                                            {thisPlayer?.isReady ? (
-                                                <Button
-                                                    colorScheme="red"
-                                                    isLoading={isLoading}
-                                                    onClick={changePlayerReady(false)}
-                                                >
-                                                    Unready
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    colorScheme="green"
-                                                    isLoading={isLoading}
-                                                    onClick={changePlayerReady(true)}
-                                                >
-                                                    Ready up
-                                                </Button>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className={styles.staffers}>
-                                    {fullGameState.activePlayersStaffers[activePlayer.playerRid]
-                                        .slice()
-                                        .sort((a, b) => a.stafferDetails.type.localeCompare(b.stafferDetails.type))
-                                        .map((staffer) => (
-                                            <StafferCard staffer={staffer} key={staffer.activeStafferRid} />
-                                        ))}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                <AllPlayers indexedPlayers={indexedPlayers} fullGameState={fullGameState} />
             </>
         );
     };

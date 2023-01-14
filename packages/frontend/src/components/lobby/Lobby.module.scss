@@ -28,46 +28,6 @@
     justify-content: center;
     align-items: center;
     margin: 20px 0;
-
-    > :not(:last-child) {
-        margin-right: 10px;
-    }
-}
-
-.tableHeaders {
-    display: flex;
-    box-shadow: 0 1px $gray;
-    margin: 0 0 10px 30px;
-}
-
-.isReady {
-    margin-right: 15px;
-
-    &.ready {
-        color: $green;
-    }
-
-    &.notReady {
-        color: $red;
-    }
-}
-
-.readyUpContainer {
-    margin-top: 10px;
-}
-
-.name {
-    display: flex;
-    flex-direction: column;
-    flex: 2;
-}
-
-.staffers {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    flex: 4;
-    gap: 10px;
 }
 
 .playersContainer {
@@ -82,5 +42,37 @@
 
 .singlePlayer {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid $gray;
+    padding: 10px;
+
+    &.ready {
+        background: rgba($green, 0.1);
+    }
+
+    &.notReady {
+        background: rgba($red, 0.1);
+    }
+}
+
+.playerNameContainer {
+    display: flex;
+    margin-right: 15px;
+}
+
+.playerNameText {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.playerDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.playerNameAndReady {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }

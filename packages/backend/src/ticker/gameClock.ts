@@ -10,22 +10,33 @@ import { sendGameStateToAllActiveGlobalScreens } from "../services/gameService";
 import { resolveGameEvents } from "./resolveGameEvents";
 import { takeGameSnapshot } from "./takeGameSnapshot";
 
+async function handleEndGame(activeGame: GameState) {
+    activeGame.state = "complete";
+    await activeGame.save();
+
+    await takeGameSnapshot(activeGame);
+
+    sendGameStateToAllActiveGlobalScreens(activeGame.gameStateRid);
+}
+
 export async function updateGameStates() {
     const activeGames = await GameState.findAll({ where: { state: "active" } });
 
     activeGames.forEach(async (activeGame) => {
         activeGame.gameClock = (activeGame.gameClock + 1) as IGameClock;
-        if (activeGame.gameClock >= TOTAL_DAYS_IN_GAME) {
-            activeGame.state = "complete";
+
+        if (activeGame.gameClock > TOTAL_DAYS_IN_GAME) {
+            await handleEndGame(activeGame);
+            return;
         }
 
-        await activeGame.save();
+        await Promise.all([activeGame.save(), resolveGameEvents(activeGame)]);
+        sendGameStateToAllActiveGlobalScreens(activeGame.gameStateRid);
 
-        await takeGameSnapshot(activeGame);
-
-        await resolveGameEvents(activeGame);
-
-        const activePlayers = await ActivePlayer.findAll({ where: { gameStateRid: activeGame.gameStateRid } });
+        const [activePlayers] = await Promise.all([
+            ActivePlayer.findAll({ where: { gameStateRid: activeGame.gameStateRid } }),
+            takeGameSnapshot(activeGame),
+        ]);
 
         activePlayers.forEach((activePlayer) => {
             ProcessPlayerQueue.add({
@@ -34,8 +45,6 @@ export async function updateGameStates() {
                 gameClock: activeGame.gameClock,
             });
         });
-
-        sendGameStateToAllActiveGlobalScreens(activeGame.gameStateRid);
     });
 }
 

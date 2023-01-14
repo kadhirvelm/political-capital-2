@@ -11,9 +11,12 @@
     font-size: 18px;
 
     > :first-child {
-        --avatar-border-color: $gray;
-        color: $gray;
-
         margin-right: 10px;
     }
+}
+
+.avatar.avatar {
+    --avatar-border-color: $gray;
+    color: $gray;
+    background: white;
 }

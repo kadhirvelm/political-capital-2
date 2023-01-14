@@ -3,6 +3,7 @@
  */
 
 import {
+    AvatarSet,
     IActiveGameService,
     IActiveResolutionVote,
     IActiveStaffer,
@@ -30,7 +31,7 @@ import Express from "express";
 import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
-import { INITIAL_STAFFERS, TIME_BETWEEN_RESOLUTIONS_IN_DAYS } from "../constants/game";
+import { INITIAL_STAFFERS } from "../constants/game";
 import { INITIAL_APPROVAL_RATING, INITIAL_POLITICAL_CAPITAL } from "../constants/initializePlayers";
 import { areThereActiveGlobalScreens, sendMessageToGlobalScreens, sendMessageToPlayer } from "./socketService";
 
@@ -299,12 +300,15 @@ export async function getActiveGameState(): Promise<IActiveGameService["getActiv
 }
 
 async function addPlayerToGame(gameStateRid: IGameStateRid, playerRid: IPlayerRid, isGameActive: boolean = false) {
+    const playersInitialAvatarSet = _.sample(AvatarSet) ?? AvatarSet[0];
+
     return Promise.all([
         ActivePlayer.create({
             gameStateRid,
             playerRid,
             politicalCapital: INITIAL_POLITICAL_CAPITAL,
             approvalRating: INITIAL_APPROVAL_RATING,
+            avatarSet: playersInitialAvatarSet,
             lastUpdatedGameClock: 0 as IGameClock,
             isReady: isGameActive ? true : false,
         }),
@@ -314,7 +318,7 @@ async function addPlayerToGame(gameStateRid: IGameStateRid, playerRid: IPlayerRi
                 playerRid,
                 activeStafferRid: v4() as IActiveStafferRid,
                 stafferDetails: getStafferOfType(staffer),
-                avatarSet: _.random(1, 5) as IActiveStaffer["avatarSet"],
+                avatarSet: playersInitialAvatarSet,
                 state: "active",
             }),
         ),
@@ -387,10 +391,18 @@ export async function changeReadyState(
         return undefined;
     }
 
-    if (maybeActivePlayer.isReady !== payload.isReady) {
-        maybeActivePlayer.isReady = payload.isReady;
-        await maybeActivePlayer.save();
+    maybeActivePlayer.isReady = payload.isReady;
+
+    if (maybeActivePlayer.avatarSet !== payload.avatarSet) {
+        await ActiveStaffer.update(
+            { avatarSet: payload.avatarSet },
+            { where: { gameStateRid: payload.gameStateRid, playerRid: payload.playerRid } },
+        );
     }
+
+    maybeActivePlayer.avatarSet = payload.avatarSet;
+
+    await maybeActivePlayer.save();
 
     sendGameStateToAllActiveGlobalScreens(maybeActivePlayer.gameStateRid);
     await sendGameStateToAllActivePlayers(maybeActivePlayer.gameStateRid);

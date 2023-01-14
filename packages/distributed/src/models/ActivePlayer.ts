@@ -41,6 +41,11 @@ export class ActivePlayer extends Model<IActivePlayer> {
     @Column({
         type: DataTypes.INTEGER,
     })
+    declare avatarSet: IActivePlayer["avatarSet"];
+
+    @Column({
+        type: DataTypes.INTEGER,
+    })
     declare lastUpdatedGameClock: IActivePlayer["lastUpdatedGameClock"];
 
     @Column({

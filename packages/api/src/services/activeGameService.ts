@@ -15,6 +15,7 @@ import {
     IActiveResolution,
     IActiveResolutionVote,
     IActiveStaffer,
+    IAvatarSet,
     IGameState,
     IHistoricalGameState,
     IPassedGameModifier,
@@ -67,6 +68,7 @@ export interface IActiveGameService extends IService {
             playerRid: IPlayerRid;
             gameStateRid: IGameStateRid;
             isReady: boolean;
+            avatarSet: IAvatarSet;
         };
         response: {};
     };

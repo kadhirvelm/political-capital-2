@@ -20,6 +20,9 @@ module.exports = {
             politicalCapital: {
                 type: Sequelize.DOUBLE,
             },
+            avatarSet: {
+                type: Sequelize.STRING,
+            },
             approvalRating: {
                 type: Sequelize.DOUBLE,
             },

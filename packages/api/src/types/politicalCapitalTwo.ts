@@ -20,11 +20,15 @@ export interface IGameState {
     gameClock: IGameClock;
 }
 
+export type IAvatarSet = "robots" | "monsters" | "cats" | "humans";
+export const AvatarSet: IAvatarSet[] = ["robots", "monsters", "cats", "humans"];
+
 export interface IActivePlayer {
     gameStateRid: IGameStateRid;
     playerRid: IPlayerRid;
     politicalCapital: number;
     approvalRating: number;
+    avatarSet: IAvatarSet;
     lastUpdatedGameClock: IGameClock;
     isReady: boolean;
 }
@@ -49,7 +53,7 @@ export interface IActiveStaffer {
     playerRid: IPlayerRid;
     activeStafferRid: IActiveStafferRid;
     stafferDetails: IPossibleStaffer;
-    avatarSet: 1 | 2 | 3 | 4 | 5;
+    avatarSet: IAvatarSet;
     state: "active" | "disabled";
 }
 

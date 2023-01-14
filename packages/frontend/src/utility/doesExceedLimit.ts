@@ -2,7 +2,7 @@
  * Copyright (c) 2023 - KM
  */
 
-import { DEFAULT_STAFFER, IAllStaffers, IFullGameState, IPlayerRid } from "@pc2/api";
+import { DEFAULT_STAFFER, IAllStaffers, IEvent, IFullGameState, IPlayerRid } from "@pc2/api";
 import { flatten } from "lodash-es";
 
 export function doesExceedLimit(
@@ -29,14 +29,14 @@ export function doesExceedLimit(
         .filter((event) => {
             if (type === "recruiting") {
                 return (
-                    event.eventDetails.type === "start-hiring-staffer" &&
+                    IEvent.isStartHireStaffer(event.eventDetails) &&
                     event.eventDetails.stafferType === stafferType &&
                     event.resolvesOn > fullGameState.gameState.gameClock
                 );
             }
 
             return (
-                event.eventDetails.type === "start-training-staffer" &&
+                IEvent.isStartTrainingStaffer(event.eventDetails) &&
                 event.eventDetails.toLevel === stafferType &&
                 event.resolvesOn > fullGameState.gameState.gameClock
             );

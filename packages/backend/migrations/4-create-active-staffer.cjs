@@ -20,7 +20,7 @@ module.exports = {
                 type: Sequelize.JSONB,
             },
             avatarSet: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.STRING,
             },
             state: {
                 allowNull: false,

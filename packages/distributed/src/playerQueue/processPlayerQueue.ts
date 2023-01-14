@@ -7,7 +7,7 @@ import {
     getCostToAcquireModifier,
     getTimeToAcquireModifier,
     getTotalPayout,
-    IActiveStaffer,
+    IActivePlayer,
     IActiveStafferRid,
     IEvent,
     IFinishHiringStaffer,
@@ -15,14 +15,12 @@ import {
     IGameClock,
     IGameStateRid,
     IPassedGameModifier,
-    IPlayerRid,
     IStartHiringStaffer,
     IStartTrainingStaffer,
     ITallyResolution,
 } from "@pc2/api";
 import { DoneCallback, Job } from "bull";
 import crypto from "crypto";
-import _ from "lodash";
 import { Op } from "sequelize";
 import {
     ActivePlayer,
@@ -86,7 +84,7 @@ async function handleFinishHiringOrTraining(
 
 export async function handleStartHiringOrTraining(
     gameStateRid: IGameStateRid,
-    playerRid: IPlayerRid,
+    activePlayer: IActivePlayer,
     startHiringOrTraining: Array<IStartHiringStaffer | IStartTrainingStaffer>,
     currentGameClock: IGameClock,
     startHiringOrTrainingModels: ResolveGameEvent[],
@@ -108,17 +106,17 @@ export async function handleStartHiringOrTraining(
                 await Promise.all([
                     ActiveStaffer.create({
                         gameStateRid,
-                        playerRid,
+                        playerRid: activePlayer.playerRid,
                         activeStafferRid: newStafferRid,
                         stafferDetails: newStafferDetails,
-                        avatarSet: _.random(1, 5) as IActiveStaffer["avatarSet"],
+                        avatarSet: activePlayer.avatarSet,
                         state: "disabled",
                     }),
                     ResolveGameEvent.create({
                         gameStateRid,
                         resolvesOn: Math.round(currentGameClock + finalTimeToAcquire) as IGameClock,
                         eventDetails: {
-                            playerRid,
+                            playerRid: activePlayer.playerRid,
                             recruiterRid: trainingOrHiring.recruiterRid,
                             activeStafferRid: newStafferRid,
                             type: "finish-hiring-staffer",
@@ -166,7 +164,7 @@ export async function handleStartHiringOrTraining(
                         gameStateRid,
                         resolvesOn: Math.round(currentGameClock + finalTimeToAcquire) as IGameClock,
                         eventDetails: {
-                            playerRid,
+                            playerRid: activePlayer.playerRid,
                             trainerRid: trainingOrHiring.trainerRid,
                             activeStafferRid: trainingOrHiring.activeStafferRid,
                             type: "finish-training-staffer",
@@ -268,7 +266,7 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
     if (startHiringOrTraining.length > 0) {
         const deltaInPoliticalCapitalFromHiringAndTraining = await handleStartHiringOrTraining(
             gameStateRid,
-            playerRid,
+            activePlayer,
             startHiringOrTraining.map((event) => event.eventDetails) as Array<
                 IStartHiringStaffer | IStartTrainingStaffer
             >,
