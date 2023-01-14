@@ -58,7 +58,7 @@ describe("Process player works as expected", () => {
             gameStateRid,
             politicalCapital: 0,
             approvalRating: 0,
-            avatarSet: 1,
+            avatarSet: "cats",
             lastUpdatedGameClock: 9 as IGameClock,
             isReady: true,
         });
@@ -87,7 +87,7 @@ describe("Process player works as expected", () => {
             gameStateRid,
             politicalCapital: 0,
             approvalRating: 0,
-            avatarSet: 1,
+            avatarSet: "cats",
             lastUpdatedGameClock: 9 as IGameClock,
             isReady: true,
         });
@@ -96,7 +96,7 @@ describe("Process player works as expected", () => {
             playerRid,
             activeStafferRid: votingStaffer,
             stafferDetails: DEFAULT_STAFFER.representative,
-            avatarSet: 1,
+            avatarSet: "cats",
             state: "active",
         });
         await ActiveStaffer.create({
@@ -104,7 +104,7 @@ describe("Process player works as expected", () => {
             playerRid,
             activeStafferRid: recruiterStaffer,
             stafferDetails: DEFAULT_STAFFER.recruiter,
-            avatarSet: 1,
+            avatarSet: "cats",
             state: "active",
         });
         await ActiveStaffer.create({
@@ -112,7 +112,7 @@ describe("Process player works as expected", () => {
             playerRid,
             activeStafferRid: phoneBankerStaffer,
             stafferDetails: DEFAULT_STAFFER.phoneBanker,
-            avatarSet: 1,
+            avatarSet: "cats",
             state: "disabled",
         });
         await ActiveStaffer.create({
@@ -120,7 +120,7 @@ describe("Process player works as expected", () => {
             playerRid,
             activeStafferRid: partTimeTrainer,
             stafferDetails: DEFAULT_STAFFER.adjunctInstructor,
-            avatarSet: 1,
+            avatarSet: "cats",
             state: "active",
         });
         await ActiveResolution.create({

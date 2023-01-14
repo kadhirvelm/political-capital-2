@@ -19,7 +19,6 @@ import { getVoters, getVotesAlreadyCast } from "../../selectors/getVoters";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addVotes } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
-import { getEffectivenessNumber } from "../../utility/gameModifiers";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { StafferName } from "../common/StafferName";
 import styles from "./PlayerVoters.module.scss";
@@ -180,7 +179,7 @@ export const PlayerVoters: React.FC<{
                         return undefined;
                     }
 
-                    const totalVotes = getEffectivenessNumber(resolvedGameModifiers, voter.staffer.stafferDetails.type);
+                    const totalVotes = resolvedGameModifiers[stafferDetails.type].effectiveness;
                     const maybeExistingVote = getStafferExistingVote(voter.staffer.activeStafferRid);
 
                     const canStafferVote =

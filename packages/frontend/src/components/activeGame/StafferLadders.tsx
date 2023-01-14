@@ -7,7 +7,6 @@ import classNames from "classnames";
 import * as React from "react";
 import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
-import { getAcquisitionCostNumber, getAcquisitionTimeNumber } from "../../utility/gameModifiers";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./StafferLadders.module.scss";
 
@@ -27,8 +26,8 @@ export const StafferLadders: React.FC<{}> = () => {
         );
         const stafferCategory = getStafferCategory(staffer);
 
-        const finalCostToAcquire = getAcquisitionCostNumber(resolvedGameModifiers, staffer.type);
-        const finalTimeToAcquire = getAcquisitionTimeNumber(resolvedGameModifiers, staffer.type);
+        const finalCostToAcquire = resolvedGameModifiers[staffer.type].costToAcquire;
+        const finalTimeToAcquire = resolvedGameModifiers[staffer.type].timeToAcquire;
 
         return (
             <div className={styles.withIndicator}>

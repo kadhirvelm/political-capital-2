@@ -13,8 +13,7 @@ import {
 import { createSelector } from "@reduxjs/toolkit";
 import { State } from "../store/createStore";
 import { IUserFacingIndexedResolveEvents, IUserFacingResolveEvents } from "../store/gameState";
-import { getEffectivenessNumber } from "../utility/gameModifiers";
-import { getGameModifiers, IResolvedGameModifiers } from "./gameModifiers";
+import { getGameModifiers, IResolvedGameModifiersForEachStaffer } from "./gameModifiers";
 
 export interface IVoterAndActiveEvent {
     staffer: IActiveStaffer;
@@ -27,7 +26,7 @@ export const getVoters = createSelector(
     (state: State) => state.localGameState.fullGameState?.activePlayersStaffers,
     (state: State) => state.localGameState.resolveEvents,
     (
-        gameModifiers: IResolvedGameModifiers,
+        gameModifiers: IResolvedGameModifiersForEachStaffer,
         playerState: IPlayer | undefined,
         activePlayersStaffers: IFullGameState["activePlayersStaffers"] | undefined,
         resolveEvent: IUserFacingIndexedResolveEvents | undefined,
@@ -52,8 +51,8 @@ export const getVoters = createSelector(
                     return a.staffer.state.localeCompare(b.staffer.state);
                 }
 
-                const aVotes = getEffectivenessNumber(gameModifiers, a.staffer.stafferDetails.type);
-                const bVotes = getEffectivenessNumber(gameModifiers, b.staffer.stafferDetails.type);
+                const aVotes = gameModifiers[a.staffer.stafferDetails.type].effectiveness;
+                const bVotes = gameModifiers[b.staffer.stafferDetails.type].effectiveness;
 
                 if (aVotes === bVotes) {
                     return a.staffer.stafferDetails.displayName.localeCompare(b.staffer.stafferDetails.displayName);

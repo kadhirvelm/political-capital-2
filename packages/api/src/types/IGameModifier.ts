@@ -29,6 +29,8 @@ export interface IResolutionEffect {
     timeBetweenResolutions?: number;
     /** A percent multiplier on the political capital payout for future resolutions, including this one. */
     payoutPerResolution?: number;
+    /** Increases the payout per player */
+    payoutPerPlayer?: number;
     type: "resolution-effect";
 }
 

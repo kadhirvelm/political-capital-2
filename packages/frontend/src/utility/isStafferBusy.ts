@@ -12,9 +12,8 @@ import {
     isTrainer,
     isVoter,
 } from "@pc2/api";
-import { IResolvedGameModifiers } from "../selectors/gameModifiers";
+import { IResolvedGameModifiersForEachStaffer } from "../selectors/gameModifiers";
 import { IUserFacingIndexedResolveEvents } from "../store/gameState";
-import { getEffectivenessNumber } from "./gameModifiers";
 
 export function isStafferBusy(
     staffer: IActiveStaffer,
@@ -22,7 +21,7 @@ export function isStafferBusy(
     playerRid: IPlayerRid | undefined,
     fullGameState: IFullGameState | undefined,
     activeResolution: IActiveResolution | undefined,
-    gameModifiers: IResolvedGameModifiers,
+    gameModifiers: IResolvedGameModifiersForEachStaffer,
 ): boolean {
     if (playerRid === undefined) {
         return false;
@@ -40,7 +39,7 @@ export function isStafferBusy(
     const hasActiveEvent = activeEvents.length > 0;
 
     if (isRecruit(staffer) || isTrainer(staffer)) {
-        const totalEffectiveness = getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
+        const totalEffectiveness = gameModifiers[staffer.stafferDetails.type].effectiveness;
         const relevantActiveEvents = activeEvents.filter(
             (event) =>
                 IEvent.isStartHireStaffer(event.eventDetails) ||
@@ -53,7 +52,7 @@ export function isStafferBusy(
     }
 
     if (isVoter(staffer) && fullGameState !== undefined && activeResolution !== undefined) {
-        const totalAllowedVotes = getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
+        const totalAllowedVotes = gameModifiers[staffer.stafferDetails.type].effectiveness;
         const maybeVotesOnThisResolution =
             fullGameState.activePlayersVotes[activeResolution.activeResolutionRid]?.[staffer.activeStafferRid];
 

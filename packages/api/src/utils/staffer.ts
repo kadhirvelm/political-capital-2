@@ -2,6 +2,8 @@
  * Copyright (c) 2022 - KM
  */
 
+import { ACCOUNTANT_MODIFIER, CHIEF_OF_STAFF_MODIFIER } from "../constants/game";
+import { IGameClock } from "../types/BrandedIDs";
 import { DEFAULT_STAFFER, IPossibleStaffer } from "../types/generatedStaffers";
 import {
     IAdjunctInstructor,
@@ -14,7 +16,7 @@ import {
     ITrainer,
     IVoter,
 } from "../types/IStaffer";
-import { IActiveStaffer, IPassedGameModifier } from "../types/politicalCapitalTwo";
+import { IActivePlayerModifier, IActiveStaffer, IPassedGameModifier } from "../types/politicalCapitalTwo";
 import { getCostToAcquireModifier, getEffectivenessModifier, getTimeToAcquireModifier } from "./gameModifierUtils";
 
 export type IActiveOrPossibleStaffer = IActiveStaffer | IPossibleStaffer;
@@ -34,9 +36,16 @@ export function getStafferDetails(staffer: IActiveOrPossibleStaffer): IPossibleS
 export function getStafferAcquisitionTime(
     staffer: IActiveOrPossibleStaffer,
     passedGameModifiers: IPassedGameModifier[],
+    activePlayerStaffers: IActiveStaffer[],
 ) {
     const stafferDetails = getStafferDetails(staffer);
-    const timeModifier = getTimeToAcquireModifier(passedGameModifiers, staffer);
+
+    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = passedGameModifiers;
+    if (activePlayerStaffers.find((s) => s.stafferDetails.type === "chiefOfStaff")?.state === "active") {
+        finalModifiers.push({ modifier: CHIEF_OF_STAFF_MODIFIER, createdOn: 0 as IGameClock });
+    }
+
+    const timeModifier = getTimeToAcquireModifier(finalModifiers, staffer);
 
     return Math.round(stafferDetails.timeToAcquire * timeModifier);
 }
@@ -44,8 +53,15 @@ export function getStafferAcquisitionTime(
 export function getStafferAcquisitionCost(
     staffer: IActiveOrPossibleStaffer,
     passedGameModifiers: IPassedGameModifier[],
+    activePlayerStaffers: IActiveStaffer[],
 ) {
     const stafferDetails = getStafferDetails(staffer);
+
+    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = passedGameModifiers;
+    if (activePlayerStaffers.find((s) => s.stafferDetails.type === "accountant")?.state === "active") {
+        finalModifiers.push({ modifier: ACCOUNTANT_MODIFIER, createdOn: 0 as IGameClock });
+    }
+
     const costModifier = getCostToAcquireModifier(passedGameModifiers, staffer);
 
     return Math.round(stafferDetails.costToAcquire * costModifier);

@@ -6,7 +6,6 @@ import { Card, CardBody } from "@chakra-ui/react";
 import { IActiveResolution, IEvent } from "@pc2/api";
 import classNames from "classnames";
 import { flatten } from "lodash-es";
-import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { roundToHundred } from "../../utility/roundTo";
 import { getFakeDate } from "../common/ServerStatus";
@@ -23,7 +22,6 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
         ),
     );
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
-    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
@@ -100,12 +98,9 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
             return (
                 <div className={styles.payoutContainer}>
                     <div>
-                        <span className={styles.description}>PC per vote</span>
+                        <span className={styles.description}>Total PC</span>
                         <span className={styles.politicalCapitalPayout}>
-                            {roundToHundred(
-                                resolution.resolutionDetails.politicalCapitalPayout *
-                                    resolvedGameModifiers.game.payoutPerResolution,
-                            ).toLocaleString()}
+                            {roundToHundred(resolution.resolutionDetails.politicalCapitalPayout).toLocaleString()}
                         </span>
                     </div>
                     <div className={styles.tallyContainer}>

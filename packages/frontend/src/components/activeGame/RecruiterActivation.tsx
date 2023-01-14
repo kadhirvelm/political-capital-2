@@ -35,7 +35,6 @@ import { addGameEventToStaffer, IUserFacingResolveEvents, payPoliticalCapital } 
 import { checkIsError } from "../../utility/alertOnError";
 import { getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
 import { doesExceedLimit } from "../../utility/doesExceedLimit";
-import { getAcquisitionCostNumber, getAcquisitionTimeNumber } from "../../utility/gameModifiers";
 import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
@@ -119,11 +118,11 @@ export const RecruiterActivation: React.FC<{
                         const stafferCategory = getStafferCategory(staffer);
                         const trainsInto = getTrainsIntoDisplayName(staffer);
 
-                        const finalCost = getAcquisitionCostNumber(resolvedGameModifiers, staffer.type);
-                        const finalTime = getAcquisitionTimeNumber(resolvedGameModifiers, staffer.type);
+                        const finalCost = resolvedGameModifiers[staffer.type].costToAcquire;
+                        const finalTime = resolvedGameModifiers[staffer.type].timeToAcquire;
 
                         const isDisabled =
-                            resolvedGameModifiers.staffers[staffer.type].disableHiring ||
+                            resolvedGameModifiers[staffer.type].disableHiring ||
                             doesExceedLimit(staffer.type, recruitRequest.playerRid, fullGameState, "recruiting");
 
                         const maybeRenderDisabledExplanation = () => {
@@ -131,7 +130,7 @@ export const RecruiterActivation: React.FC<{
                                 return undefined;
                             }
 
-                            if (resolvedGameModifiers.staffers[staffer.type].disableHiring) {
+                            if (resolvedGameModifiers[staffer.type].disableHiring) {
                                 return (
                                     <div className={styles.disabledReason}>
                                         A game modifier has prevented this staffer from being hired.
@@ -194,7 +193,7 @@ export const RecruiterActivation: React.FC<{
             return undefined;
         }
 
-        return getAcquisitionCostNumber(resolvedGameModifiers, confirmStaffer.type);
+        return resolvedGameModifiers[confirmStaffer.type].costToAcquire;
     })();
 
     const maybeRenderJobPostingBody = () => {
@@ -202,9 +201,7 @@ export const RecruiterActivation: React.FC<{
             return undefined;
         }
 
-        const finalTime = Math.round(
-            confirmStaffer.timeToAcquire * resolvedGameModifiers.staffers[confirmStaffer.type].timeToAcquire,
-        ) as IGameClock;
+        const finalTime = resolvedGameModifiers[confirmStaffer.type].timeToAcquire;
         const finalPoliticalCapital = roundToHundred(currentPoliticalCapital - politicalCapitalCost);
 
         return (
@@ -223,7 +220,11 @@ export const RecruiterActivation: React.FC<{
                 <div className={styles.result}>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Remaining</div>
-                        <div>{finalPoliticalCapital} political capital</div>
+                        <div>{currentPoliticalCapital}</div>
+                        <div>-</div>
+                        <div>{politicalCapitalCost}</div>
+                        <div>=</div>
+                        <div>{finalPoliticalCapital}</div>
                     </div>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Available on</div>

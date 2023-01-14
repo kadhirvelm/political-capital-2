@@ -71,6 +71,11 @@ export interface IPassedGameModifier {
     createdOn: IGameClock;
 }
 
+export interface IActivePlayerModifier {
+    modifier: IGameModifier;
+    createdOn: IGameClock;
+}
+
 export interface IHistoricalGameState {
     gameStateRid: IGameStateRid;
     gameClock: IGameClock;

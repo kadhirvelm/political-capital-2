@@ -7,7 +7,9 @@
 import {
     IIntern,
     INewHire,
+    IAccountant,
     ISeasonedStaffer,
+    IChiefOfStaff,
     IPoliticalCommentator,
     IHeadOfHr,
     IProfessor,
@@ -25,6 +27,7 @@ import {
     IProfessionalTrainer,
     IInitiate,
     IVeteranInitiate,
+    ILobbyist,
     IPoliticalSpy,
     IInformant,
 } from "./IStaffer";
@@ -33,7 +36,9 @@ import { IVisit } from "./IVisit";
 export interface IAllStaffers {
     intern: IIntern;
     newHire: INewHire;
+    accountant: IAccountant;
     seasonedStaffer: ISeasonedStaffer;
+    chiefOfStaff: IChiefOfStaff;
     politicalCommentator: IPoliticalCommentator;
     headOfHr: IHeadOfHr;
     professor: IProfessor;
@@ -51,6 +56,7 @@ export interface IAllStaffers {
     professionalTrainer: IProfessionalTrainer;
     initiate: IInitiate;
     veteranInitiate: IVeteranInitiate;
+    lobbyist: ILobbyist;
     politicalSpy: IPoliticalSpy;
     informant: IInformant;
     unknown: never;
@@ -74,6 +80,14 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
         payout: 0.15,
         type: "newHire",
     },
+    accountant: {
+        displayName: "Accountant",
+        upgradedFrom: ["newHire"],
+        costToAcquire: 10,
+        timeToAcquire: 15,
+        limitPerParty: 1,
+        type: "accountant",
+    },
     seasonedStaffer: {
         displayName: "Seasoned staffer",
         upgradedFrom: ["newHire"],
@@ -82,6 +96,14 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
         payout: 0.25,
         limitPerParty: 2,
         type: "seasonedStaffer",
+    },
+    chiefOfStaff: {
+        displayName: "Chief of staff",
+        upgradedFrom: ["seasonedStaffer"],
+        costToAcquire: 10,
+        timeToAcquire: 28,
+        limitPerParty: 1,
+        type: "chiefOfStaff",
     },
     politicalCommentator: {
         displayName: "Political commentator",
@@ -231,6 +253,15 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
         limitPerParty: 1,
         type: "veteranInitiate",
     },
+    lobbyist: {
+        displayName: "Lobbyist",
+        upgradedFrom: ["veteranInitiate"],
+        costToAcquire: 10,
+        timeToAcquire: 21,
+        shadowGovernment: true,
+        limitPerParty: 1,
+        type: "lobbyist",
+    },
     politicalSpy: {
         displayName: "Political spy",
         upgradedFrom: ["veteranInitiate"],
@@ -260,8 +291,16 @@ export namespace IStaffer {
         return staffer.type === "newHire";
     };
 
+    export const isAccountant = (staffer: IPossibleStaffer): staffer is IAccountant => {
+        return staffer.type === "accountant";
+    };
+
     export const isSeasonedStaffer = (staffer: IPossibleStaffer): staffer is ISeasonedStaffer => {
         return staffer.type === "seasonedStaffer";
+    };
+
+    export const isChiefOfStaff = (staffer: IPossibleStaffer): staffer is IChiefOfStaff => {
+        return staffer.type === "chiefOfStaff";
     };
 
     export const isPoliticalCommentator = (staffer: IPossibleStaffer): staffer is IPoliticalCommentator => {
@@ -332,6 +371,10 @@ export namespace IStaffer {
         return staffer.type === "veteranInitiate";
     };
 
+    export const isLobbyist = (staffer: IPossibleStaffer): staffer is ILobbyist => {
+        return staffer.type === "lobbyist";
+    };
+
     export const isPoliticalSpy = (staffer: IPossibleStaffer): staffer is IPoliticalSpy => {
         return staffer.type === "politicalSpy";
     };
@@ -349,8 +392,16 @@ export namespace IStaffer {
             return visitor.newHire(value);
         }
 
+        if (isAccountant(value)) {
+            return visitor.accountant(value);
+        }
+
         if (isSeasonedStaffer(value)) {
             return visitor.seasonedStaffer(value);
+        }
+
+        if (isChiefOfStaff(value)) {
+            return visitor.chiefOfStaff(value);
         }
 
         if (isPoliticalCommentator(value)) {
@@ -419,6 +470,10 @@ export namespace IStaffer {
 
         if (isVeteranInitiate(value)) {
             return visitor.veteranInitiate(value);
+        }
+
+        if (isLobbyist(value)) {
+            return visitor.lobbyist(value);
         }
 
         if (isPoliticalSpy(value)) {

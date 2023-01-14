@@ -11,13 +11,12 @@ import {
     IStafferCategory,
     StafferLadderIndex,
 } from "@pc2/api";
-import { IResolvedGameModifiers } from "../selectors/gameModifiers";
-import { getEffectivenessNumber } from "./gameModifiers";
+import { IResolvedGameModifiersForEachStaffer } from "../selectors/gameModifiers";
 
 export function getStaffersOfCategory(
     activeStaffers: IActiveStaffer[],
     category: IStafferCategory | undefined,
-    gameModifiers: IResolvedGameModifiers,
+    gameModifiers: IResolvedGameModifiersForEachStaffer,
 ) {
     return activeStaffers
         .slice()
@@ -31,8 +30,8 @@ export function getStaffersOfCategory(
 
             const defaultCompare = a.stafferDetails.type.localeCompare(b.stafferDetails.type);
 
-            const aEffectiveness = getEffectivenessNumber(gameModifiers, a.stafferDetails.type);
-            const bEffectiveness = getEffectivenessNumber(gameModifiers, a.stafferDetails.type);
+            const aEffectiveness = gameModifiers[a.stafferDetails.type].effectiveness;
+            const bEffectiveness = gameModifiers[a.stafferDetails.type].effectiveness;
 
             return aEffectiveness === bEffectiveness ? defaultCompare : aEffectiveness > bEffectiveness ? -1 : 1;
         });

@@ -2,8 +2,10 @@
  * Copyright (c) 2022 - KM
  */
 
+import { LOBBYIST_MODIFIER } from "../constants/game";
+import { IGameClock } from "../types/BrandedIDs";
 import { IStafferCategory, IStafferEffect } from "../types/IGameModifier";
-import { IPassedGameModifier } from "../types/politicalCapitalTwo";
+import { IActivePlayerModifier, IActiveStaffer, IPassedGameModifier } from "../types/politicalCapitalTwo";
 import {
     getStafferDetails,
     IActiveOrPossibleStaffer,
@@ -76,9 +78,9 @@ function isStafferInCategory(
 }
 
 function getRelevantModifiersToStaffer(
-    allPassedGameModifiers: IPassedGameModifier[],
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     activeStaffer: IActiveOrPossibleStaffer,
-): IPassedGameModifier[] {
+): Array<IPassedGameModifier | IActivePlayerModifier> {
     return allPassedGameModifiers.filter(({ modifier }) => {
         if (modifier.type === "resolution-effect") {
             return false;
@@ -90,7 +92,7 @@ function getRelevantModifiersToStaffer(
 
 function getStafferModifier(
     modifierKey: "costToAcquire" | "timeToAcquire" | "effectiveness",
-    allPassedGameModifiers: IPassedGameModifier[],
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     activeStaffer: IActiveOrPossibleStaffer | undefined,
 ): number {
     if (activeStaffer === undefined) {
@@ -118,21 +120,21 @@ function getStafferModifier(
 }
 
 export function getCostToAcquireModifier(
-    allPassedGameModifiers: IPassedGameModifier[],
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     activeStaffer: IActiveOrPossibleStaffer | undefined,
 ): number {
     return getStafferModifier("costToAcquire", allPassedGameModifiers, activeStaffer);
 }
 
 export function getTimeToAcquireModifier(
-    allPassedGameModifiers: IPassedGameModifier[],
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     activeStaffer: IActiveOrPossibleStaffer | undefined,
 ): number {
     return getStafferModifier("timeToAcquire", allPassedGameModifiers, activeStaffer);
 }
 
 export function getEffectivenessModifier(
-    allPassedGameModifiers: IPassedGameModifier[],
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     activeStaffer: IActiveOrPossibleStaffer | undefined,
 ): number {
     return getStafferModifier("effectiveness", allPassedGameModifiers, activeStaffer);
@@ -140,7 +142,7 @@ export function getEffectivenessModifier(
 
 function getDisabledStaffers(
     modifierKey: "disableHiring" | "disableTraining",
-    allPassedGameModifiers: IPassedGameModifier[],
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
 ) {
     const disabledStaffers: IStafferEffect["staffersAffected"][number][] = [];
 
@@ -160,7 +162,7 @@ function getDisabledStaffers(
 }
 
 export function isStafferHiringDisabled(
-    allPassedGameModifiers: IPassedGameModifier[],
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     staffer: IActiveOrPossibleStaffer,
 ) {
     const disabledStaffers = getDisabledStaffers("disableHiring", allPassedGameModifiers);
@@ -168,7 +170,7 @@ export function isStafferHiringDisabled(
 }
 
 export function isStafferTrainingDisabled(
-    allPassedGameModifiers: IPassedGameModifier[],
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     staffer: IActiveOrPossibleStaffer,
 ) {
     const disabledStaffers = getDisabledStaffers("disableTraining", allPassedGameModifiers);
@@ -176,8 +178,8 @@ export function isStafferTrainingDisabled(
 }
 
 function getResolutionModifier(
-    modifierKey: "timePerResolution" | "timeBetweenResolutions" | "payoutPerResolution",
-    allPassedGameModifiers: IPassedGameModifier[],
+    modifierKey: "timePerResolution" | "timeBetweenResolutions" | "payoutPerResolution" | "payoutPerPlayer",
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
 ) {
     const relevantModifiers = allPassedGameModifiers
         .filter((modifier) => modifier.modifier.type === "resolution-effect")
@@ -200,14 +202,32 @@ function getResolutionModifier(
     return Math.max(newMultiplier, 0);
 }
 
-export function getTimePerResolutionModifier(allPassedGameModifiers: IPassedGameModifier[]) {
+export function getTimePerResolutionModifier(
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
+) {
     return getResolutionModifier("timePerResolution", allPassedGameModifiers);
 }
 
-export function getTimeBetweenResolutionsModifier(allPassedGameModifiers: IPassedGameModifier[]) {
+export function getTimeBetweenResolutionsModifier(
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
+) {
     return getResolutionModifier("timeBetweenResolutions", allPassedGameModifiers);
 }
 
-export function getPayoutPerResolutionModifier(allPassedGameModifiers: IPassedGameModifier[]) {
+export function getPayoutPerResolutionModifier(
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
+) {
     return getResolutionModifier("payoutPerResolution", allPassedGameModifiers);
+}
+
+export function getPayoutPerPlayerModifier(
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
+    activePlayerStaffers: IActiveStaffer[],
+) {
+    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = allPassedGameModifiers;
+    if (activePlayerStaffers.find((s) => s.stafferDetails.type === "lobbyist")?.state === "active") {
+        finalModifiers.push({ modifier: LOBBYIST_MODIFIER, createdOn: 0 as IGameClock });
+    }
+
+    return getResolutionModifier("payoutPerPlayer", allPassedGameModifiers);
 }

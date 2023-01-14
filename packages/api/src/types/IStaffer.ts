@@ -49,6 +49,14 @@ export interface INewHire extends IBasicStaffer, IGenerator {
     type: "newHire";
 }
 
+export interface IAccountant extends IBasicStaffer {
+    upgradedFrom: ["newHire"];
+    costToAcquire: 10;
+    timeToAcquire: 15;
+    limitPerParty: 1;
+    type: "accountant";
+}
+
 export interface ISeasonedStaffer extends IBasicStaffer, IGenerator {
     upgradedFrom: ["newHire"];
     costToAcquire: 0;
@@ -56,6 +64,14 @@ export interface ISeasonedStaffer extends IBasicStaffer, IGenerator {
     payout: 0.25;
     limitPerParty: 2;
     type: "seasonedStaffer";
+}
+
+export interface IChiefOfStaff extends IBasicStaffer {
+    upgradedFrom: ["seasonedStaffer"];
+    costToAcquire: 10;
+    timeToAcquire: 28;
+    limitPerParty: 1;
+    type: "chiefOfStaff";
 }
 
 export interface IPoliticalCommentator extends IBasicStaffer, IGenerator {
@@ -204,6 +220,15 @@ export interface IVeteranInitiate extends IBasicStaffer, IShadowGovernment {
     shadowGovernment: true;
     limitPerParty: 1;
     type: "veteranInitiate";
+}
+
+export interface ILobbyist extends IBasicStaffer, IShadowGovernment {
+    upgradedFrom: ["veteranInitiate"];
+    costToAcquire: 10;
+    timeToAcquire: 21;
+    shadowGovernment: true;
+    limitPerParty: 1;
+    type: "lobbyist";
 }
 
 export interface IPoliticalSpy extends IBasicStaffer, IShadowGovernment {

@@ -3,6 +3,7 @@
  */
 
 import { IAllStaffers } from "../types/generatedStaffers";
+import { IGameModifier } from "../types/IGameModifier";
 
 export const TIME_BETWEEN_RESOLUTIONS_IN_DAYS = 4;
 
@@ -16,3 +17,20 @@ export const INITIAL_STAFFERS: Array<Exclude<keyof IAllStaffers, "unknown">> = [
     "recruiter",
     "adjunctInstructor",
 ];
+
+export const ACCOUNTANT_MODIFIER: IGameModifier = {
+    staffersAffected: ["everyone"],
+    costToAcquire: -0.2,
+    type: "staffer-effect",
+};
+
+export const CHIEF_OF_STAFF_MODIFIER: IGameModifier = {
+    staffersAffected: ["everyone"],
+    timeToAcquire: -0.15,
+    type: "staffer-effect",
+};
+
+export const LOBBYIST_MODIFIER: IGameModifier = {
+    payoutPerPlayer: 0.1,
+    type: "resolution-effect",
+};

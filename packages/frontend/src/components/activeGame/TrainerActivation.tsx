@@ -38,7 +38,6 @@ import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../
 import { addGameEventToStaffer, IUserFacingResolveEvents, payPoliticalCapital } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { doesExceedLimit } from "../../utility/doesExceedLimit";
-import { getAcquisitionCostNumber, getAcquisitionTimeNumber } from "../../utility/gameModifiers";
 import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
@@ -136,11 +135,11 @@ export const TrainerActivation: React.FC<{
                             const defaultStaffer = DEFAULT_STAFFER[upgradeStaffer];
                             const newStafferCategory = getStafferCategory(defaultStaffer);
 
-                            const finalCost = getAcquisitionCostNumber(resolvedGameModifiers, upgradeStaffer);
-                            const finalTime = getAcquisitionTimeNumber(resolvedGameModifiers, upgradeStaffer);
+                            const finalCost = resolvedGameModifiers[defaultStaffer.type].costToAcquire;
+                            const finalTime = resolvedGameModifiers[defaultStaffer.type].timeToAcquire;
 
                             const isDisabled =
-                                resolvedGameModifiers.staffers[upgradeStaffer].disableTraining ||
+                                resolvedGameModifiers[upgradeStaffer].disableTraining ||
                                 doesExceedLimit(upgradeStaffer, trainerRequest.playerRid, fullGameState, "training");
 
                             const maybeRenderDisabledExplanation = () => {
@@ -148,7 +147,7 @@ export const TrainerActivation: React.FC<{
                                     return undefined;
                                 }
 
-                                if (resolvedGameModifiers.staffers[upgradeStaffer].disableHiring) {
+                                if (resolvedGameModifiers[upgradeStaffer].disableHiring) {
                                     return (
                                         <div className={styles.disabledReason}>
                                             A game modifier has prevented this staffer from being hired.
@@ -225,7 +224,7 @@ export const TrainerActivation: React.FC<{
             return undefined;
         }
 
-        return getAcquisitionCostNumber(resolvedGameModifiers, upgradeStafferToLevel.toLevel);
+        return resolvedGameModifiers[upgradeStafferToLevel.toLevel].costToAcquire;
     })();
 
     const maybeRenderTrainStafferBody = () => {
@@ -235,9 +234,7 @@ export const TrainerActivation: React.FC<{
 
         const toLevelStaffer = DEFAULT_STAFFER[upgradeStafferToLevel.toLevel];
 
-        const finalTime = Math.round(
-            toLevelStaffer.timeToAcquire * resolvedGameModifiers.staffers[toLevelStaffer.type].timeToAcquire,
-        );
+        const finalTime = resolvedGameModifiers[upgradeStafferToLevel.toLevel].timeToAcquire;
         const finalPoliticalCapital = roundToHundred(currentPoliticalCapital - politicalCapitalCost);
 
         return (
@@ -262,7 +259,11 @@ export const TrainerActivation: React.FC<{
                 <div className={styles.result}>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Remaining</div>
-                        <div>{finalPoliticalCapital} political capital</div>
+                        <div>{currentPoliticalCapital}</div>
+                        <div>-</div>
+                        <div>{politicalCapitalCost}</div>
+                        <div>=</div>
+                        <div>{finalPoliticalCapital}</div>
                     </div>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Available on</div>

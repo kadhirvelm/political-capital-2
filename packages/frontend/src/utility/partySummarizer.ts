@@ -3,10 +3,9 @@
  */
 
 import { getStafferDetails, IActiveStaffer, isGenerator, isRecruit, isTrainer, isVoter } from "@pc2/api";
-import { IResolvedGameModifiers } from "../selectors/gameModifiers";
-import { getEffectivenessNumber } from "./gameModifiers";
+import { IResolvedGameModifiersForEachStaffer } from "../selectors/gameModifiers";
 
-export function summaryStaffers(staffers: IActiveStaffer[], gameModifiers: IResolvedGameModifiers) {
+export function summaryStaffers(staffers: IActiveStaffer[], gameModifiers: IResolvedGameModifiersForEachStaffer) {
     let votingCapacity = 0;
     let generator = 0;
     let hiring = 0;
@@ -18,20 +17,22 @@ export function summaryStaffers(staffers: IActiveStaffer[], gameModifiers: IReso
             return;
         }
 
+        const effectiveness = gameModifiers[staffer.stafferDetails.type].effectiveness;
+
         if (isVoter(stafferDetails)) {
-            votingCapacity += getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
+            votingCapacity += effectiveness;
         }
 
         if (isGenerator(stafferDetails)) {
-            generator += getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
+            generator += effectiveness;
         }
 
         if (isRecruit(stafferDetails)) {
-            hiring += getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
+            hiring += effectiveness;
         }
 
         if (isTrainer(stafferDetails)) {
-            training += getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
+            training += effectiveness;
         }
     });
 
