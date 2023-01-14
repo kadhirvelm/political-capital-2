@@ -78,6 +78,13 @@ export function getPayoutForStaffer(staffer: IActiveOrPossibleStaffer): number {
     return (stafferDetails as IGenerator).payout ?? 0;
 }
 
+export function getPotentialPayoutForStaffer(staffer: IActiveOrPossibleStaffer, days_left: number): number {
+    if (!isGenerator(staffer)){
+        return 0;
+    }
+    return (getStafferDetails(staffer) as IGenerator).payout * days_left;
+}
+
 export function isGenerator(staffer: IActiveOrPossibleStaffer): staffer is IPhoneBanker {
     return (getStafferDetails(staffer) as IGenerator).payout !== undefined;
 }
