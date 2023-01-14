@@ -3,9 +3,6 @@
  */
 
 import {
-    getTotalAllowedRecruits,
-    getTotalAllowedTrainees,
-    getTotalAllowedVotes,
     IActiveStaffer,
     IActiveStafferRid,
     IEvent,
@@ -19,6 +16,8 @@ import {
 import { createSelector } from "@reduxjs/toolkit";
 import { State } from "../store/createStore";
 import { IUserFacingIndexedResolveEvents } from "../store/gameState";
+import { getEffectivenessNumber } from "../utility/stafferDescriptions";
+import { getGameModifiers, IResolvedGameModifiers } from "./gameModifiers";
 
 export const getAvailableToTrainStaffer = (trainerRid: IActiveStafferRid) =>
     createSelector(
@@ -68,10 +67,12 @@ export const getAvailableToTrainStaffer = (trainerRid: IActiveStafferRid) =>
     );
 
 export const getUnusedCapacity = createSelector(
+    getGameModifiers,
     (state: State) => state.localGameState.fullGameState,
     (state: State) => state.localGameState.resolveEvents,
     (state: State) => state.playerState.player,
     (
+        gameModifiers: IResolvedGameModifiers,
         fullGameState: IFullGameState | undefined,
         resolveEvents: IUserFacingIndexedResolveEvents | undefined,
         player: IPlayer | undefined,
@@ -85,8 +86,8 @@ export const getUnusedCapacity = createSelector(
         const currentResolution = fullGameState.activeResolutions.find((resolution) => resolution.state === "active");
 
         fullGameState.activePlayersStaffers[player.playerRid].forEach((staffer) => {
-            if (isVoter(staffer) && currentResolution !== undefined) {
-                const totalVotes = getTotalAllowedVotes(staffer);
+            if (isVoter(staffer) && currentResolution !== undefined && staffer.state !== "disabled") {
+                const totalVotes = getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
                 const castVotes =
                     fullGameState.activePlayersVotes[currentResolution.activeResolutionRid]?.[staffer.activeStafferRid]
                         ?.length ?? 0;
@@ -95,8 +96,8 @@ export const getUnusedCapacity = createSelector(
                 notifications.voting += Math.max(totalVotes - castVotes, 0);
             }
 
-            if (isRecruit(staffer)) {
-                const totalRecruitCapacity = getTotalAllowedRecruits(staffer);
+            if (isRecruit(staffer) && staffer.state !== "disabled") {
+                const totalRecruitCapacity = getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
                 const currentlyRecruiting =
                     resolveEvents.players[player.playerRid]?.staffers[staffer.activeStafferRid]?.filter(
                         (event) =>
@@ -108,8 +109,8 @@ export const getUnusedCapacity = createSelector(
                 notifications.hiring += Math.max(totalRecruitCapacity - currentlyRecruiting, 0);
             }
 
-            if (isTrainer(staffer)) {
-                const totalTrainingCapacity = getTotalAllowedTrainees(staffer);
+            if (isTrainer(staffer) && staffer.state !== "disabled") {
+                const totalTrainingCapacity = getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
                 const currentlyTraining =
                     resolveEvents.players[player.playerRid]?.staffers[staffer.activeStafferRid]?.filter(
                         (event) =>

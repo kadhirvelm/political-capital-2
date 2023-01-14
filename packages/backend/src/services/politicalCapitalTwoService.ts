@@ -4,11 +4,11 @@
 
 import {
     DEFAULT_STAFFER,
-    getEffectivenessModifier,
     getTotalAllowedRecruits,
     getTotalAllowedTrainees,
     getTotalAllowedVotes,
     IActiveResolutionVote,
+    IActiveStaffer,
     IAllStaffers,
     IGameClock,
     IGameStateRid,
@@ -16,6 +16,7 @@ import {
     IPoliticalCapitalTwoService,
     IResolveGameEvent,
     isStafferHiringDisabled,
+    isStafferTrainingDisabled,
     IStartHiringStaffer,
     IStartTrainingStaffer,
     isVoter,
@@ -68,6 +69,37 @@ async function doesExceedLimitForPlayer(
     return totalStaffersOfType >= maybeLimitPerParty;
 }
 
+async function isStafferBusy(
+    gameStateRid: IGameStateRid,
+    attemptToTrainStaffer: IActiveStaffer,
+    existingActiveStafferRequests: IResolveGameEvent[],
+) {
+    if (existingActiveStafferRequests.length > 0) {
+        return true;
+    }
+
+    if (!isVoter(attemptToTrainStaffer)) {
+        return false;
+    }
+
+    const currentResolution = await ActiveResolution.findOne({
+        where: { gameStateRid: gameStateRid, state: "active" },
+    });
+    if (currentResolution == null) {
+        return false;
+    }
+
+    const maybeVotesByStaffer = await ActiveResolutionVote.findAll({
+        where: {
+            gameStateRid: gameStateRid,
+            activeResolutionRid: currentResolution.activeResolutionRid,
+            activeStafferRid: attemptToTrainStaffer.activeStafferRid,
+        },
+    });
+
+    return maybeVotesByStaffer.length !== 0;
+}
+
 export async function recruitStaffer(
     payload: IPoliticalCapitalTwoService["recruitStaffer"]["payload"],
     response: Express.Response,
@@ -106,8 +138,7 @@ export async function recruitStaffer(
         return undefined;
     }
 
-    const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, recruiterStaffer);
-    const totalAllowedRecruits = Math.floor(getTotalAllowedRecruits(recruiterStaffer) * effectivenessModifier);
+    const totalAllowedRecruits = getTotalAllowedRecruits(recruiterStaffer, passedGameModifiers);
     if (existingRecruitRequests.length >= totalAllowedRecruits) {
         response.status(400).send({ error: `This recruiter is already at capacity, please use another recruiter.` });
         return undefined;
@@ -122,20 +153,6 @@ export async function recruitStaffer(
         return undefined;
     }
 
-    const maybeLimitPerParty = DEFAULT_STAFFER[payload.recruitRequest.stafferType].limitPerParty;
-    if (maybeLimitPerParty !== undefined) {
-        const existingStaffersOfType = await ActiveStaffer.findAll({
-            where: { gameStateRid: payload.gameStateRid, stafferDetails: { type: payload.recruitRequest.stafferType } },
-        });
-
-        if (existingStaffersOfType.length >= maybeLimitPerParty) {
-            response.status(400).send({
-                error: `This type of staffer is limited to ${maybeLimitPerParty}. You already have ${existingStaffersOfType.length} staffers of this type.`,
-            });
-            return undefined;
-        }
-    }
-
     if (
         await doesExceedLimitForPlayer(
             payload.gameStateRid,
@@ -144,11 +161,9 @@ export async function recruitStaffer(
             "recruiting",
         )
     ) {
-        response
-            .status(400)
-            .send({
-                error: `You have reached the limit for this kind of staffer, please try recruiting a different type.`,
-            });
+        response.status(400).send({
+            error: `You have reached the limit for this kind of staffer, please try recruiting a different type.`,
+        });
         return undefined;
     }
 
@@ -244,51 +259,18 @@ export async function trainStaffer(
         return undefined;
     }
 
-    const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, trainerStaffer);
-    const totalAllowedTrains = Math.floor(getTotalAllowedTrainees(trainerStaffer) * effectivenessModifier);
+    const totalAllowedTrains = getTotalAllowedTrainees(trainerStaffer, passedGameModifiers);
     if (existingTrainRequests.length >= totalAllowedTrains) {
         response.status(400).send({ error: `This trainer is already at capacity, please use another trainer.` });
         return undefined;
     }
 
-    if (existingActiveStafferRequests.length > 0) {
-        response
-            .status(400)
-            .send({ error: `Cannot train this staffer, they are currently busy. Please select someone else.` });
-        return undefined;
-    }
-
-    const isDisabled = isStafferHiringDisabled(passedGameModifiers, attemptToTrainStaffer);
+    const isDisabled = isStafferTrainingDisabled(passedGameModifiers, attemptToTrainStaffer);
     if (isDisabled) {
         response
             .status(400)
             .send({ error: `Due to the game modifiers, training this type of staffer is not allowed.` });
         return undefined;
-    }
-
-    if (isVoter(attemptToTrainStaffer)) {
-        const currentResolution = await ActiveResolution.findOne({
-            where: { gameStateRid: payload.gameStateRid, state: "active" },
-        });
-        const maybeVotesByStaffer =
-            currentResolution == null
-                ? undefined
-                : await ActiveResolutionVote.findAll({
-                      where: {
-                          gameStateRid: payload.gameStateRid,
-                          activeResolutionRid: currentResolution.activeResolutionRid,
-                          activeStafferRid: attemptToTrainStaffer.activeStafferRid,
-                      },
-                  });
-
-        const isAllowedToBeTrained = maybeVotesByStaffer === undefined || maybeVotesByStaffer.length === 0;
-
-        if (!isAllowedToBeTrained) {
-            response.status(400).send({
-                error: `This staffer has voted in the current resolution and is busy. Please wait until the current resolution has been tallied and try again.`,
-            });
-            return undefined;
-        }
     }
 
     if (
@@ -299,11 +281,16 @@ export async function trainStaffer(
             "training",
         )
     ) {
+        response.status(400).send({
+            error: `You have reached the limit for this kind of staffer, please try training to a different type.`,
+        });
+        return undefined;
+    }
+
+    if (await isStafferBusy(payload.gameStateRid, attemptToTrainStaffer, existingActiveStafferRequests)) {
         response
             .status(400)
-            .send({
-                error: `You have reached the limit for this kind of staffer, please try training to a different type.`,
-            });
+            .send({ error: `Cannot train this staffer, they are currently busy. Please select someone else.` });
         return undefined;
     }
 
@@ -372,10 +359,7 @@ export async function castVote(
         return undefined;
     }
 
-    const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, votingStaffer);
-    const totalAllowedVotes = Math.floor(getTotalAllowedVotes(votingStaffer) * effectivenessModifier);
-
-    console.log({ effectivenessModifier, totalAllowedVotes }, "@@@@@");
+    const totalAllowedVotes = getTotalAllowedVotes(votingStaffer, passedGameModifiers);
 
     if (existingVotes.length >= totalAllowedVotes) {
         response.status(400).send({ error: `This staffer has already voted, please refresh your page and try again.` });

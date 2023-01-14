@@ -7,6 +7,7 @@ import { IGameModifier } from "./IGameModifier";
 export interface IBasicResolution {
     title: string;
     description: string;
+    /** This is the total political capital payout per player in the game. */
     politicalCapitalPayout: number;
     gameModifier?: IGameModifier;
     stage: "all" | "early" | "middle" | "late";

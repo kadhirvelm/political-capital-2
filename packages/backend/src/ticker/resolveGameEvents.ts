@@ -4,6 +4,7 @@
 
 import {
     ALL_RESOLUTIONS,
+    getPayoutPerResolutionModifier,
     getTimeBetweenResolutionsModifier,
     getTimePerResolutionModifier,
     IActiveResolutionRid,
@@ -15,6 +16,7 @@ import {
     ITallyResolution,
 } from "@pc2/api";
 import {
+    ActivePlayer,
     ActiveResolution,
     ActiveResolutionVote,
     GameState,
@@ -44,8 +46,26 @@ function getCurrentStage(gameClock: IGameClock): IBasicResolution["stage"] {
     return "late";
 }
 
+function updatePoliticalCapitalPayout(
+    randomResolution: IBasicResolution,
+    totalPlayers: number,
+    passedGameModifiers: IPassedGameModifier[],
+): IBasicResolution {
+    const finalResolution = { ...randomResolution };
+
+    const totalBasePayout = finalResolution.politicalCapitalPayout * totalPlayers;
+    const accountForModifier = totalBasePayout * getPayoutPerResolutionModifier(passedGameModifiers);
+
+    finalResolution.politicalCapitalPayout = accountForModifier;
+
+    return finalResolution;
+}
+
 async function createNewResolution(gameState: GameState, passedGameModifiers: IPassedGameModifier[]) {
-    const existingResolutions = await ActiveResolution.findAll({ where: { gameStateRid: gameState.gameStateRid } });
+    const [existingResolutions, activePlayers] = await Promise.all([
+        ActiveResolution.findAll({ where: { gameStateRid: gameState.gameStateRid } }),
+        ActivePlayer.findAll({ where: { gameStateRid: gameState.gameStateRid } }),
+    ]);
 
     const alreadySeenResolutions = existingResolutions.map((resolution) => resolution.resolutionDetails.title);
 
@@ -64,6 +84,12 @@ async function createNewResolution(gameState: GameState, passedGameModifiers: IP
         return Promise.resolve({});
     }
 
+    const resolutionWithUpdatedPayout = updatePoliticalCapitalPayout(
+        randomResolution,
+        activePlayers.length,
+        passedGameModifiers,
+    );
+
     const activeResolutionRid = v4() as IActiveResolutionRid;
 
     const timePerResolutionModifier = getTimePerResolutionModifier(passedGameModifiers);
@@ -73,7 +99,7 @@ async function createNewResolution(gameState: GameState, passedGameModifiers: IP
         ActiveResolution.create({
             gameStateRid: gameState.gameStateRid,
             activeResolutionRid,
-            resolutionDetails: randomResolution,
+            resolutionDetails: resolutionWithUpdatedPayout,
             state: "active",
             createdOn: gameState.gameClock,
         }),

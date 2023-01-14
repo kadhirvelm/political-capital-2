@@ -3,8 +3,6 @@
  */
 
 import {
-    getTotalAllowedRecruits,
-    getTotalAllowedTrainees,
     IActiveResolution,
     IActiveStaffer,
     IEvent,
@@ -14,7 +12,9 @@ import {
     isTrainer,
     isVoter,
 } from "@pc2/api";
+import { IResolvedGameModifiers } from "../selectors/gameModifiers";
 import { IUserFacingIndexedResolveEvents } from "../store/gameState";
+import { getEffectivenessNumber } from "./stafferDescriptions";
 
 export function isStafferBusy(
     staffer: IActiveStaffer,
@@ -22,9 +22,14 @@ export function isStafferBusy(
     playerRid: IPlayerRid | undefined,
     fullGameState: IFullGameState | undefined,
     activeResolution: IActiveResolution | undefined,
+    gameModifiers: IResolvedGameModifiers,
 ): boolean {
     if (playerRid === undefined) {
         return false;
+    }
+
+    if (staffer.state === "disabled") {
+        return true;
     }
 
     const activeEvents =
@@ -34,68 +39,25 @@ export function isStafferBusy(
 
     const hasActiveEvent = activeEvents.length > 0;
 
-    if (isRecruit(staffer)) {
-        const totalRecruits = getTotalAllowedRecruits(staffer);
-        const hiringEvents = activeEvents.filter(
+    if (isRecruit(staffer) || isTrainer(staffer)) {
+        const totalEffectiveness = getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
+        const relevantActiveEvents = activeEvents.filter(
             (event) =>
-                IEvent.isStartHireStaffer(event.eventDetails) || IEvent.isFinishHiringStaffer(event.eventDetails),
+                IEvent.isStartHireStaffer(event.eventDetails) ||
+                IEvent.isFinishHiringStaffer(event.eventDetails) ||
+                IEvent.isStartTrainingStaffer(event.eventDetails) ||
+                IEvent.isFinishTrainingStaffer(event.eventDetails),
         );
 
-        return totalRecruits <= hiringEvents.length || activeEvents.length - hiringEvents.length > 0;
-    }
-
-    if (isTrainer(staffer)) {
-        const totalTraining = getTotalAllowedTrainees(staffer);
-        const trainingEvents = activeEvents.filter(
-            (event) =>
-                IEvent.isStartTrainingStaffer(event.eventDetails) || IEvent.isFinishTrainingStaffer(event.eventDetails),
-        );
-
-        return totalTraining <= trainingEvents.length || activeEvents.length - trainingEvents.length > 0;
+        return totalEffectiveness <= relevantActiveEvents.length;
     }
 
     if (isVoter(staffer) && fullGameState !== undefined && activeResolution !== undefined) {
+        const totalAllowedVotes = getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
         const maybeVotesOnThisResolution =
             fullGameState.activePlayersVotes[activeResolution.activeResolutionRid]?.[staffer.activeStafferRid];
 
-        return maybeVotesOnThisResolution !== undefined && maybeVotesOnThisResolution.length > 0;
-    }
-
-    return hasActiveEvent;
-}
-
-export function isSurfaceLevelBusy(
-    staffer: IActiveStaffer,
-    resolveEvents: IUserFacingIndexedResolveEvents | undefined,
-    playerRid: IPlayerRid | undefined,
-): boolean {
-    if (playerRid === undefined) {
-        return false;
-    }
-
-    const activeEvents =
-        resolveEvents?.players[playerRid]?.staffers[staffer.activeStafferRid]?.filter(
-            (event) => event.state === "active" || event.state === "pending",
-        ) ?? [];
-
-    const hasActiveEvent = activeEvents.length > 0;
-
-    if (isRecruit(staffer)) {
-        const hiringEvents = activeEvents.filter(
-            (event) =>
-                IEvent.isStartHireStaffer(event.eventDetails) || IEvent.isFinishHiringStaffer(event.eventDetails),
-        );
-
-        return activeEvents.length - hiringEvents.length > 0;
-    }
-
-    if (isTrainer(staffer)) {
-        const trainingEvents = activeEvents.filter(
-            (event) =>
-                IEvent.isStartTrainingStaffer(event.eventDetails) || IEvent.isFinishTrainingStaffer(event.eventDetails),
-        );
-
-        return activeEvents.length - trainingEvents.length > 0;
+        return totalAllowedVotes <= (maybeVotesOnThisResolution?.length ?? 0);
     }
 
     return hasActiveEvent;

@@ -3,7 +3,6 @@
  */
 
 import {
-    getTotalAllowedVotes,
     IActiveResolutionRid,
     IActiveResolutionVote,
     IActiveStaffer,
@@ -14,6 +13,8 @@ import {
 import { createSelector } from "@reduxjs/toolkit";
 import { State } from "../store/createStore";
 import { IUserFacingIndexedResolveEvents, IUserFacingResolveEvents } from "../store/gameState";
+import { getEffectivenessNumber } from "../utility/stafferDescriptions";
+import { getGameModifiers, IResolvedGameModifiers } from "./gameModifiers";
 
 export interface IVoterAndActiveEvent {
     staffer: IActiveStaffer;
@@ -21,19 +22,21 @@ export interface IVoterAndActiveEvent {
 }
 
 export const getVoters = createSelector(
+    getGameModifiers,
     (state: State) => state.playerState.player,
-    (state: State) => state.localGameState.fullGameState,
+    (state: State) => state.localGameState.fullGameState?.activePlayersStaffers,
     (state: State) => state.localGameState.resolveEvents,
     (
+        gameModifiers: IResolvedGameModifiers,
         playerState: IPlayer | undefined,
-        fullGameState: IFullGameState | undefined,
+        activePlayersStaffers: IFullGameState["activePlayersStaffers"] | undefined,
         resolveEvent: IUserFacingIndexedResolveEvents | undefined,
     ): IVoterAndActiveEvent[] => {
-        if (playerState === undefined || fullGameState === undefined || resolveEvent === undefined) {
+        if (playerState === undefined || activePlayersStaffers === undefined || resolveEvent === undefined) {
             return [];
         }
 
-        return fullGameState.activePlayersStaffers[playerState.playerRid]
+        return activePlayersStaffers[playerState.playerRid]
             .filter((staffer) => {
                 return isVoter(staffer.stafferDetails);
             })
@@ -45,22 +48,18 @@ export const getVoters = createSelector(
             }))
             .slice()
             .sort((a, b) => {
-                if (a.activeEvent === undefined && b.activeEvent !== undefined) {
-                    return -1;
+                if (a.staffer.state !== b.staffer.state) {
+                    return a.staffer.state.localeCompare(b.staffer.state);
                 }
 
-                if (a.activeEvent !== undefined && b.activeEvent === undefined) {
-                    return 1;
+                const aVotes = getEffectivenessNumber(gameModifiers, a.staffer.stafferDetails.type);
+                const bVotes = getEffectivenessNumber(gameModifiers, b.staffer.stafferDetails.type);
+
+                if (aVotes === bVotes) {
+                    return a.staffer.stafferDetails.displayName.localeCompare(b.staffer.stafferDetails.displayName);
                 }
 
-                const aVotes = getTotalAllowedVotes(a.staffer);
-                const bVotes = getTotalAllowedVotes(b.staffer);
-
-                return aVotes === bVotes
-                    ? a.staffer.stafferDetails.displayName.localeCompare(b.staffer.stafferDetails.displayName)
-                    : aVotes > bVotes
-                    ? -1
-                    : 1;
+                return aVotes > bVotes ? -1 : 1;
             });
     },
 );

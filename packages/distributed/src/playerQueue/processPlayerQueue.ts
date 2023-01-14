@@ -5,10 +5,8 @@
 import {
     DEFAULT_STAFFER,
     getCostToAcquireModifier,
-    getEffectivenessModifier,
-    getPayoutForStaffer,
-    getPayoutPerResolutionModifier,
     getTimeToAcquireModifier,
+    getTotalPayout,
     IActiveStaffer,
     IActiveStafferRid,
     IEvent,
@@ -24,6 +22,7 @@ import {
 } from "@pc2/api";
 import { DoneCallback, Job } from "bull";
 import crypto from "crypto";
+import _ from "lodash";
 import { Op } from "sequelize";
 import {
     ActivePlayer,
@@ -35,13 +34,11 @@ import {
 } from "../models";
 import { IProcessPlayerQueue, UpdatePlayerQueue } from "../queues";
 import { getStafferOfType } from "../utils/getStafferOfType";
-import _ from "lodash";
 
 async function getPayoutForPlayer(
     gameStateRid: IGameStateRid,
     eventDetails: ITallyResolution,
     activePlayerStaffers: ActiveStaffer[],
-    passedGameModifiers: IPassedGameModifier[],
 ): Promise<number> {
     const [activeResolution, allVotesForResolution] = await Promise.all([
         ActiveResolution.findOne({ where: { gameStateRid, activeResolutionRid: eventDetails.activeResolutionRid } }),
@@ -49,7 +46,6 @@ async function getPayoutForPlayer(
             where: {
                 gameStateRid,
                 activeResolutionRid: eventDetails.activeResolutionRid,
-                activeStafferRid: activePlayerStaffers.map((a) => a.activeStafferRid),
             },
         }),
     ]);
@@ -58,12 +54,15 @@ async function getPayoutForPlayer(
         return 0;
     }
 
-    const correctVotes = allVotesForResolution.filter((vote) => vote.vote === activeResolution.state);
+    const allCorrectVotes = allVotesForResolution.filter((vote) => vote.vote === activeResolution.state);
 
-    const payoutModifier = getPayoutPerResolutionModifier(passedGameModifiers);
-    const basePayoutPerVote = activeResolution.resolutionDetails.politicalCapitalPayout * payoutModifier;
+    const thisPlayersStaffers = activePlayerStaffers.map((staffer) => staffer.activeStafferRid);
+    const thisPlayersCorrectVotes = allCorrectVotes.filter((vote) =>
+        thisPlayersStaffers.includes(vote.activeStafferRid),
+    );
+    const thisPlayerCorrectVotesPercentage = thisPlayersCorrectVotes.length / allCorrectVotes.length;
 
-    return correctVotes.map(() => basePayoutPerVote).reduce((a, b) => a + b, 0);
+    return activeResolution.resolutionDetails.politicalCapitalPayout * thisPlayerCorrectVotesPercentage;
 }
 
 async function handleFinishHiringOrTraining(
@@ -217,7 +216,6 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
             gameStateRid,
             possibleTallyEvent.eventDetails,
             activePlayerStaffers,
-            passedGameModifiers,
         );
         activePlayer.politicalCapital += totalPayoutForPlayer;
     }
@@ -259,10 +257,7 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
 
     // Then any payouts from staffers
     const deltaInPoliticalCapital = activePlayerStaffers
-        .map((activeStaffer) => {
-            const effectivenessModifier = getEffectivenessModifier(passedGameModifiers, activeStaffer);
-            return getPayoutForStaffer(activeStaffer) * effectivenessModifier;
-        })
+        .map((activeStaffer) => getTotalPayout(activeStaffer, passedGameModifiers))
         .reduce((previous, next) => previous + next, 0);
     activePlayer.politicalCapital += deltaInPoliticalCapital;
 
