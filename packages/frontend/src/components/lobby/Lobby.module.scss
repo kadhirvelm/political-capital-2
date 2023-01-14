@@ -27,7 +27,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px 0;
+    margin: 20px 20px 0;
+}
+
+.thisPlayerContainer {
+    display: flex;
+    margin: 20px;
 }
 
 .playersContainer {
@@ -38,6 +43,12 @@
     > :not(:last-child) {
         margin-bottom: 20px;
     }
+}
+
+.allPlayersText {
+    display: flex;
+    margin-bottom: 10px;
+    color: $gray;
 }
 
 .singlePlayer {
@@ -53,6 +64,10 @@
 
     &.notReady {
         background: rgba($red, 0.1);
+    }
+
+    &.canStart {
+        background: rgba($blue, 0.1);
     }
 }
 
