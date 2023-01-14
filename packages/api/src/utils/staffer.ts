@@ -38,7 +38,7 @@ export function getStafferAcquisitionTime(
     const stafferDetails = getStafferDetails(staffer);
     const timeModifier = getTimeToAcquireModifier(passedGameModifiers, staffer);
 
-    return stafferDetails.timeToAcquire * timeModifier;
+    return Math.round(stafferDetails.timeToAcquire * timeModifier);
 }
 
 export function getStafferAcquisitionCost(
@@ -48,7 +48,7 @@ export function getStafferAcquisitionCost(
     const stafferDetails = getStafferDetails(staffer);
     const costModifier = getCostToAcquireModifier(passedGameModifiers, staffer);
 
-    return stafferDetails.costToAcquire * costModifier;
+    return Math.round(stafferDetails.costToAcquire * costModifier);
 }
 
 /**
