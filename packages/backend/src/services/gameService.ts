@@ -12,6 +12,9 @@ import {
     IFullGameState,
     IGameClock,
     IGameStateRid,
+    INITIAL_APPROVAL_RATING,
+    INITIAL_STAFFERS,
+    INITIAL_POLITICAL_CAPITAL,
     IPlayerRid,
     IResolveGameEvent,
 } from "@pc2/api";
@@ -31,8 +34,6 @@ import Express from "express";
 import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
-import { INITIAL_STAFFERS } from "../constants/game";
-import { INITIAL_APPROVAL_RATING, INITIAL_POLITICAL_CAPITAL } from "../constants/initializePlayers";
 import { areThereActiveGlobalScreens, sendMessageToGlobalScreens, sendMessageToPlayer } from "./socketService";
 
 // This isn't strictly necessary, but given there's a second promise going out anyway, might as well optimize it

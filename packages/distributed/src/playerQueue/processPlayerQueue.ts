@@ -5,6 +5,8 @@
 import {
     DEFAULT_STAFFER,
     getCostToAcquireModifier,
+    getStafferAcquisitionCost,
+    getStafferAcquisitionTime,
     getTimeToAcquireModifier,
     getTotalPayout,
     IActivePlayer,
@@ -100,8 +102,7 @@ export async function handleStartHiringOrTraining(
                 const newStafferRid = crypto.randomUUID() as IActiveStafferRid;
                 const newStafferDetails = getStafferOfType(trainingOrHiring.stafferType);
 
-                const timeModifier = getTimeToAcquireModifier(passedGameModifiers, newStafferDetails);
-                const finalTimeToAcquire = newStafferDetails.timeToAcquire * timeModifier;
+                const finalTimeToAcquire = getStafferAcquisitionTime(newStafferDetails, passedGameModifiers);
 
                 await Promise.all([
                     ActiveStaffer.create({
@@ -126,8 +127,7 @@ export async function handleStartHiringOrTraining(
                     accordingModel.save(),
                 ]);
 
-                const costModifier = getCostToAcquireModifier(passedGameModifiers, newStafferDetails);
-                return newStafferDetails.costToAcquire * costModifier;
+                return getStafferAcquisitionCost(newStafferDetails, passedGameModifiers);
             }
 
             if (IEvent.isStartTrainingStaffer(trainingOrHiring)) {

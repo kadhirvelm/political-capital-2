@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IAllStaffers } from "@pc2/api";
+import { IAllStaffers } from "../types/generatedStaffers";
 
 export const TIME_BETWEEN_RESOLUTIONS_IN_DAYS = 2;
 

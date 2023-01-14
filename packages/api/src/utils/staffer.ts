@@ -15,7 +15,7 @@ import {
     IVoter,
 } from "../types/IStaffer";
 import { IActiveStaffer, IPassedGameModifier } from "../types/politicalCapitalTwo";
-import { getEffectivenessModifier } from "./gameModifierUtils";
+import { getCostToAcquireModifier, getEffectivenessModifier, getTimeToAcquireModifier } from "./gameModifierUtils";
 
 export type IActiveOrPossibleStaffer = IActiveStaffer | IPossibleStaffer;
 
@@ -29,6 +29,26 @@ export function getStafferDetails(staffer: IActiveOrPossibleStaffer): IPossibleS
     }
 
     return staffer;
+}
+
+export function getStafferAcquisitionTime(
+    staffer: IActiveOrPossibleStaffer,
+    passedGameModifiers: IPassedGameModifier[],
+) {
+    const stafferDetails = getStafferDetails(staffer);
+    const timeModifier = getTimeToAcquireModifier(passedGameModifiers, staffer);
+
+    return Math.round(stafferDetails.timeToAcquire * timeModifier);
+}
+
+export function getStafferAcquisitionCost(
+    staffer: IActiveOrPossibleStaffer,
+    passedGameModifiers: IPassedGameModifier[],
+) {
+    const stafferDetails = getStafferDetails(staffer);
+    const costModifier = getCostToAcquireModifier(passedGameModifiers, staffer);
+
+    return Math.round(stafferDetails.costToAcquire * costModifier);
 }
 
 /**
