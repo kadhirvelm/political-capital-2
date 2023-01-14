@@ -24,6 +24,7 @@ import {
     IGameClock,
     IGameStateRid,
     IPlayerRid,
+    IStafferCategory,
     IStartTrainingStaffer,
     ITrainer,
     PoliticalCapitalTwoServiceFrontend,
@@ -37,8 +38,10 @@ import { getAvailableToTrainStaffer } from "../../selectors/staffers";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addGameEventToStaffer, IUserFacingResolveEvents, payPoliticalCapital } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
+import { getStaffersOfCategory } from "../../utility/categorizeStaffers";
 import { doesExceedLimit } from "../../utility/doesExceedLimit";
-import { roundToHundred } from "../../utility/roundTo";
+import { summaryStaffers } from "../../utility/partySummarizer";
+import { roundToHundred, roundToThousand } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
 import { StafferName } from "../common/StafferName";
@@ -67,12 +70,13 @@ export const TrainerActivation: React.FC<{
 
     const closeModal = () => setUpgradeStafferToLevel(undefined);
 
+    const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
     const availableToTrain = usePoliticalCapitalSelector(getAvailableToTrainStaffer(trainerRequest.trainerRid));
 
-    if (fullGameState === undefined || resolveEvents === undefined) {
+    if (player === undefined || fullGameState === undefined || resolveEvents === undefined) {
         return null;
     }
 
@@ -103,103 +107,153 @@ export const TrainerActivation: React.FC<{
     const upgradeStafferCurried = (activeStaffer: IActiveStaffer, toLevel: IStartTrainingStaffer["toLevel"]) => () =>
         setUpgradeStafferToLevel({ activeStaffer, toLevel });
 
+    const renderSingleCategory = (category: IStafferCategory | undefined) => {
+        const filteredStaffers = getStaffersOfCategory(availableToTrain, category, resolvedGameModifiers);
+        if (filteredStaffers.length === 0) {
+            return <div className={styles.description}>No staffers available to train</div>;
+        }
+
+        return (
+            <div className={styles.staffersInCategory}>
+                {filteredStaffers.map((staffer) => {
+                    const upgradesInto = StafferLadderIndex[staffer.stafferDetails.type] ?? [];
+                    const stafferCategory = getStafferCategory(staffer);
+
+                    return (
+                        <div className={styles.singleTrainee} key={staffer.activeStafferRid}>
+                            <div
+                                className={classNames(styles.currentPosition, {
+                                    [styles.voter]: stafferCategory === "voter",
+                                    [styles.generator]: stafferCategory === "generator",
+                                    [styles.trainer]: stafferCategory === "trainer",
+                                    [styles.recruit]: stafferCategory === "recruit",
+                                    [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
+                                })}
+                            >
+                                <div className={styles.nameContainer}>
+                                    <StafferName staffer={staffer} showType={true} showDescription={true} />
+                                </div>
+                            </div>
+                            <div className={styles.upgradeInto}>
+                                {upgradesInto.map((upgradeStaffer) => {
+                                    const defaultStaffer = DEFAULT_STAFFER[upgradeStaffer];
+                                    const newStafferCategory = getStafferCategory(defaultStaffer);
+
+                                    const finalCost = resolvedGameModifiers[defaultStaffer.type].costToAcquire;
+                                    const finalTime = resolvedGameModifiers[defaultStaffer.type].timeToAcquire;
+
+                                    const isDisabled =
+                                        resolvedGameModifiers[upgradeStaffer].disableTraining ||
+                                        doesExceedLimit(
+                                            upgradeStaffer,
+                                            trainerRequest.playerRid,
+                                            fullGameState,
+                                            "training",
+                                        );
+
+                                    const maybeRenderDisabledExplanation = () => {
+                                        if (!isDisabled) {
+                                            return undefined;
+                                        }
+
+                                        if (resolvedGameModifiers[upgradeStaffer].disableHiring) {
+                                            return (
+                                                <div className={styles.disabledReason}>
+                                                    A game modifier has prevented this staffer from being hired.
+                                                </div>
+                                            );
+                                        }
+
+                                        return (
+                                            <div className={styles.disabledReason}>
+                                                You have reached the limit for this type of staffer in your party.
+                                                Staffers allowed: {DEFAULT_STAFFER[upgradeStaffer].limitPerParty}
+                                            </div>
+                                        );
+                                    };
+
+                                    return (
+                                        <div className={styles.withArrow} key={upgradeStaffer}>
+                                            <ArrowForwardIcon className={styles.arrow} boxSize="1.7em" />
+                                            <div
+                                                className={classNames(styles.newPosition, {
+                                                    [styles.disabled]: isDisabled,
+                                                    [styles.voter]: newStafferCategory === "voter" && !isDisabled,
+                                                    [styles.generator]:
+                                                        newStafferCategory === "generator" && !isDisabled,
+                                                    [styles.trainer]: newStafferCategory === "trainer" && !isDisabled,
+                                                    [styles.recruit]: newStafferCategory === "recruit" && !isDisabled,
+                                                    [styles.shadowGovernment]:
+                                                        newStafferCategory === "shadowGovernment" && !isDisabled,
+                                                })}
+                                                onClick={
+                                                    isDisabled
+                                                        ? undefined
+                                                        : upgradeStafferCurried(staffer, upgradeStaffer)
+                                                }
+                                            >
+                                                <div>
+                                                    {defaultStaffer.displayName} ({finalCost} PC, {finalTime} days)
+                                                </div>
+                                                <div className={styles.description}>
+                                                    {descriptionOfStaffer(resolvedGameModifiers)[upgradeStaffer]}
+                                                </div>
+                                                {maybeRenderDisabledExplanation()}
+                                                {defaultStaffer.limitPerParty !== undefined && (
+                                                    <div className={styles.description}>
+                                                        Limited to {defaultStaffer.limitPerParty} per party{" "}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
     const maybeRenderStaffersToTrain = () => {
         if (availableToTrain.length === 0) {
             return <div className={styles.noTraineesAvailable}>No staffers available</div>;
         }
 
-        return availableToTrain.map((staffer) => {
-            const upgradesInto = StafferLadderIndex[staffer.stafferDetails.type] ?? [];
-            const stafferCategory = getStafferCategory(staffer);
+        const playerStaffers = fullGameState.activePlayersStaffers[player.playerRid];
+        const { votingCapacity, generator, hiring, training } = summaryStaffers(playerStaffers, resolvedGameModifiers);
 
-            return (
-                <div className={styles.singleTrainee} key={staffer.activeStafferRid}>
-                    <div
-                        className={classNames(styles.currentPosition, {
-                            [styles.voter]: stafferCategory === "voter",
-                            [styles.generator]: stafferCategory === "generator",
-                            [styles.trainer]: stafferCategory === "trainer",
-                            [styles.recruit]: stafferCategory === "recruit",
-                            [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
-                        })}
-                    >
-                        <div className={styles.nameContainer}>
-                            <StafferName staffer={staffer} showType={true} />
-                        </div>
-                        <div className={styles.description}>
-                            {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}
-                        </div>
-                    </div>
-                    <div className={styles.upgradeInto}>
-                        {upgradesInto.map((upgradeStaffer) => {
-                            const defaultStaffer = DEFAULT_STAFFER[upgradeStaffer];
-                            const newStafferCategory = getStafferCategory(defaultStaffer);
-
-                            const finalCost = resolvedGameModifiers[defaultStaffer.type].costToAcquire;
-                            const finalTime = resolvedGameModifiers[defaultStaffer.type].timeToAcquire;
-
-                            const isDisabled =
-                                resolvedGameModifiers[upgradeStaffer].disableTraining ||
-                                doesExceedLimit(upgradeStaffer, trainerRequest.playerRid, fullGameState, "training");
-
-                            const maybeRenderDisabledExplanation = () => {
-                                if (!isDisabled) {
-                                    return undefined;
-                                }
-
-                                if (resolvedGameModifiers[upgradeStaffer].disableHiring) {
-                                    return (
-                                        <div className={styles.disabledReason}>
-                                            A game modifier has prevented this staffer from being hired.
-                                        </div>
-                                    );
-                                }
-
-                                return (
-                                    <div className={styles.disabledReason}>
-                                        You have reached the limit for this type of staffer in your party. Staffers
-                                        allowed: {DEFAULT_STAFFER[upgradeStaffer].limitPerParty}
-                                    </div>
-                                );
-                            };
-
-                            return (
-                                <div className={styles.withArrow} key={upgradeStaffer}>
-                                    <ArrowForwardIcon className={styles.arrow} boxSize="1.7em" />
-                                    <div
-                                        className={classNames(styles.newPosition, {
-                                            [styles.disabled]: isDisabled,
-                                            [styles.voter]: newStafferCategory === "voter" && !isDisabled,
-                                            [styles.generator]: newStafferCategory === "generator" && !isDisabled,
-                                            [styles.trainer]: newStafferCategory === "trainer" && !isDisabled,
-                                            [styles.recruit]: newStafferCategory === "recruit" && !isDisabled,
-                                            [styles.shadowGovernment]:
-                                                newStafferCategory === "shadowGovernment" && !isDisabled,
-                                        })}
-                                        onClick={
-                                            isDisabled ? undefined : upgradeStafferCurried(staffer, upgradeStaffer)
-                                        }
-                                    >
-                                        <div>
-                                            {defaultStaffer.displayName} ({finalCost} PC, {finalTime} days)
-                                        </div>
-                                        <div className={styles.description}>
-                                            {descriptionOfStaffer(resolvedGameModifiers)[upgradeStaffer]}
-                                        </div>
-                                        {maybeRenderDisabledExplanation()}
-                                        {defaultStaffer.limitPerParty !== undefined && (
-                                            <div className={styles.description}>
-                                                Limited to {defaultStaffer.limitPerParty} per party{" "}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+        return (
+            <div className={styles.staffers}>
+                <div>
+                    <div className={styles.categoryTitle}>Hiring - {hiring}</div>
+                    {renderSingleCategory("recruit")}
                 </div>
-            );
-        });
+                <div>
+                    <div className={styles.categoryTitle}>Training - {training}</div>
+                    {renderSingleCategory("trainer")}
+                </div>
+                <div>
+                    <div className={styles.categoryTitle}>Voters - {votingCapacity} votes</div>
+                    {renderSingleCategory("voter")}
+                </div>
+                <div>
+                    <div className={styles.categoryTitle}>
+                        Generators - {roundToThousand(generator).toLocaleString()} PC/day
+                    </div>
+                    {renderSingleCategory("generator")}
+                </div>
+                <div>
+                    <div className={styles.categoryTitle}>Shadow government</div>
+                    {renderSingleCategory("shadowGovernment")}
+                </div>
+                <div>
+                    <div className={styles.categoryTitle}>Hiring - {hiring}</div>
+                    {renderSingleCategory(undefined)}
+                </div>
+            </div>
+        );
     };
 
     const maybeRenderTrainStaffer = () => {
@@ -258,12 +312,14 @@ export const TrainerActivation: React.FC<{
                 </div>
                 <div className={styles.result}>
                     <div className={styles.modalSentence}>
+                        <div className={styles.description}>Current PC</div>
+                        <div>{currentPoliticalCapital.toLocaleString()}</div>
+                    </div>
+                    <div className={styles.modalSentence}>
                         <div className={styles.description}>Remaining</div>
-                        <div>{currentPoliticalCapital}</div>
-                        <div>-</div>
-                        <div>{politicalCapitalCost}</div>
-                        <div>=</div>
-                        <div>{finalPoliticalCapital}</div>
+                        <div className={classNames({ [styles.cost]: finalPoliticalCapital < 0 })}>
+                            {finalPoliticalCapital.toLocaleString()}
+                        </div>
                     </div>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Available on</div>
@@ -339,6 +395,9 @@ export const TrainerActivation: React.FC<{
                     <ModalCloseButton />
                     <ModalBody>{maybeRenderTrainStafferBody()}</ModalBody>
                     <ModalFooter>
+                        {fullGameState.gameState.state === "paused" && (
+                            <div className={styles.pausedGame}>The game is paused</div>
+                        )}
                         <Button
                             colorScheme="green"
                             disabled={fullGameState.gameState.state !== "active" || !canAfford}

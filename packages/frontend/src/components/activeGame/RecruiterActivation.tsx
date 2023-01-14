@@ -105,6 +105,8 @@ export const RecruiterActivation: React.FC<{
             );
         }
 
+        // TODO: switch this to a category view and include the summary of the party, like the training page
+
         const availableToTrain = Object.values(DEFAULT_STAFFER)
             .filter((staffer) => staffer.upgradedFrom.length === 0)
             .slice()
@@ -219,12 +221,14 @@ export const RecruiterActivation: React.FC<{
                 </div>
                 <div className={styles.result}>
                     <div className={styles.modalSentence}>
+                        <div className={styles.description}>Current PC</div>
+                        <div>{currentPoliticalCapital.toLocaleString()}</div>
+                    </div>
+                    <div className={styles.modalSentence}>
                         <div className={styles.description}>Remaining</div>
-                        <div>{currentPoliticalCapital}</div>
-                        <div>-</div>
-                        <div>{politicalCapitalCost}</div>
-                        <div>=</div>
-                        <div>{finalPoliticalCapital}</div>
+                        <div className={classNames({ [styles.cost]: finalPoliticalCapital < 0 })}>
+                            {finalPoliticalCapital.toLocaleString()}
+                        </div>
                     </div>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Available on</div>
@@ -291,6 +295,9 @@ export const RecruiterActivation: React.FC<{
                     <ModalCloseButton />
                     <ModalBody>{maybeRenderJobPostingBody()}</ModalBody>
                     <ModalFooter>
+                        {fullGameState.gameState.state === "paused" && (
+                            <div className={styles.pausedGame}>The game is paused</div>
+                        )}
                         <Button
                             colorScheme="green"
                             disabled={isPaused || !canAfford}

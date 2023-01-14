@@ -16,6 +16,10 @@ $gray: #9E9E9E;
 $dark-gray: #424242;
 $black: #1B2631;
 
+%noCategory {
+    background: white;
+}
+
 %voter {
     background: rgba($green, 0.15);
 }
@@ -25,7 +29,7 @@ $black: #1B2631;
 }
 
 %trainer {
-    background: rgba($yellow, 0.15);
+    background: rgba($purple, 0.15);
 }
 
 %recruit {

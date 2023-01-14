@@ -2,20 +2,26 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IAllStaffers } from "@pc2/api";
+import { ACCOUNTANT_MODIFIER, CHIEF_OF_STAFF_MODIFIER, IAllStaffers, LOBBYIST_MODIFIER } from "@pc2/api";
 import { IResolvedGameModifiersForEachStaffer } from "../selectors/gameModifiers";
 
 type IDescriptionOfStaffer = {
     [key in Exclude<keyof IAllStaffers, "unknown">]: string;
 };
 
+const getPercent = (modifier: number) => `${Math.abs(modifier) * 100}%`;
+
 export const descriptionOfStaffer = (gameModifiers: IResolvedGameModifiersForEachStaffer): IDescriptionOfStaffer => {
     return {
         intern: "A college intern, doesn't provide much value - yet",
         newHire: `Provides ${gameModifiers.newHire.effectiveness} political capital every day`,
-        accountant: `Provides a 20% discount in political capital when hiring any staffer`,
+        accountant: `Reduces training and hiring costs of staffers by ${getPercent(
+            ACCOUNTANT_MODIFIER.costToAcquire ?? 0,
+        )}`,
         seasonedStaffer: `Provides ${gameModifiers.seasonedStaffer.effectiveness} political capital every day.`,
-        chiefOfStaff: `Reduces training and hiring time of staffers by 15%`,
+        chiefOfStaff: `Reduces training and hiring time of staffers by ${getPercent(
+            CHIEF_OF_STAFF_MODIFIER.timeToAcquire ?? 0,
+        )}`,
         politicalCommentator: `Provides ${gameModifiers.politicalCommentator.effectiveness} political capital every day.`,
         headOfHr: `Recruits up to ${gameModifiers.headOfHr.effectiveness} staffers to your party at a time.`,
         professor: `Trains up to ${gameModifiers.professor.effectiveness} staffers in your party at a time.`,
@@ -33,7 +39,9 @@ export const descriptionOfStaffer = (gameModifiers: IResolvedGameModifiersForEac
         professionalTrainer: `Trains up to ${gameModifiers.professionalTrainer.effectiveness} staffers in your party at a time`,
         initiate: `An initiate into the shadow government still learning the ropes`,
         veteranInitiate: `An adept member of the shadow government, ready to take on greater responsibility`,
-        lobbyist: `Get paid 10% more political capital from resolutions.`,
+        lobbyist: `Get paid ${getPercent(
+            LOBBYIST_MODIFIER.payoutPerPlayer ?? 0,
+        )} more political capital from resolutions.`,
         politicalSpy: `Allows viewing of enemy political parties and political capital`,
         informant: `Allows viewing the cast votes ahead of tallying`,
     };

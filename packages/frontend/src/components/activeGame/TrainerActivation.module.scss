@@ -42,10 +42,31 @@
 }
 
 .trainStaffer {
+    color: $gray;
     margin-bottom: 10px;
 }
 
 .allTrainingPossibilities {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.staffers {
+    display: flex;
+    flex-direction: column;
+
+    > :not(:last-child) {
+        margin-bottom: 30px;
+    }
+}
+
+.categoryTitle {
+    color: $gray;
+    margin-bottom: 5px;
+}
+
+.staffersInCategory {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -160,4 +181,9 @@
     box-shadow: 0 -1px $gray;
     margin-top: 10px;
     padding-top: 10px;
+}
+
+.pausedGame {
+    margin-right: 10px;
+    color: $gray;
 }

@@ -65,25 +65,21 @@
     border-radius: 3px;
     border: 1px solid $gray;
     padding: 5px 10px;
-}
+    background: white;
 
-.disabled {
-    background: rgba($gray, 0.15);
+    &.disabled {
+        background: rgba($gray, 0.15);
+    }
 }
 
 .stafferDetails {
     display: flex;
     flex-direction: column;
-    margin-bottom: 5px;
 }
 
 .nameAndType {
     display: flex;
     align-items: center;
-
-    > :first-child {
-        margin-right: 3px;
-    }
 }
 
 .activeEvent {

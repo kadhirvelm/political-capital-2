@@ -5,6 +5,9 @@
 import { Avatar } from "@chakra-ui/react";
 import { DEFAULT_STAFFER, IActivePlayer, IActiveStaffer, IAvatarSet, IPlayer } from "@pc2/api";
 import * as React from "react";
+import { getGameModifiers } from "../../selectors/gameModifiers";
+import { usePoliticalCapitalSelector } from "../../store/createStore";
+import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import styles from "./StafferName.module.scss";
 
 const avatar = (avatarSet: IAvatarSet) => {
@@ -41,12 +44,14 @@ export const PlayerName: React.FC<{ player: IPlayer; activePlayer: IActivePlayer
     );
 };
 
-export const StafferName: React.FC<{ staffer: IActiveStaffer; showType?: boolean; avatarExclusive?: boolean }> = ({
-    staffer,
-    showType,
-    avatarExclusive,
-}) => {
+export const StafferName: React.FC<{
+    staffer: IActiveStaffer;
+    showType?: boolean;
+    showDescription?: boolean;
+    avatarExclusive?: boolean;
+}> = ({ staffer, showType, showDescription, avatarExclusive }) => {
     const avatarSet = avatar(staffer.avatarSet);
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     if (avatarExclusive) {
         return (
@@ -69,8 +74,17 @@ export const StafferName: React.FC<{ staffer: IActiveStaffer; showType?: boolean
                 showBorder
                 src={`https://robohash.org/${staffer.stafferDetails.displayName}?set=set${avatarSet}`}
             />
-            <div>{staffer.stafferDetails.displayName}</div>
-            {showType && <div>, {DEFAULT_STAFFER[staffer.stafferDetails.type].displayName}</div>}
+            <div className={styles.detailsContainer}>
+                <div className={styles.nameAndType}>
+                    {staffer.stafferDetails.displayName}
+                    {showType && <div>, {DEFAULT_STAFFER[staffer.stafferDetails.type].displayName}</div>}
+                </div>
+                {showDescription && (
+                    <div className={styles.description}>
+                        {descriptionOfStaffer(resolvedGameModifiers)[staffer.stafferDetails.type]}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

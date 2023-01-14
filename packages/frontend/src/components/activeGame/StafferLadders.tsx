@@ -44,6 +44,7 @@ export const StafferLadders: React.FC<{}> = () => {
                 <div className={styles.singleLevel}>
                     <div
                         className={classNames(styles.singleLevelDetails, {
+                            [styles.noCategory]: stafferCategory === undefined,
                             [styles.voter]: stafferCategory === "voter",
                             [styles.generator]: stafferCategory === "generator",
                             [styles.trainer]: stafferCategory === "trainer",
@@ -81,6 +82,7 @@ export const StafferLadders: React.FC<{}> = () => {
                 <div className={classNames(styles.trainer, styles.tagContainer)}>Trainer</div>
                 <div className={classNames(styles.recruit, styles.tagContainer)}>Recruiter</div>
                 <div className={classNames(styles.shadowGovernment, styles.tagContainer)}>Shadow government</div>
+                <div className={classNames(styles.noCategory, styles.tagContainer)}>None</div>
             </div>
             {lowestLevelStaffers.map((s) => renderSingleStafferLevel(s, false, true, false))}
         </div>

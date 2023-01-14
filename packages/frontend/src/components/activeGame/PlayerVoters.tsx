@@ -19,7 +19,6 @@ import { getVoters, getVotesAlreadyCast } from "../../selectors/getVoters";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addVotes } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
-import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { StafferName } from "../common/StafferName";
 import styles from "./PlayerVoters.module.scss";
 import { ResolveEvent } from "./ResolveEvent";
@@ -194,10 +193,7 @@ export const PlayerVoters: React.FC<{
                         >
                             <div className={styles.stafferDetails}>
                                 <div className={styles.nameAndType}>
-                                    <StafferName staffer={voter.staffer} showType={true} />
-                                </div>
-                                <div className={styles.description}>
-                                    {descriptionOfStaffer(resolvedGameModifiers)[voter.staffer.stafferDetails.type]}
+                                    <StafferName staffer={voter.staffer} showType={true} showDescription={true} />
                                 </div>
                                 {voter.activeEvent !== undefined && (
                                     <div className={styles.activeEvent}>
