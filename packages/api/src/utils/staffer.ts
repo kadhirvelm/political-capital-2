@@ -96,7 +96,7 @@ export function getPotentialPayoutForStaffer(staffer: IActiveOrPossibleStaffer,
     if (!isGenerator(staffer)){
         return 0;
     }
-    return (getStafferDetails(staffer) as IGenerator).payout * days_left * getEffectivenessModifier(passedGameModifiers, staffer));;
+    return Math.floor((getStafferDetails(staffer) as IGenerator).payout * days_left * getEffectivenessModifier(passedGameModifiers, staffer));
 }
 
 /**
