@@ -7,31 +7,34 @@ import {
     getStafferCategory,
     getStafferDetails,
     IActiveOrPossibleStaffer,
-    IActiveStaffer,
+    isActiveStaffer,
     IStafferCategory,
     StafferLadderIndex,
 } from "@pc2/api";
 import { IResolvedGameModifiersForEachStaffer } from "../selectors/gameModifiers";
 
-export function getStaffersOfCategory(
-    activeStaffers: IActiveStaffer[],
+export function getStaffersOfCategory<StafferType extends IActiveOrPossibleStaffer>(
+    activeStaffers: StafferType[],
     category: IStafferCategory | undefined,
     gameModifiers: IResolvedGameModifiersForEachStaffer,
-) {
+): StafferType[] {
     return activeStaffers
         .slice()
         .filter((activeStaffer) => {
-            return getStafferCategory(activeStaffer.stafferDetails) === category;
+            return getStafferCategory(getStafferDetails(activeStaffer)) === category;
         })
         .sort((a, b) => {
-            if (a.state !== b.state) {
+            if (isActiveStaffer(a) && isActiveStaffer(b) && a.state !== b.state) {
                 return a.state.localeCompare(b.state);
             }
 
-            const defaultCompare = a.stafferDetails.type.localeCompare(b.stafferDetails.type);
+            const stafferDetailsA = getStafferDetails(a);
+            const stafferDetailsB = getStafferDetails(b);
 
-            const aEffectiveness = gameModifiers[a.stafferDetails.type].effectiveness;
-            const bEffectiveness = gameModifiers[a.stafferDetails.type].effectiveness;
+            const defaultCompare = stafferDetailsA.type.localeCompare(stafferDetailsB.type);
+
+            const aEffectiveness = gameModifiers[stafferDetailsA.type].effectiveness;
+            const bEffectiveness = gameModifiers[stafferDetailsB.type].effectiveness;
 
             return aEffectiveness === bEffectiveness ? defaultCompare : aEffectiveness > bEffectiveness ? -1 : 1;
         });

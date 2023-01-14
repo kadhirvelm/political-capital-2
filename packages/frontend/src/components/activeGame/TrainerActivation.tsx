@@ -117,17 +117,16 @@ export const TrainerActivation: React.FC<{
             <div className={styles.staffersInCategory}>
                 {filteredStaffers.map((staffer) => {
                     const upgradesInto = StafferLadderIndex[staffer.stafferDetails.type] ?? [];
-                    const stafferCategory = getStafferCategory(staffer);
 
                     return (
                         <div className={styles.singleTrainee} key={staffer.activeStafferRid}>
                             <div
                                 className={classNames(styles.currentPosition, {
-                                    [styles.voter]: stafferCategory === "voter",
-                                    [styles.generator]: stafferCategory === "generator",
-                                    [styles.trainer]: stafferCategory === "trainer",
-                                    [styles.recruit]: stafferCategory === "recruit",
-                                    [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
+                                    [styles.voter]: category === "voter",
+                                    [styles.generator]: category === "generator",
+                                    [styles.trainer]: category === "trainer",
+                                    [styles.recruit]: category === "recruit",
+                                    [styles.shadowGovernment]: category === "shadowGovernment",
                                 })}
                             >
                                 <div className={styles.nameContainer}>

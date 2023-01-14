@@ -24,6 +24,7 @@ import {
     IPlayerRid,
     IPossibleStaffer,
     IRecruit,
+    IStafferCategory,
     PoliticalCapitalTwoServiceFrontend,
 } from "@pc2/api";
 import classNames from "classnames";
@@ -33,9 +34,10 @@ import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { addGameEventToStaffer, IUserFacingResolveEvents, payPoliticalCapital } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
-import { getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
+import { getStaffersOfCategory, getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
 import { doesExceedLimit } from "../../utility/doesExceedLimit";
-import { roundToHundred } from "../../utility/roundTo";
+import { summaryStaffers } from "../../utility/partySummarizer";
+import { roundToHundred, roundToThousand } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
 import styles from "./RecruiterActivation.module.scss";
@@ -56,6 +58,7 @@ export const RecruiterActivation: React.FC<{
         (s) => s.localGameState.fullGameState?.gameState.gameClock ?? (0 as IGameClock),
     );
 
+    const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
     const isPaused = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState?.gameState.state !== "active");
@@ -63,7 +66,7 @@ export const RecruiterActivation: React.FC<{
     const [isLoading, setIsLoading] = React.useState(false);
     const [confirmStaffer, setConfirmStaffer] = React.useState<IPossibleStaffer | undefined>(undefined);
 
-    if (fullGameState === undefined) {
+    if (player === undefined || fullGameState === undefined) {
         return null;
     }
 
@@ -96,6 +99,90 @@ export const RecruiterActivation: React.FC<{
         );
     };
 
+    const availableToTrain = Object.values(DEFAULT_STAFFER)
+        .filter((staffer) => staffer.upgradedFrom.length === 0)
+        .slice();
+
+    const renderSingleCategory = (category: IStafferCategory | undefined) => {
+        const filteredStaffers = getStaffersOfCategory(availableToTrain, category, resolvedGameModifiers);
+        if (filteredStaffers.length === 0) {
+            return <div className={styles.description}>No staffers available to hire</div>;
+        }
+
+        return (
+            <div className={styles.allJobPostingsContainer}>
+                {filteredStaffers.map((staffer) => {
+                    const stafferCategory = getStafferCategory(staffer);
+                    const trainsInto = getTrainsIntoDisplayName(staffer);
+
+                    const finalCost = resolvedGameModifiers[staffer.type].costToAcquire;
+                    const finalTime = resolvedGameModifiers[staffer.type].timeToAcquire;
+
+                    const isDisabled =
+                        resolvedGameModifiers[staffer.type].disableHiring ||
+                        doesExceedLimit(staffer.type, recruitRequest.playerRid, fullGameState, "recruiting");
+
+                    const maybeRenderDisabledExplanation = () => {
+                        if (!isDisabled) {
+                            return undefined;
+                        }
+
+                        if (resolvedGameModifiers[staffer.type].disableHiring) {
+                            return (
+                                <div className={styles.disabledReason}>
+                                    A game modifier has prevented this staffer from being hired.
+                                </div>
+                            );
+                        }
+
+                        return (
+                            <div className={styles.disabledReason}>
+                                You have reached the limit for this type of staffer in your party. Staffers allowed:{" "}
+                                {DEFAULT_STAFFER[staffer.type].limitPerParty}
+                            </div>
+                        );
+                    };
+
+                    return (
+                        <div
+                            className={classNames(styles.singleJobPosting, {
+                                [styles.disabled]: isDisabled,
+                                [styles.noCategory]: stafferCategory === undefined,
+                                [styles.voter]: stafferCategory === "voter" && !isDisabled,
+                                [styles.generator]: stafferCategory === "generator" && !isDisabled,
+                                [styles.trainer]: stafferCategory === "trainer" && !isDisabled,
+                                [styles.recruit]: stafferCategory === "recruit" && !isDisabled,
+                                [styles.shadowGovernment]: stafferCategory === "shadowGovernment" && !isDisabled,
+                            })}
+                            key={staffer.type}
+                            onClick={isDisabled ? undefined : openConfirmModal(staffer)}
+                        >
+                            <div>
+                                {staffer.displayName} ({finalCost.toLocaleString()} PC, {finalTime} days)
+                            </div>
+                            <div className={styles.description}>
+                                {descriptionOfStaffer(resolvedGameModifiers)[staffer.type]}
+                            </div>
+                            <div className={styles.trainsInto}>
+                                <div className={styles.description}>Trains into</div>
+                                {trainsInto.map((type, index) => (
+                                    <span key={type}>
+                                        {type}
+                                        {index !== trainsInto.length - 1 && ","}
+                                    </span>
+                                ))}
+                            </div>
+                            {maybeRenderDisabledExplanation()}
+                            {staffer.limitPerParty !== undefined && (
+                                <div className={styles.description}>Limited to {staffer.limitPerParty} per party </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
     const maybeRenderRecruitStaffer = () => {
         if (currentlyRecruiting.length >= recruiter.recruitCapacity) {
             return (
@@ -105,86 +192,39 @@ export const RecruiterActivation: React.FC<{
             );
         }
 
-        // TODO: switch this to a category view and include the summary of the party, like the training page
-
-        const availableToTrain = Object.values(DEFAULT_STAFFER)
-            .filter((staffer) => staffer.upgradedFrom.length === 0)
-            .slice()
-            .sort((a, b) => a.type.localeCompare(b.type));
+        const playerStaffers = fullGameState.activePlayersStaffers[player.playerRid];
+        const { votingCapacity, generator, hiring, training } = summaryStaffers(playerStaffers, resolvedGameModifiers);
 
         return (
             <div className={styles.recruitOptionsContainer}>
-                <div className={styles.jobPosting}>Send out a job posting for</div>
-                <div className={styles.allJobPostingsContainer}>
-                    {availableToTrain.map((staffer) => {
-                        const stafferCategory = getStafferCategory(staffer);
-                        const trainsInto = getTrainsIntoDisplayName(staffer);
-
-                        const finalCost = resolvedGameModifiers[staffer.type].costToAcquire;
-                        const finalTime = resolvedGameModifiers[staffer.type].timeToAcquire;
-
-                        const isDisabled =
-                            resolvedGameModifiers[staffer.type].disableHiring ||
-                            doesExceedLimit(staffer.type, recruitRequest.playerRid, fullGameState, "recruiting");
-
-                        const maybeRenderDisabledExplanation = () => {
-                            if (!isDisabled) {
-                                return undefined;
-                            }
-
-                            if (resolvedGameModifiers[staffer.type].disableHiring) {
-                                return (
-                                    <div className={styles.disabledReason}>
-                                        A game modifier has prevented this staffer from being hired.
-                                    </div>
-                                );
-                            }
-
-                            return (
-                                <div className={styles.disabledReason}>
-                                    You have reached the limit for this type of staffer in your party. Staffers allowed:{" "}
-                                    {DEFAULT_STAFFER[staffer.type].limitPerParty}
-                                </div>
-                            );
-                        };
-
-                        return (
-                            <div
-                                className={classNames(styles.singleJobPosting, {
-                                    [styles.disabled]: isDisabled,
-                                    [styles.voter]: stafferCategory === "voter" && !isDisabled,
-                                    [styles.generator]: stafferCategory === "generator" && !isDisabled,
-                                    [styles.trainer]: stafferCategory === "trainer" && !isDisabled,
-                                    [styles.recruit]: stafferCategory === "recruit" && !isDisabled,
-                                    [styles.shadowGovernment]: stafferCategory === "shadowGovernment" && !isDisabled,
-                                })}
-                                key={staffer.type}
-                                onClick={isDisabled ? undefined : openConfirmModal(staffer)}
-                            >
-                                <div>
-                                    {staffer.displayName} ({finalCost.toLocaleString()} PC, {finalTime} days)
-                                </div>
-                                <div className={styles.description}>
-                                    {descriptionOfStaffer(resolvedGameModifiers)[staffer.type]}
-                                </div>
-                                <div className={styles.trainsInto}>
-                                    <div className={styles.description}>Trains into</div>
-                                    {trainsInto.map((type, index) => (
-                                        <span key={type}>
-                                            {type}
-                                            {index !== trainsInto.length - 1 && ","}
-                                        </span>
-                                    ))}
-                                </div>
-                                {maybeRenderDisabledExplanation()}
-                                {staffer.limitPerParty !== undefined && (
-                                    <div className={styles.description}>
-                                        Limited to {staffer.limitPerParty} per party{" "}
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
+                <div className={styles.jobPosting}>Available staffers to hire</div>
+                <div className={styles.staffers}>
+                    <div>
+                        <div className={styles.categoryTitle}>Hiring - {hiring}</div>
+                        {renderSingleCategory("recruit")}
+                    </div>
+                    <div>
+                        <div className={styles.categoryTitle}>Training - {training}</div>
+                        {renderSingleCategory("trainer")}
+                    </div>
+                    <div>
+                        <div className={styles.categoryTitle}>Voters - {votingCapacity} votes</div>
+                        {renderSingleCategory("voter")}
+                    </div>
+                    <div>
+                        <div className={styles.categoryTitle}>
+                            Generators - {roundToThousand(generator).toLocaleString()} PC/day
+                        </div>
+                        {renderSingleCategory("generator")}
+                    </div>
+                    <div>
+                        <div className={styles.categoryTitle}>Shadow government</div>
+                        {renderSingleCategory("shadowGovernment")}
+                    </div>
+                    <div>
+                        <div className={styles.categoryTitle}>Hiring - {hiring}</div>
+                        {renderSingleCategory(undefined)}
+                    </div>
                 </div>
             </div>
         );

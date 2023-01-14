@@ -134,10 +134,6 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
                     <div>Political capital</div>
                     <div>{roundToHundred(activePlayer.politicalCapital).toLocaleString()}</div>
                 </div>
-                {/* <div className={styles.singleResource}>
-                    <div>Approval rating</div>
-                    <div>{activePlayer.approvalRating}</div>
-                </div> */}
                 <PartySummary playerRid={playerRid} />
             </div>
             {renderBody()}

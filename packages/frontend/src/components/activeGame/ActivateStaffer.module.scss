@@ -15,10 +15,23 @@
     margin: 10px 0;
 }
 
-.activateLine {
-    font-weight: 500;
+.activatingStaffer {
+    display: flex;
+    flex: 1;
+    border-radius: 3px;
+    border: 1px solid rgba($gray, 0.25);
+    padding: 5px 10px;
+    margin: 10px 0;
 }
 
 .description {
     color: $gray;
+}
+
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
 }

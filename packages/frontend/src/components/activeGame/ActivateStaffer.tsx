@@ -4,11 +4,11 @@
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
-import { DEFAULT_STAFFER, IActiveStaffer, IBasicStaffer, IRecruit, isRecruit, isTrainer, ITrainer } from "@pc2/api";
+import { getStafferCategory, IActiveStaffer, IBasicStaffer, IRecruit, isRecruit, isTrainer, ITrainer } from "@pc2/api";
+import classNames from "classnames";
 import * as React from "react";
-import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
-import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
+import { StafferName } from "../common/StafferName";
 import styles from "./ActivateStaffer.module.scss";
 import { RecruiterActivation } from "./RecruiterActivation";
 import { TrainerActivation } from "./TrainerActivation";
@@ -20,7 +20,6 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
     const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
-    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
     if (player === undefined || fullGameState === undefined || resolveEvents === undefined) {
         return null;
@@ -62,6 +61,8 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
         return undefined;
     };
 
+    const categoryOfStaffer = getStafferCategory(activateStaffer);
+
     return (
         <div className={styles.activateStaffer}>
             <div className={styles.onBack}>
@@ -69,12 +70,13 @@ export const ActivateStaffer: React.FC<{ activateStaffer: IActiveStaffer; onBack
                     Back
                 </Button>
             </div>
-            <div className={styles.activateLine}>
-                Activating {activateStaffer.stafferDetails.displayName} (
-                {DEFAULT_STAFFER[activateStaffer.stafferDetails.type].displayName})
-            </div>
-            <div className={styles.description}>
-                {descriptionOfStaffer(resolvedGameModifiers)[activateStaffer.stafferDetails.type]}
+            <div
+                className={classNames(styles.activatingStaffer, {
+                    [styles.trainer]: categoryOfStaffer === "trainer",
+                    [styles.recruit]: categoryOfStaffer === "recruit",
+                })}
+            >
+                <StafferName staffer={activateStaffer} showType showDescription />
             </div>
             {renderStafferActivationSpecifics()}
         </div>
