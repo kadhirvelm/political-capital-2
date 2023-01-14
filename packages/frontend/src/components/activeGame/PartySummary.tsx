@@ -4,25 +4,23 @@
 
 import { IPlayerRid } from "@pc2/api";
 import * as React from "react";
+import { getGameModifiers } from "../../selectors/gameModifiers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { summaryStaffers } from "../../utility/partySummarizer";
 import { roundToThousand } from "../../utility/roundTo";
 import styles from "./PartySummary.module.scss";
 
 export const PartySummary: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) => {
-    const maybePlayerStaffers = usePoliticalCapitalSelector(
-        (s) => s.localGameState.fullGameState?.activePlayersStaffers[playerRid],
-    );
-    const resolveEvents = usePoliticalCapitalSelector((s) => s.localGameState.resolveEvents);
+    const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
+    const resolvedGameModifiers = usePoliticalCapitalSelector(getGameModifiers);
 
-    if (maybePlayerStaffers === undefined) {
+    if (fullGameState === undefined) {
         return null;
     }
 
     const { votingCapacity, generator, hiring, training } = summaryStaffers(
-        maybePlayerStaffers,
-        resolveEvents,
-        playerRid,
+        fullGameState.activePlayersStaffers[playerRid],
+        resolvedGameModifiers,
     );
 
     return (

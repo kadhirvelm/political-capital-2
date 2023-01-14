@@ -9,6 +9,7 @@ import {
     getPayoutPerResolutionModifier,
     getTimeToAcquireModifier,
     IFullGameState,
+    IPassedGameModifier,
     IPossibleStaffer,
     isStafferHiringDisabled,
     isStafferTrainingDisabled,
@@ -42,28 +43,26 @@ export interface IResolvedGameModifiers {
 }
 
 export const getGameModifiers = createSelector(
-    (state: State) => state.localGameState.fullGameState,
-    (fullGameState: IFullGameState | undefined) => {
+    (state: State) => state.localGameState.fullGameState?.passedGameModifiers,
+    (passedGameModifiers: IPassedGameModifier[] | undefined) => {
         const resolvedGameModifiers: IResolvedGameModifiers = {
             game: { payoutPerResolution: 1 },
             staffers: {} as IResolvedGameModifiersForEachStaffer,
         };
 
-        if (fullGameState === undefined) {
+        if (passedGameModifiers === undefined) {
             return resolvedGameModifiers;
         }
 
-        resolvedGameModifiers.game.payoutPerResolution = getPayoutPerResolutionModifier(
-            fullGameState.passedGameModifiers,
-        );
+        resolvedGameModifiers.game.payoutPerResolution = getPayoutPerResolutionModifier(passedGameModifiers);
 
         Object.values(DEFAULT_STAFFER).forEach((staffer) => {
             resolvedGameModifiers.staffers[staffer.type] = {
-                costToAcquire: getCostToAcquireModifier(fullGameState.passedGameModifiers, staffer),
-                timeToAcquire: getTimeToAcquireModifier(fullGameState.passedGameModifiers, staffer),
-                effectiveness: getEffectivenessModifier(fullGameState.passedGameModifiers, staffer),
-                disableHiring: isStafferHiringDisabled(fullGameState.passedGameModifiers, staffer),
-                disableTraining: isStafferTrainingDisabled(fullGameState.passedGameModifiers, staffer),
+                costToAcquire: getCostToAcquireModifier(passedGameModifiers, staffer),
+                timeToAcquire: getTimeToAcquireModifier(passedGameModifiers, staffer),
+                effectiveness: getEffectivenessModifier(passedGameModifiers, staffer),
+                disableHiring: isStafferHiringDisabled(passedGameModifiers, staffer),
+                disableTraining: isStafferTrainingDisabled(passedGameModifiers, staffer),
             };
         });
 

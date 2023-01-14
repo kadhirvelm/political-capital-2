@@ -30,3 +30,13 @@ services:
     ports:
       - "6379:6379"
     command: redis-server
+
+  pgAdmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgAdmin
+    ports:
+      - "2000:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+      - PGADMIN_LISTEN_ADDRESS=0.0.0.0
+      - PGADMIN_DEFAULT_PASSWORD=admin

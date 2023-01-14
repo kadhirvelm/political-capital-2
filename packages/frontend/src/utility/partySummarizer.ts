@@ -2,15 +2,11 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IActiveStaffer, IPlayerRid, getStafferDetails, isVoter, isGenerator, isRecruit, isTrainer } from "@pc2/api";
-import { IUserFacingIndexedResolveEvents } from "../store/gameState";
-import { isSurfaceLevelBusy } from "./isStafferBusy";
+import { getStafferDetails, IActiveStaffer, isGenerator, isRecruit, isTrainer, isVoter } from "@pc2/api";
+import { IResolvedGameModifiers } from "../selectors/gameModifiers";
+import { getEffectivenessNumber } from "./stafferDescriptions";
 
-export function summaryStaffers(
-    staffers: IActiveStaffer[],
-    resolveEvents: IUserFacingIndexedResolveEvents | undefined,
-    playerRid: IPlayerRid,
-) {
+export function summaryStaffers(staffers: IActiveStaffer[], gameModifiers: IResolvedGameModifiers) {
     let votingCapacity = 0;
     let generator = 0;
     let hiring = 0;
@@ -18,24 +14,24 @@ export function summaryStaffers(
 
     staffers.forEach((staffer) => {
         const stafferDetails = getStafferDetails(staffer);
-        if (isSurfaceLevelBusy(staffer, resolveEvents, playerRid)) {
+        if (staffer.state !== "active") {
             return;
         }
 
         if (isVoter(stafferDetails)) {
-            votingCapacity += stafferDetails.votes;
+            votingCapacity += getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
         }
 
         if (isGenerator(stafferDetails)) {
-            generator += stafferDetails.payout;
+            generator += getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
         }
 
         if (isRecruit(stafferDetails)) {
-            hiring += stafferDetails.recruitCapacity;
+            hiring += getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
         }
 
         if (isTrainer(stafferDetails)) {
-            training += stafferDetails.trainingCapacity;
+            training += getEffectivenessNumber(gameModifiers, staffer.stafferDetails.type);
         }
     });
 

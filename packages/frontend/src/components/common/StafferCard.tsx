@@ -40,7 +40,14 @@ export const StafferCard: React.FC<{ staffer: IActiveStaffer; isPlayerStaffer?: 
         );
     })();
 
-    const isBusy = isStafferBusy(staffer, resolveEvents, playerRid, fullGameState, activeResolution);
+    const isBusy = isStafferBusy(
+        staffer,
+        resolveEvents,
+        playerRid,
+        fullGameState,
+        activeResolution,
+        resolvedGameModifiers,
+    );
 
     const maybeRenderEvents = () => {
         if (isVoter(staffer) && isBusy) {

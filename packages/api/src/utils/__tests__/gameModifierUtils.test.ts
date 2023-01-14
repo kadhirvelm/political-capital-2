@@ -3,9 +3,9 @@
  */
 
 import { IActiveResolutionRid, IGameClock, IGameStateRid } from "../../types/BrandedIDs";
+import { DEFAULT_STAFFER } from "../../types/generatedStaffers";
 import { IPassedGameModifier } from "../../types/politicalCapitalTwo";
 import { getEffectivenessModifier } from "../gameModifierUtils";
-import { IActiveOrPossibleStaffer } from "../staffer";
 
 describe("Game modifier utils works as expected", () => {
     it("effectiveness modifiers works as expected", () => {
@@ -35,7 +35,7 @@ describe("Game modifier utils works as expected", () => {
             },
         ];
 
-        expect(getEffectivenessModifier(modifiers, { type: "coach" } as IActiveOrPossibleStaffer)).toEqual(1);
+        expect(getEffectivenessModifier(modifiers, DEFAULT_STAFFER.representative)).toEqual(1);
 
         const modifiersTwo: IPassedGameModifier[] = [
             {
@@ -60,6 +60,6 @@ describe("Game modifier utils works as expected", () => {
             },
         ];
 
-        expect(getEffectivenessModifier(modifiersTwo, { type: "coach" } as IActiveOrPossibleStaffer)).toEqual(0.75);
+        expect(getEffectivenessModifier(modifiersTwo, DEFAULT_STAFFER.representative)).toEqual(0.75);
     });
 });

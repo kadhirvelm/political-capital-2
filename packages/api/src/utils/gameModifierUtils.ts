@@ -14,7 +14,31 @@ import {
     isVoter,
 } from "./staffer";
 
-export function isStafferInCategory(
+export function getStafferCategory(stafferDetails: IActiveOrPossibleStaffer): IStafferCategory | undefined {
+    if (isVoter(stafferDetails)) {
+        return "voter";
+    }
+
+    if (isGenerator(stafferDetails)) {
+        return "generator";
+    }
+
+    if (isTrainer(stafferDetails)) {
+        return "trainer";
+    }
+
+    if (isRecruit(stafferDetails)) {
+        return "recruit";
+    }
+
+    if (isShadowGovernment(stafferDetails)) {
+        return "shadowGovernment";
+    }
+
+    return undefined;
+}
+
+function isStafferInCategory(
     activeStaffer: IActiveOrPossibleStaffer,
     category: IStafferEffect["staffersAffected"][number],
 ) {
@@ -51,31 +75,7 @@ export function isStafferInCategory(
     return false;
 }
 
-export function getStafferCategory(stafferDetails: IActiveOrPossibleStaffer): IStafferCategory | undefined {
-    if (isVoter(stafferDetails)) {
-        return "voter";
-    }
-
-    if (isGenerator(stafferDetails)) {
-        return "generator";
-    }
-
-    if (isTrainer(stafferDetails)) {
-        return "trainer";
-    }
-
-    if (isRecruit(stafferDetails)) {
-        return "recruit";
-    }
-
-    if (isShadowGovernment(stafferDetails)) {
-        return "shadowGovernment";
-    }
-
-    return undefined;
-}
-
-export function getRelevantModifiersToStaffer(
+function getRelevantModifiersToStaffer(
     allPassedGameModifiers: IPassedGameModifier[],
     activeStaffer: IActiveOrPossibleStaffer,
 ): IPassedGameModifier[] {
@@ -205,9 +205,9 @@ export function getTimePerResolutionModifier(allPassedGameModifiers: IPassedGame
 }
 
 export function getTimeBetweenResolutionsModifier(allPassedGameModifiers: IPassedGameModifier[]) {
-    return getResolutionModifier("timePerResolution", allPassedGameModifiers);
+    return getResolutionModifier("timeBetweenResolutions", allPassedGameModifiers);
 }
 
 export function getPayoutPerResolutionModifier(allPassedGameModifiers: IPassedGameModifier[]) {
-    return getResolutionModifier("timePerResolution", allPassedGameModifiers);
+    return getResolutionModifier("payoutPerResolution", allPassedGameModifiers);
 }
