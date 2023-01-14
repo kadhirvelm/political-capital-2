@@ -46,14 +46,9 @@ export const Leaderboard: React.FC<{}> = () => {
 
     const hasPoliticalSpy =
         playerPoliticalParty.find((p) => p.stafferDetails.type === "politicalSpy")?.state === "active";
-    const canViewPlayerParties = hasPoliticalSpy || fullGameState.gameState.state === "complete";
-
-    const hasInformationBroker =
-        playerPoliticalParty.find((p) => p.stafferDetails.type === "informationBroker")?.state === "active";
-    const canViewPoliticalCapital = hasInformationBroker || fullGameState.gameState.state === "complete";
 
     const maybeRenderExploreParty = () => {
-        if (!canViewPlayerParties) {
+        if (fullGameState.gameState.state === "complete") {
             return undefined;
         }
 
@@ -94,7 +89,7 @@ export const Leaderboard: React.FC<{}> = () => {
                                         <div>(you)</div>
                                     ) : undefined}
                                 </div>
-                                {canViewPoliticalCapital && (
+                                {hasPoliticalSpy && (
                                     <div>
                                         {roundToHundred(
                                             leaderboardPlayer.activePlayer.politicalCapital,
@@ -103,7 +98,7 @@ export const Leaderboard: React.FC<{}> = () => {
                                     </div>
                                 )}
                             </div>
-                            {canViewPlayerParties && <PartySummary playerRid={leaderboardPlayer.player.playerRid} />}
+                            {hasPoliticalSpy && <PartySummary playerRid={leaderboardPlayer.player.playerRid} />}
                         </div>
                     ))}
                 </div>

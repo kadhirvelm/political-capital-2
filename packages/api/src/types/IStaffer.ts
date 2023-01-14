@@ -208,28 +208,18 @@ export interface IVeteranInitiate extends IBasicStaffer, IShadowGovernment {
 
 export interface IPoliticalSpy extends IBasicStaffer, IShadowGovernment {
     upgradedFrom: ["veteranInitiate"];
-    costToAcquire: 5;
+    costToAcquire: 15;
     timeToAcquire: 30;
     shadowGovernment: true;
     limitPerParty: 1;
     type: "politicalSpy";
 }
 
-export interface IInformationBroker extends IBasicStaffer, IGenerator, IShadowGovernment {
-    upgradedFrom: ["veteranInitiate"];
-    costToAcquire: 0;
-    timeToAcquire: 15;
-    shadowGovernment: true;
-    limitPerParty: 1;
-    payout: 1;
-    type: "informationBroker";
-}
-
 export interface IInformant extends IBasicStaffer, IShadowGovernment {
     upgradedFrom: ["veteranInitiate"];
-    costToAcquire: 80;
+    costToAcquire: 15;
     timeToAcquire: 30;
     shadowGovernment: true;
-    limitPerParty: 0;
+    limitPerParty: 1;
     type: "informant";
 }

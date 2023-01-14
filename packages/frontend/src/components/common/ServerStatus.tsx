@@ -33,6 +33,10 @@ export const ServerStatus: React.FC<{}> = () => {
     const isConnectedToServer = usePoliticalCapitalSelector((s) => s.playerState.isConnectedToServer);
     const fullGameState = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
+    if (fullGameState?.gameState.state === "waiting") {
+        return null;
+    }
+
     const maybeRenderGameIndicator = () => {
         if (fullGameState === undefined) {
             return undefined;

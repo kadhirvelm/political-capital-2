@@ -2,8 +2,16 @@
  * Copyright (c) 2022 - KM
  */
 
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { AvatarGroup, Badge, Button, Input } from "@chakra-ui/react";
-import { ActiveGameFrontend, IFullGameState, IPlayer, PlayerServiceFrontend } from "@pc2/api";
+import {
+    ActiveGameFrontend,
+    AvatarSet,
+    IActiveGameService,
+    IFullGameState,
+    IPlayer,
+    PlayerServiceFrontend,
+} from "@pc2/api";
 import classNames from "classnames";
 import { keyBy } from "lodash-es";
 import * as React from "react";
@@ -27,21 +35,37 @@ const ThisPlayer: React.FC<{ fullGameState: IFullGameState }> = ({ fullGameState
         return null;
     }
 
-    const togglePlayerReady = (currentReadyState: boolean) => async () => {
-        if (fullGameState === undefined || player === undefined) {
-            return;
-        }
+    const thisPlayer = fullGameState.activePlayers[player.playerRid];
 
-        const thisPlayer = fullGameState.activePlayers[player.playerRid];
-
+    const updatePlayer = async (newReadyState: Partial<IActiveGameService["changeReadyState"]["payload"]>) => {
         setIsLoading(true);
         await ActiveGameFrontend.changeReadyState({
             gameStateRid: fullGameState.gameState.gameStateRid,
             playerRid: player.playerRid,
-            isReady: !currentReadyState,
-            avatarSet: thisPlayer.avatarSet,
+            isReady: newReadyState.isReady ?? thisPlayer.isReady,
+            avatarSet: newReadyState.avatarSet ?? thisPlayer.avatarSet,
         });
         setIsLoading(false);
+    };
+
+    const onChangeAvatarSet = (direction: "left" | "right") => () => {
+        const currentIcon = AvatarSet.findIndex((a) => a === thisPlayer.avatarSet);
+
+        const newAvatarIndex = (() => {
+            const naiveNumber = currentIcon + (direction === "left" ? -1 : 1);
+
+            if (naiveNumber < 0) {
+                return AvatarSet.length - 1;
+            }
+
+            if (naiveNumber > AvatarSet.length - 1) {
+                return 0;
+            }
+
+            return naiveNumber;
+        })();
+
+        updatePlayer({ avatarSet: AvatarSet[newAvatarIndex] });
     };
 
     const onChangePlayerName = (event: React.ChangeEvent<HTMLInputElement>) => setPlayerName(event.currentTarget.value);
@@ -52,18 +76,49 @@ const ThisPlayer: React.FC<{ fullGameState: IFullGameState }> = ({ fullGameState
         dispatch(setPlayer(updatedPlayer));
     };
 
-    const thisPlayer = fullGameState.activePlayers[player.playerRid];
+    const togglePlayerReady = () => {
+        if (fullGameState === undefined || player === undefined) {
+            return;
+        }
+
+        updatePlayer({ isReady: !thisPlayer.isReady });
+    };
+
+    const { isReady } = thisPlayer;
 
     return (
         <div className={styles.thisPlayerContainer}>
-            <div>
+            <div className={styles.playerNameContainer}>
+                {isReady ? (
+                    <div className={styles.dummyChevron} />
+                ) : (
+                    <ChevronLeftIcon boxSize={7} onClick={onChangeAvatarSet("left")} />
+                )}
                 <PlayerName player={player} activePlayer={thisPlayer} />
+                {isReady ? (
+                    <div className={styles.dummyChevron} />
+                ) : (
+                    <ChevronRightIcon boxSize={7} onClick={onChangeAvatarSet("right")} />
+                )}
             </div>
-            <div>
-                <div>
-                    <Input value={playerName} onChange={onChangePlayerName} onBlur={savePlayerName} />
+            <div className={styles.playerDetails}>
+                <div className={styles.playerNameAndReady}>
+                    {isReady ? (
+                        <div className={styles.playerNameText}>{playerName}</div>
+                    ) : (
+                        <Input
+                            value={playerName}
+                            onChange={onChangePlayerName}
+                            onBlur={savePlayerName}
+                            background="white"
+                        />
+                    )}
                 </div>
-                <Button onClick={togglePlayerReady(thisPlayer.isReady)} isLoading={isLoading}>
+                <Button
+                    onClick={togglePlayerReady}
+                    isLoading={isLoading}
+                    colorScheme={thisPlayer.isReady ? "red" : "green"}
+                >
                     {thisPlayer.isReady ? "Unready" : "Ready up"}
                 </Button>
             </div>
@@ -184,7 +239,7 @@ export const Lobby: React.FC<{}> = () => {
 
         return (
             <div className={styles.playerActions}>
-                <Button colorScheme="green" onClick={startGame}>
+                <Button colorScheme="green" onClick={startGame} style={{ display: "flex", flex: "1" }}>
                     Start game!
                 </Button>
             </div>
@@ -199,7 +254,10 @@ export const Lobby: React.FC<{}> = () => {
         return (
             <>
                 <ThisPlayer fullGameState={fullGameState} />
-                <div className={styles.allPlayersText}>All players</div>
+                <div className={styles.allPlayersText}>
+                    <div>All players</div>
+                    <div className={styles.divider} />
+                </div>
                 <AllPlayers fullGameState={fullGameState} />
             </>
         );
@@ -207,7 +265,7 @@ export const Lobby: React.FC<{}> = () => {
 
     return (
         <div className={styles.lobbyMainContainer}>
-            <div className={styles.lobbyText}>Waiting for game to start</div>
+            <div className={styles.pc2}>Political Capital 2</div>
             {maybeRenderCreateNewGameButton()}
             {maybeRenderPlayerActions()}
             {maybeRenderPlayers()}

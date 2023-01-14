@@ -26,7 +26,6 @@ import {
     IInitiate,
     IVeteranInitiate,
     IPoliticalSpy,
-    IInformationBroker,
     IInformant,
 } from "./IStaffer";
 import { IVisit } from "./IVisit";
@@ -53,7 +52,6 @@ export interface IAllStaffers {
     initiate: IInitiate;
     veteranInitiate: IVeteranInitiate;
     politicalSpy: IPoliticalSpy;
-    informationBroker: IInformationBroker;
     informant: IInformant;
     unknown: never;
 }
@@ -236,29 +234,19 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
     politicalSpy: {
         displayName: "Political spy",
         upgradedFrom: ["veteranInitiate"],
-        costToAcquire: 5,
+        costToAcquire: 15,
         timeToAcquire: 30,
         shadowGovernment: true,
         limitPerParty: 1,
         type: "politicalSpy",
     },
-    informationBroker: {
-        displayName: "Information broker",
-        upgradedFrom: ["veteranInitiate"],
-        costToAcquire: 0,
-        timeToAcquire: 15,
-        shadowGovernment: true,
-        limitPerParty: 1,
-        payout: 1,
-        type: "informationBroker",
-    },
     informant: {
         displayName: "Informant",
         upgradedFrom: ["veteranInitiate"],
-        costToAcquire: 80,
+        costToAcquire: 15,
         timeToAcquire: 30,
         shadowGovernment: true,
-        limitPerParty: 0,
+        limitPerParty: 1,
         type: "informant",
     },
 };
@@ -348,10 +336,6 @@ export namespace IStaffer {
         return staffer.type === "politicalSpy";
     };
 
-    export const isInformationBroker = (staffer: IPossibleStaffer): staffer is IInformationBroker => {
-        return staffer.type === "informationBroker";
-    };
-
     export const isInformant = (staffer: IPossibleStaffer): staffer is IInformant => {
         return staffer.type === "informant";
     };
@@ -439,10 +423,6 @@ export namespace IStaffer {
 
         if (isPoliticalSpy(value)) {
             return visitor.politicalSpy(value);
-        }
-
-        if (isInformationBroker(value)) {
-            return visitor.informationBroker(value);
         }
 
         if (isInformant(value)) {

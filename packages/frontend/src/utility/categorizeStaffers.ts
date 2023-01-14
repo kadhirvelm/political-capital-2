@@ -12,7 +12,7 @@ import {
     StafferLadderIndex,
 } from "@pc2/api";
 import { IResolvedGameModifiers } from "../selectors/gameModifiers";
-import { getEffectivenessNumber } from "./stafferDescriptions";
+import { getEffectivenessNumber } from "./gameModifiers";
 
 export function getStaffersOfCategory(
     activeStaffers: IActiveStaffer[],

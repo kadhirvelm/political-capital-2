@@ -71,11 +71,7 @@ export const descriptionOfStaffer = (gameModifiers: IResolvedGameModifiers): IDe
         )} staffers in your party at a time`,
         initiate: `An initiate into the shadow government still learning the ropes`,
         veteranInitiate: `An adept member of the shadow government, ready to take on greater responsibility`,
-        politicalSpy: `Allows viewing of enemy political parties`,
-        informationBroker: `Allows viewing enemy political capital. Also provides ${getEffectivenessNumber(
-            gameModifiers,
-            "informationBroker",
-        )} political capital per day`,
+        politicalSpy: `Allows viewing of enemy political parties and political capital`,
         informant: `Allows viewing the cast votes ahead of tallying`,
     };
 };

@@ -14,7 +14,7 @@ import {
 } from "@pc2/api";
 import { IResolvedGameModifiers } from "../selectors/gameModifiers";
 import { IUserFacingIndexedResolveEvents } from "../store/gameState";
-import { getEffectivenessNumber } from "./stafferDescriptions";
+import { getEffectivenessNumber } from "./gameModifiers";
 
 export function isStafferBusy(
     staffer: IActiveStaffer,

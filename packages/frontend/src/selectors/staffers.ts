@@ -16,7 +16,7 @@ import {
 import { createSelector } from "@reduxjs/toolkit";
 import { State } from "../store/createStore";
 import { IUserFacingIndexedResolveEvents } from "../store/gameState";
-import { getEffectivenessNumber } from "../utility/stafferDescriptions";
+import { getEffectivenessNumber } from "../utility/gameModifiers";
 import { getGameModifiers, IResolvedGameModifiers } from "./gameModifiers";
 
 export const getAvailableToTrainStaffer = (trainerRid: IActiveStafferRid) =>

@@ -4,7 +4,7 @@
 
 import { IAllStaffers } from "../types/generatedStaffers";
 
-export const TIME_BETWEEN_RESOLUTIONS_IN_DAYS = 2;
+export const TIME_BETWEEN_RESOLUTIONS_IN_DAYS = 4;
 
 export const TIME_FOR_EACH_RESOLUTION_IN_DAYS = 28;
 

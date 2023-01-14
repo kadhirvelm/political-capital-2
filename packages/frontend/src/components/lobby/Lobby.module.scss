@@ -11,9 +11,12 @@
     flex-direction: column;
 }
 
-.lobbyText {
+.pc2 {
     display: flex;
     align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-size: 20px;
 }
 
 .createNewGame {
@@ -25,14 +28,13 @@
 
 .playerActions {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 20px 0;
+    margin: 20px;
 }
 
 .thisPlayerContainer {
     display: flex;
-    margin: 20px;
+    align-items: center;
+    margin: 20px 0;
 }
 
 .playersContainer {
@@ -47,8 +49,17 @@
 
 .allPlayersText {
     display: flex;
-    margin-bottom: 10px;
+    align-items: center;
+    margin: 20px 0;
     color: $gray;
+}
+
+.divider {
+    display: flex;
+    flex: 1;
+    height: 1px;
+    background: $gray;
+    margin-left: 10px;
 }
 
 .singlePlayer {
@@ -73,21 +84,31 @@
 
 .playerNameContainer {
     display: flex;
+    align-items: center;
     margin-right: 15px;
 }
 
 .playerNameText {
+    display: flex;
+    flex: 1;
     font-size: 18px;
     margin-right: 10px;
 }
 
 .playerDetails {
     display: flex;
+    flex: 1;
+    justify-content: flex-start;
     flex-direction: column;
 }
 
 .playerNameAndReady {
     display: flex;
+    flex: 1;
     align-items: center;
     margin-bottom: 10px;
+}
+
+.dummyChevron {
+    width: 28px;
 }

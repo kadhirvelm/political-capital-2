@@ -4,7 +4,7 @@
 
 import { getStafferDetails, IActiveStaffer, isGenerator, isRecruit, isTrainer, isVoter } from "@pc2/api";
 import { IResolvedGameModifiers } from "../selectors/gameModifiers";
-import { getEffectivenessNumber } from "./stafferDescriptions";
+import { getEffectivenessNumber } from "./gameModifiers";
 
 export function summaryStaffers(staffers: IActiveStaffer[], gameModifiers: IResolvedGameModifiers) {
     let votingCapacity = 0;
