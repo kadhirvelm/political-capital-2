@@ -35,6 +35,7 @@ import { addGameEventToStaffer, IUserFacingResolveEvents, payPoliticalCapital } 
 import { checkIsError } from "../../utility/alertOnError";
 import { getTrainsIntoDisplayName } from "../../utility/categorizeStaffers";
 import { doesExceedLimit } from "../../utility/doesExceedLimit";
+import { getAcquisitionCostNumber, getAcquisitionTimeNumber } from "../../utility/gameModifiers";
 import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
@@ -118,12 +119,8 @@ export const RecruiterActivation: React.FC<{
                         const stafferCategory = getStafferCategory(staffer);
                         const trainsInto = getTrainsIntoDisplayName(staffer);
 
-                        const finalCost = roundToHundred(
-                            staffer.costToAcquire * resolvedGameModifiers.staffers[staffer.type].costToAcquire,
-                        );
-                        const finalTime = Math.round(
-                            staffer.timeToAcquire * resolvedGameModifiers.staffers[staffer.type].timeToAcquire,
-                        );
+                        const finalCost = getAcquisitionCostNumber(resolvedGameModifiers, staffer.type);
+                        const finalTime = getAcquisitionTimeNumber(resolvedGameModifiers, staffer.type);
 
                         const isDisabled =
                             resolvedGameModifiers.staffers[staffer.type].disableHiring ||
@@ -164,7 +161,7 @@ export const RecruiterActivation: React.FC<{
                                 onClick={isDisabled ? undefined : openConfirmModal(staffer)}
                             >
                                 <div>
-                                    {staffer.displayName} ({finalCost} PC, {finalTime} days)
+                                    {staffer.displayName} ({finalCost.toLocaleString()} PC, {finalTime} days)
                                 </div>
                                 <div className={styles.description}>
                                     {descriptionOfStaffer(resolvedGameModifiers)[staffer.type]}
@@ -197,9 +194,7 @@ export const RecruiterActivation: React.FC<{
             return undefined;
         }
 
-        return roundToHundred(
-            confirmStaffer.costToAcquire * resolvedGameModifiers.staffers[confirmStaffer.type].costToAcquire,
-        );
+        return getAcquisitionCostNumber(resolvedGameModifiers, confirmStaffer.type);
     })();
 
     const maybeRenderJobPostingBody = () => {
@@ -258,15 +253,12 @@ export const RecruiterActivation: React.FC<{
         );
         setIsLoading(false);
 
-        if (newRecruitStaffer === undefined) {
+        if (newRecruitStaffer === undefined || politicalCapitalCost === undefined) {
             return undefined;
         }
 
-        const subtractPoliticalCapital =
-            confirmStaffer.costToAcquire * resolvedGameModifiers.staffers[confirmStaffer.type].costToAcquire;
-
         batch(() => {
-            dispatch(payPoliticalCapital({ cost: subtractPoliticalCapital, playerRid: recruitRequest.playerRid }));
+            dispatch(payPoliticalCapital({ cost: politicalCapitalCost, playerRid: recruitRequest.playerRid }));
 
             dispatch(
                 addGameEventToStaffer({

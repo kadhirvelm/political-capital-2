@@ -2,37 +2,12 @@
  * Copyright (c) 2022 - KM
  */
 
-import { DEFAULT_STAFFER, IAllStaffers, isGenerator, isRecruit, isTrainer, isVoter } from "@pc2/api";
+import { IAllStaffers } from "@pc2/api";
 import { IResolvedGameModifiers } from "../selectors/gameModifiers";
-import { roundToThousand } from "./roundTo";
+import { getEffectivenessNumber } from "./gameModifiers";
 
 type IDescriptionOfStaffer = {
     [key in Exclude<keyof IAllStaffers, "unknown">]: string;
-};
-
-export const getEffectivenessNumber = (
-    gameModifiers: IResolvedGameModifiers,
-    stafferType: Exclude<keyof IAllStaffers, "unknown">,
-): number => {
-    const defaultStaffer = DEFAULT_STAFFER[stafferType];
-
-    if (isVoter(defaultStaffer)) {
-        return Math.floor(defaultStaffer.votes * gameModifiers.staffers[stafferType].effectiveness);
-    }
-
-    if (isGenerator(defaultStaffer)) {
-        return roundToThousand(defaultStaffer.payout * gameModifiers.staffers[stafferType].effectiveness);
-    }
-
-    if (isRecruit(defaultStaffer)) {
-        return Math.floor(defaultStaffer.recruitCapacity * gameModifiers.staffers[stafferType].effectiveness);
-    }
-
-    if (isTrainer(defaultStaffer)) {
-        return Math.floor(defaultStaffer.trainingCapacity * gameModifiers.staffers[stafferType].effectiveness);
-    }
-
-    return 0;
 };
 
 export const descriptionOfStaffer = (gameModifiers: IResolvedGameModifiers): IDescriptionOfStaffer => {

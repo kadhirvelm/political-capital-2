@@ -35,9 +35,10 @@ import { batch } from "react-redux";
 import { getGameModifiers } from "../../selectors/gameModifiers";
 import { getAvailableToTrainStaffer } from "../../selectors/staffers";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
-import { addGameEventToStaffer, IUserFacingResolveEvents } from "../../store/gameState";
+import { addGameEventToStaffer, IUserFacingResolveEvents, payPoliticalCapital } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { doesExceedLimit } from "../../utility/doesExceedLimit";
+import { getAcquisitionCostNumber, getAcquisitionTimeNumber } from "../../utility/gameModifiers";
 import { roundToHundred } from "../../utility/roundTo";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
@@ -135,14 +136,8 @@ export const TrainerActivation: React.FC<{
                             const defaultStaffer = DEFAULT_STAFFER[upgradeStaffer];
                             const newStafferCategory = getStafferCategory(defaultStaffer);
 
-                            const finalCost = roundToHundred(
-                                defaultStaffer.costToAcquire *
-                                    resolvedGameModifiers.staffers[upgradeStaffer].costToAcquire,
-                            );
-                            const finalTime = Math.round(
-                                defaultStaffer.timeToAcquire *
-                                    resolvedGameModifiers.staffers[upgradeStaffer].timeToAcquire,
-                            );
+                            const finalCost = getAcquisitionCostNumber(resolvedGameModifiers, upgradeStaffer);
+                            const finalTime = getAcquisitionTimeNumber(resolvedGameModifiers, upgradeStaffer);
 
                             const isDisabled =
                                 resolvedGameModifiers.staffers[upgradeStaffer].disableTraining ||
@@ -230,10 +225,7 @@ export const TrainerActivation: React.FC<{
             return undefined;
         }
 
-        const toLevelStaffer = DEFAULT_STAFFER[upgradeStafferToLevel.toLevel];
-        return roundToHundred(
-            toLevelStaffer.costToAcquire * resolvedGameModifiers.staffers[toLevelStaffer.type].costToAcquire,
-        );
+        return getAcquisitionCostNumber(resolvedGameModifiers, upgradeStafferToLevel.toLevel);
     })();
 
     const maybeRenderTrainStafferBody = () => {
@@ -301,11 +293,13 @@ export const TrainerActivation: React.FC<{
         );
         setIsLoading(false);
 
-        if (newTrainStaffer === undefined) {
+        if (newTrainStaffer === undefined || politicalCapitalCost === undefined) {
             return;
         }
 
         batch(() => {
+            dispatch(payPoliticalCapital({ cost: politicalCapitalCost, playerRid: trainerRequest.playerRid }));
+
             dispatch(
                 addGameEventToStaffer({
                     activeStafferRid: trainerRequest.trainerRid,

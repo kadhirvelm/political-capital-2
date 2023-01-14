@@ -9,7 +9,7 @@ import { handleUpdatePlayerProcessor } from "./updatePlayer";
 
 function setupPlayerQueueProcessor() {
     ProcessPlayerQueue.process(3, handlePlayerProcessor);
-    UpdatePlayerQueue.process(3, handleUpdatePlayerProcessor);
+    UpdatePlayerQueue.process(1, handleUpdatePlayerProcessor);
 }
 
 export function configureAllQueueProcessors(app: Express) {
