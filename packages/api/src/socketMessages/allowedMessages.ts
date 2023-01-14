@@ -5,31 +5,47 @@
 import { IActiveGameService } from "../services/activeGameService";
 import { IGlobalScreenIdentifier } from "../types/BrandedIDs";
 import { IVisit } from "../types/IVisit";
-import { IPlayer } from "../types/politicalCapitalTwo";
+import { INotification, IPlayer } from "../types/politicalCapitalTwo";
 
 export interface IUpdateGameStateMessage {
     newGameState: IActiveGameService["getGameState"]["response"];
     type: "update-game-state";
 }
 
-interface IAllFromPlayerMessages {
+export interface IReceivedNewNotification {
+    notification: INotification;
+    type: "new-notification";
+}
+
+interface IAllToPlayerMessages {
     updateGameState: IUpdateGameStateMessage;
+    receiveNotification: IReceivedNewNotification;
     unknown: never;
 }
 
-export type IPossibleToPlayerMessages = IUpdateGameStateMessage;
+export type IPossibleToPlayerMessages = IAllToPlayerMessages[keyof IAllToPlayerMessages];
 
 export namespace IToPlayerMessages {
     export const isUpdateGameState = (message: IPossibleToPlayerMessages): message is IUpdateGameStateMessage => {
         return message.type === "update-game-state";
     };
 
+    export const isReceiveNewNotification = (
+        message: IPossibleToPlayerMessages,
+    ): message is IReceivedNewNotification => {
+        return message.type === "new-notification";
+    };
+
     export const visit = <ReturnValue>(
         value: IPossibleToPlayerMessages,
-        visitor: IVisit<IAllFromPlayerMessages, ReturnValue>,
+        visitor: IVisit<IAllToPlayerMessages, ReturnValue>,
     ) => {
         if (isUpdateGameState(value)) {
             return visitor.updateGameState(value);
+        }
+
+        if (isReceiveNewNotification(value)) {
+            return visitor.receiveNotification(value);
         }
 
         return visitor.unknown(value);
@@ -46,13 +62,13 @@ export interface IRegisterGlobalScreen {
     type: "register-global-screen";
 }
 
-interface IAllToPlayerMessages {
+interface IAllFromPlayerMessages {
     registerPlayer: IRegisterPlayer;
     registerGlobalScreen: IRegisterGlobalScreen;
     unknown: never;
 }
 
-export type IPossibleFromPlayerMessages = IAllToPlayerMessages[keyof IAllToPlayerMessages];
+export type IPossibleFromPlayerMessages = IAllFromPlayerMessages[keyof IAllFromPlayerMessages];
 
 export namespace IFromPlayerMessages {
     export const isRegisterPlayer = (message: IPossibleFromPlayerMessages): message is IRegisterPlayer => {
@@ -65,7 +81,7 @@ export namespace IFromPlayerMessages {
 
     export const visit = <ReturnValue>(
         value: IPossibleFromPlayerMessages,
-        visitor: IVisit<IAllToPlayerMessages, ReturnValue>,
+        visitor: IVisit<IAllFromPlayerMessages, ReturnValue>,
     ) => {
         if (isRegisterPlayer(value)) {
             return visitor.registerPlayer(value);

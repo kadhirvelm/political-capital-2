@@ -7,6 +7,7 @@ import { IPossibleStaffer } from "./generatedStaffers";
 import { IPossibleEvent } from "./IEvent";
 import { IBasicResolution } from "./IResolution";
 import { IGameModifier } from "./IGameModifier";
+import { IPossibleNotification } from "./INotification";
 
 export interface IPlayer {
     playerRid: IPlayerRid;
@@ -80,4 +81,12 @@ export interface IHistoricalGameState {
     gameStateRid: IGameStateRid;
     gameClock: IGameClock;
     snapshot: Array<{ playerRid: IPlayerRid; politicalCapital: number }>;
+}
+
+export interface INotification {
+    gameStateRid: IGameStateRid;
+    notificationDetails: IPossibleNotification;
+    toPlayerRid: IPlayerRid;
+    createdOn: IGameClock;
+    status: "unread" | "read";
 }

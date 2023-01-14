@@ -6,6 +6,7 @@ import {
     IActiveResolutionVote,
     IActiveStafferRid,
     IFullGameState,
+    INotification,
     IPartialResolveGameEvent,
     IPlayerRid,
     IPossibleEvent,
@@ -36,11 +37,13 @@ export interface IUserFacingIndexedResolveEvents {
 export interface ILocalGameState {
     fullGameState: IFullGameState | undefined;
     resolveEvents: IUserFacingIndexedResolveEvents | undefined;
+    notifications: INotification[];
 }
 
 const initialState: ILocalGameState = {
     fullGameState: undefined,
     resolveEvents: undefined,
+    notifications: [],
 };
 
 const gameState = createSlice({
@@ -52,6 +55,9 @@ const gameState = createSlice({
                 updateGameState: ({ newGameState }) => {
                     state.fullGameState = newGameState;
                     state.resolveEvents = newGameState.resolveEvents;
+                },
+                receiveNotification: ({ notification }) => {
+                    state.notifications.push(notification);
                 },
                 unknown: () => {},
             });
