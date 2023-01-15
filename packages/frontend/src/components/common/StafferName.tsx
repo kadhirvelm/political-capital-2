@@ -30,16 +30,44 @@ const avatar = (avatarSet: IAvatarSet) => {
     return 5;
 };
 
-export const PlayerName: React.FC<{ player: IPlayer; activePlayer: IActivePlayer }> = ({ player, activePlayer }) => {
+export const PlayerName: React.FC<{ player: IPlayer; activePlayer: IActivePlayer; sizeOverride?: "lg" }> = ({
+    player,
+    activePlayer,
+    sizeOverride,
+}) => {
     const avatarSet = avatar(activePlayer.avatarSet);
 
     return (
         <Avatar
             className={styles.avatar}
-            size="xl"
+            size={sizeOverride ?? "xl"}
             name={player.name}
             showBorder
             src={`https://robohash.org/${player.name}?set=set${avatarSet}`}
+        />
+    );
+};
+
+export const PCAvatar: React.FC<{ sizeOverride?: "lg" }> = ({ sizeOverride }) => {
+    return (
+        <Avatar
+            className={styles.avatar}
+            size={sizeOverride ?? "xl"}
+            name="Political Capital 2"
+            showBorder
+            src={`https://api.dicebear.com/5.x/fun-emoji/svg?seed=Political Capital 2`}
+        />
+    );
+};
+
+export const AnonymousAvatar: React.FC<{ sizeOverride?: "lg" }> = ({ sizeOverride }) => {
+    return (
+        <Avatar
+            className={styles.avatar}
+            size={sizeOverride ?? "xl"}
+            name="Anonymous"
+            showBorder
+            src={`https://api.dicebear.com/5.x/identicon/svg?seed=Anonymous`}
         />
     );
 };

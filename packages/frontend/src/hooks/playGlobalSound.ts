@@ -2,12 +2,14 @@
  * Copyright (c) 2023 - KM
  */
 
-import { IEvent } from "@pc2/api";
+import { IEvent, IGameState } from "@pc2/api";
 import * as React from "react";
 import { usePoliticalCapitalSelector } from "../store/createStore";
 
 export function usePlayGlobalSound() {
     const activeGame = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
+
+    const [currentGameState, setCurrentGameState] = React.useState<IGameState["state"] | undefined>(undefined);
 
     const playNewResolution = () => {
         const audio = new Audio(`http://${window.location.hostname}:3002/new-resolution.mp3`);
@@ -16,6 +18,11 @@ export function usePlayGlobalSound() {
 
     const playTallyResolution = () => {
         const audio = new Audio(`http://${window.location.hostname}:3002/tally-resolution.mp3`);
+        audio.play();
+    };
+
+    const playGameStateSound = (gameState: IGameState["state"]) => {
+        const audio = new Audio(`http://${window.location.hostname}:3002/${gameState}.mp3`);
         audio.play();
     };
 
@@ -42,4 +49,13 @@ export function usePlayGlobalSound() {
         const audio = new Audio("http://localhost:3002/notification.mp3");
         audio.play();
     }, [activeGame?.gameState.gameClock]);
+
+    React.useEffect(() => {
+        if (activeGame?.gameState.state === undefined || currentGameState === activeGame.gameState.state) {
+            return;
+        }
+
+        playGameStateSound(activeGame?.gameState.state);
+        setCurrentGameState(activeGame?.gameState.state);
+    }, [activeGame?.gameState.state]);
 }

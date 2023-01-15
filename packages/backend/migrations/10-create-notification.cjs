@@ -3,11 +3,10 @@
 module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable("Notification", {
-            notificationId: {
+            notificationRid: {
                 allowNull: false,
-                autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER,
+                type: Sequelize.STRING,
             },
             gameStateRid: {
                 type: Sequelize.STRING,

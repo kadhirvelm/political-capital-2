@@ -73,11 +73,11 @@ export const getGameModifiers = createSelector(
     ): IResolvedGameModifiersForEachStaffer => {
         const resolvedGameModifiers: IResolvedGameModifiersForEachStaffer = {} as IResolvedGameModifiersForEachStaffer;
 
-        if (playerRid === undefined || activePlayerStaffers === undefined || passedGameModifiers === undefined) {
+        if (activePlayerStaffers === undefined || passedGameModifiers === undefined) {
             return resolvedGameModifiers;
         }
 
-        const playerParty = activePlayerStaffers[playerRid] ?? [];
+        const playerParty = playerRid === undefined ? [] : activePlayerStaffers[playerRid] ?? [];
 
         Object.values(DEFAULT_STAFFER).forEach((staffer) => {
             resolvedGameModifiers[staffer.type] = {

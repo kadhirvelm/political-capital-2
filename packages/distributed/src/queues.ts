@@ -18,6 +18,6 @@ export const ProcessPlayerQueue = new queue<IProcessPlayerQueue>("process-player
 
 export interface IUpdatePlayerQueue {
     gameStateRid: IGameStateRid;
-    playerRid: IPlayerRid;
+    gameClock: IGameClock;
 }
 export const UpdatePlayerQueue = new queue<IUpdatePlayerQueue>("update-player-queue", connection);

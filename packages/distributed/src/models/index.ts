@@ -5,6 +5,7 @@ import { ActiveResolutionVote } from "./ActiveResolutionVote";
 import { ActiveStaffer } from "./ActiveStaffer";
 import { GameState } from "./GameState";
 import { HistoricalGameState } from "./HistoricalGameState";
+import { Notification } from "./Notification";
 import { PassedGameModifier } from "./PassedGameModifier";
 import { Player } from "./Player";
 import { ResolveGameEvent } from "./ResolveGameEvent";
@@ -15,6 +16,7 @@ export { ActiveResolutionVote } from "./ActiveResolutionVote";
 export { ActiveStaffer } from "./ActiveStaffer";
 export { GameState } from "./GameState";
 export { HistoricalGameState } from "./HistoricalGameState";
+export { Notification } from "./Notification";
 export { PassedGameModifier } from "./PassedGameModifier";
 export { Player } from "./Player";
 export { ResolveGameEvent } from "./ResolveGameEvent";
@@ -34,6 +36,7 @@ export function initializeModels() {
             ActiveStaffer,
             GameState,
             HistoricalGameState,
+            Notification,
             PassedGameModifier,
             Player,
             ResolveGameEvent,

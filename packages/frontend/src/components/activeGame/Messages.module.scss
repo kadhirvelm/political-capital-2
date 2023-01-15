@@ -1,0 +1,124 @@
+/**
+ * Copyright (c) 2023 - KM
+ */
+
+@import "../../styles/variables";
+
+.playerSelectorContainer {
+    display: flex;
+    overflow-x: auto;
+
+    > :not(:last-child) {
+        margin-right: 10px;
+    }
+}
+
+.singlePlayer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid $gray;
+
+    &.selected {
+        border: 2px solid $blue;
+    }
+}
+
+.playerName {
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+.messagesContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.availableTemplates {
+    color: $gray;
+    margin-bottom: 10px;
+}
+
+.messageTemplates {
+    display: flex;
+    flex-direction: column;
+
+    > :not(:last-child) {
+        margin-bottom: 10px;
+    }
+}
+
+.singleMessage {
+    display: flex;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid $gray;
+
+    &.selected {
+        border: 2px solid $blue;
+    }
+}
+
+.cancelButton {
+    margin-right: 10px;
+}
+
+.viewMessagesContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.sendNewMessage {
+    display: flex;
+    padding-bottom: 20px;
+}
+
+.messageCategory {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.messageCategoryTitle {
+    color: $gray;
+    margin-bottom: 10px;
+}
+
+.messageCategoryContainer {
+    display: flex;
+    flex-direction: column;
+
+    > :not(:last-child) {
+        margin-bottom: 10px;
+    }
+}
+
+.singleMessage {
+    display: flex;
+    border-radius: 5px;
+    background: white;
+    border: 1px solid $gray;
+    padding: 5px 10px;
+    align-items: center;
+}
+
+.messageDetails {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.nameAndMessage {
+    display: flex;
+
+    > :first-child {
+        margin-right: 3px;
+    }
+}
+
+.description {
+    color: $gray;
+}

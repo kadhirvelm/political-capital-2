@@ -7,8 +7,9 @@ export * from "./common/generics";
 export * from "./constants/game";
 export * from "./constants/initializePlayers";
 
-export * from "./services/playerService";
 export * from "./services/activeGameService";
+export * from "./services/notificationService";
+export * from "./services/playerService";
 export * from "./services/politicalCapitalTwoService";
 
 export * from "./socketMessages/allowedMessages";

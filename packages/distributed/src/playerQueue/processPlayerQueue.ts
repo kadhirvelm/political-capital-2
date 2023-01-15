@@ -283,6 +283,6 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
     activePlayer.lastUpdatedGameClock = gameClock;
     await activePlayer.save();
 
-    UpdatePlayerQueue.add({ gameStateRid: job.data.gameStateRid, playerRid: job.data.playerRid });
+    UpdatePlayerQueue.add({ gameStateRid: job.data.gameStateRid, gameClock });
     done();
 }

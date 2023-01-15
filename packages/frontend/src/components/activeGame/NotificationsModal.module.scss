@@ -1,0 +1,39 @@
+/**
+ * Copyright (c) 2023 - KM
+ */
+
+@import "../../styles/variables";
+
+.messageContainer {
+    display: flex;
+    align-items: center;
+}
+
+.avatarContainer {
+    display: flex;
+    margin-right: 10px;
+}
+
+.messageDetailsContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.nameAndMessage {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+
+    > :first-child {
+        margin-right: 3px;
+    }
+}
+
+.date {
+    color: $gray;
+}
+
+.totalNotifications {
+    color: $gray;
+    margin-right: 10px;
+}

@@ -2,7 +2,12 @@
  * Copyright (c) 2022 - KM
  */
 
-import { ActiveGameBackend, PlayerServiceBackend, PoliticalCapitalTwoServiceBackend } from "@pc2/api";
+import {
+    ActiveGameBackend,
+    NotificationServiceBackend,
+    PlayerServiceBackend,
+    PoliticalCapitalTwoServiceBackend,
+} from "@pc2/api";
 import Express from "express";
 import {
     changeActiveGameState,
@@ -13,6 +18,7 @@ import {
     getActiveGameState,
     getHistoricalGame,
 } from "../services/gameService";
+import { createNewNotification, getAllNotifications, markNotificationAsRead } from "../services/notificationService";
 import { getPlayer, registerNewPlayer, updatePlayer } from "../services/playerService";
 import { recruitStaffer, trainStaffer, castVote } from "../services/politicalCapitalTwoService";
 import { configureFrontendRoutes } from "./configureFrontendRoutes";
@@ -36,6 +42,12 @@ export function configureAllRoutes(app: Express.Express) {
         getGameState,
         getActiveGameState,
         getHistoricalGame,
+    });
+
+    NotificationServiceBackend(app, {
+        createNewNotification,
+        getAllNotifications,
+        markNotificationAsRead,
     });
 
     PoliticalCapitalTwoServiceBackend(app, {

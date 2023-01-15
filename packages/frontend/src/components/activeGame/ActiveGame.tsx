@@ -6,18 +6,29 @@ import { HamburgerIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, MenuDivider, MenuItem, MenuList } from "@chakra-ui/react";
 import { ActiveGameFrontend, IGameState } from "@pc2/api";
 import * as React from "react";
+import { useLoadPlayerNotifications } from "../../hooks/loadPlayerNotification";
 import { getUnusedCapacity } from "../../selectors/staffers";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
 import styles from "./ActiveGame.module.scss";
 import { ActiveResolution } from "./ActiveResolution";
 import { AllGameModifiers } from "./AllGameModifiers";
 import { Leaderboard } from "./Leaderboard";
+import { Messages } from "./Messages";
+import { NotificationsModal } from "./NotificationsModal";
 import { PlayerParty } from "./PlayerParty";
 import { StafferLadders } from "./StafferLadders";
 
-type ICurrentView = "active-resolution" | "your-party" | "leaderboard" | "game-modifiers" | "staffers-ladders";
+type ICurrentView =
+    | "active-resolution"
+    | "your-party"
+    | "leaderboard"
+    | "game-modifiers"
+    | "messages"
+    | "staffers-ladders";
 
 export const ActiveGame: React.FC<{}> = () => {
+    useLoadPlayerNotifications();
+
     const [currentView, setCurrentView] = React.useState<ICurrentView>("active-resolution");
 
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
@@ -64,6 +75,10 @@ export const ActiveGame: React.FC<{}> = () => {
             return "Game modifiers";
         }
 
+        if (currentView === "messages") {
+            return "Your messages";
+        }
+
         if (currentView === "staffers-ladders") {
             return "Staffer ladders";
         }
@@ -84,6 +99,10 @@ export const ActiveGame: React.FC<{}> = () => {
 
         if (currentView === "game-modifiers") {
             return <AllGameModifiers />;
+        }
+
+        if (currentView === "messages") {
+            return <Messages />;
         }
 
         if (currentView === "staffers-ladders") {
@@ -114,6 +133,7 @@ export const ActiveGame: React.FC<{}> = () => {
                         <MenuItem onClick={changeCurrentView("your-party")}>Your party</MenuItem>
                         <MenuItem onClick={changeCurrentView("leaderboard")}>Leaderboard</MenuItem>
                         <MenuItem onClick={changeCurrentView("game-modifiers")}>Game modifiers</MenuItem>
+                        <MenuItem onClick={changeCurrentView("messages")}>Your messages</MenuItem>
                         <MenuDivider />
                         <MenuItem onClick={changeCurrentView("staffers-ladders")}>Staffer ladders</MenuItem>
                         <MenuDivider />
@@ -127,7 +147,7 @@ export const ActiveGame: React.FC<{}> = () => {
                         {notification.voting > 0 && <div className={styles.hasActions} />}
                     </div>
                     <div className={styles.support} onClick={changeCurrentView("your-party")}>
-                        <div>Support</div>
+                        <div>Party</div>
                         <div className={styles.number}>{notification.hiring + notification.training}</div>
                         {notification.hiring + notification.training > 0 && <div className={styles.hasActions} />}
                     </div>
@@ -135,6 +155,7 @@ export const ActiveGame: React.FC<{}> = () => {
             </div>
             <div className={styles.title}>{renderCurrentViewTitle()}</div>
             {renderCurrentView()}
+            <NotificationsModal />
         </div>
     );
 };

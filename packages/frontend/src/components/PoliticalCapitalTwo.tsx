@@ -3,16 +3,19 @@
  */
 
 import * as React from "react";
+import { useHandlePlayerAndSocketRegistration } from "../hooks/handlePlayerRegistration";
 import { usePoliticalCapitalSelector } from "../store/createStore";
 import { ActiveGame } from "./activeGame/ActiveGame";
 import { ServerStatus } from "./common/ServerStatus";
 import { Lobby } from "./lobby/Lobby";
-import { RegisterPlayerModal } from "./registerPlayer/RegisterPlayerModal";
 import styles from "./PoliticalCapitalTwo.module.scss";
+import { RegisterPlayerModal } from "./registerPlayer/RegisterPlayerModal";
 
 type IRenderGameState = "loading" | "lobby" | "game";
 
 export const PoliticalCapitalTwo: React.FC<{}> = () => {
+    useHandlePlayerAndSocketRegistration();
+
     const isConnectedToServer = usePoliticalCapitalSelector((s) => s.playerState.isConnectedToServer);
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
     const activeGame = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);

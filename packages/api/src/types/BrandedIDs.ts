@@ -13,3 +13,5 @@ export type IGameClock = number & { _brand: "game-clock-count" };
 export type IActiveResolutionRid = string & { _brand: "activeResolutionRid" };
 
 export type IActiveStafferRid = string & { _brand: "activeStafferRid" };
+
+export type INotificationRid = string & { _brand: "notificationRid" };

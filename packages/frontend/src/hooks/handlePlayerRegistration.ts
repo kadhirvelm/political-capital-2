@@ -30,11 +30,11 @@ export function useHandlePlayerAndSocketRegistration() {
 
     const toast = useToast();
 
-    const webSocket = React.useRef<WebSocket | undefined>(undefined);
-
     const dispatch = usePoliticalCapitalDispatch();
 
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
+
+    const webSocket = React.useRef<WebSocket | undefined>(undefined);
 
     const maybeGetExistingPlayer = async () => {
         const maybePlayer = checkIsError(await PlayerServiceFrontend.getPlayer({ browserIdentifier }), toast);

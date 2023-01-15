@@ -15,12 +15,11 @@ export function configureFrontendRoutes(app: Express.Express) {
             res.sendFile(join(process.cwd(), "packages/frontend/build/index.html"));
         });
     } else {
-        app.get("/new-resolution.mp3", (_, res) => {
-            res.sendFile(join(process.cwd(), "static/new-resolution.mp3"));
-        });
-
-        app.get("/tally-resolution.mp3", (_, res) => {
-            res.sendFile(join(process.cwd(), "static/tally-resolution.mp3"));
+        const sounds = ["active.mp3", "complete.mp3", "new-resolution.mp3", "paused.mp3", "tally-resolution.mp3"];
+        sounds.forEach((sound) => {
+            app.get(`/${sound}`, (_, res) => {
+                res.sendFile(join(process.cwd(), `static/${sound}`));
+            });
         });
 
         app.use(Express.static(join(process.cwd(), "../frontend/build"), { extensions: ["html"] }));

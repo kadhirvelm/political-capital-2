@@ -38,12 +38,14 @@ export interface ILocalGameState {
     fullGameState: IFullGameState | undefined;
     resolveEvents: IUserFacingIndexedResolveEvents | undefined;
     notifications: INotification[];
+    viewingNotifications: INotification[];
 }
 
 const initialState: ILocalGameState = {
     fullGameState: undefined,
     resolveEvents: undefined,
     notifications: [],
+    viewingNotifications: [],
 };
 
 const gameState = createSlice({
@@ -61,6 +63,20 @@ const gameState = createSlice({
                 },
                 unknown: () => {},
             });
+        },
+        setNotifications: (state, action: PayloadAction<INotification[]>) => {
+            state.notifications = action.payload;
+        },
+        setViewingNotifications: (state, action: PayloadAction<INotification[]>) => {
+            state.viewingNotifications = action.payload;
+        },
+        markNotificationAsRead: (state, action: PayloadAction<INotification>) => {
+            const index = state.notifications.findIndex((n) => n.notificationRid === action.payload.notificationRid);
+            state.notifications.splice(index, 1, action.payload);
+
+            state.viewingNotifications = state.viewingNotifications.filter(
+                (n) => n.notificationRid !== action.payload.notificationRid,
+            );
         },
         addGameEventToStaffer: (
             state,
@@ -113,6 +129,14 @@ const gameState = createSlice({
     },
 });
 
-export const { handleGameMessage, addVotes, addGameEventToStaffer, payPoliticalCapital, setGameState } =
-    gameState.actions;
+export const {
+    handleGameMessage,
+    setNotifications,
+    setViewingNotifications,
+    markNotificationAsRead,
+    addVotes,
+    addGameEventToStaffer,
+    payPoliticalCapital,
+    setGameState,
+} = gameState.actions;
 export const LocalGameStateReducer = gameState.reducer;

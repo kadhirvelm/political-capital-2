@@ -222,7 +222,7 @@ export const RecruiterActivation: React.FC<{
                         {renderSingleCategory("shadowGovernment")}
                     </div>
                     <div>
-                        <div className={styles.categoryTitle}>Hiring - {hiring}</div>
+                        <div className={styles.categoryTitle}>No category</div>
                         {renderSingleCategory(undefined)}
                     </div>
                 </div>

@@ -12,11 +12,10 @@ import { Column, Model, Table } from "sequelize-typescript";
 })
 export class Notification extends Model<INotification> {
     @Column({
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.STRING,
         primaryKey: true,
     })
-    declare notificationId?: number | null;
+    declare notificationRid: INotification["notificationRid"];
 
     @Column({
         type: DataTypes.STRING,

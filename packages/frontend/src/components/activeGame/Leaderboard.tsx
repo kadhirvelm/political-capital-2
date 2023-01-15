@@ -12,6 +12,7 @@ import styles from "./Leaderboard.module.scss";
 import { getLeaderboard } from "../../selectors/leaderboard";
 import { PartySummary } from "./PartySummary";
 import { roundToHundred } from "../../utility/roundTo";
+import { PlayerName } from "../common/StafferName";
 
 export const Leaderboard: React.FC<{}> = () => {
     const [viewingPlayerRid, setViewingPlayerRid] = React.useState<IPlayerRid | undefined>(undefined);
@@ -46,9 +47,10 @@ export const Leaderboard: React.FC<{}> = () => {
 
     const hasPoliticalSpy =
         playerPoliticalParty.find((p) => p.stafferDetails.type === "politicalSpy")?.state === "active";
+    const canViewPartyDetails = hasPoliticalSpy || fullGameState.gameState.state === "complete";
 
     const maybeRenderExploreParty = () => {
-        if (fullGameState.gameState.state === "complete") {
+        if (fullGameState.gameState.state !== "complete") {
             return undefined;
         }
 
@@ -83,22 +85,35 @@ export const Leaderboard: React.FC<{}> = () => {
                     {leaderboard.map((leaderboardPlayer, index) => (
                         <div className={styles.singleRow} key={leaderboardPlayer.player.playerRid}>
                             <div className={styles.details}>
-                                <div className={styles.name}>
-                                    {index + 1}. {leaderboardPlayer.player.name}
-                                    {leaderboardPlayer.player.playerRid === player.playerRid ? (
-                                        <div>(you)</div>
-                                    ) : undefined}
-                                </div>
-                                {hasPoliticalSpy && (
+                                <div className={styles.playerDetailsContainer}>
                                     <div>
-                                        {roundToHundred(
-                                            leaderboardPlayer.activePlayer.politicalCapital,
-                                        ).toLocaleString()}{" "}
-                                        political capital
+                                        <PlayerName
+                                            player={leaderboardPlayer.player}
+                                            activePlayer={leaderboardPlayer.activePlayer}
+                                        />
                                     </div>
-                                )}
+                                    <div className={styles.playerDetails}>
+                                        <div className={styles.playerName}>
+                                            <div>{index + 1}.</div>
+                                            <div>{leaderboardPlayer.player.name}</div>
+                                            {leaderboardPlayer.player.playerRid === player.playerRid ? (
+                                                <div>(you)</div>
+                                            ) : undefined}
+                                        </div>
+                                        {canViewPartyDetails && (
+                                            <div className={styles.politicalCapitalContainer}>
+                                                <div className={styles.politicalCapital}>Political capital</div>
+                                                {roundToHundred(
+                                                    leaderboardPlayer.activePlayer.politicalCapital,
+                                                ).toLocaleString()}
+                                            </div>
+                                        )}
+                                        {canViewPartyDetails && (
+                                            <PartySummary playerRid={leaderboardPlayer.player.playerRid} />
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                            {hasPoliticalSpy && <PartySummary playerRid={leaderboardPlayer.player.playerRid} />}
                         </div>
                     ))}
                 </div>

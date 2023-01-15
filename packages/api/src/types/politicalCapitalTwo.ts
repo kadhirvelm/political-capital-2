@@ -2,7 +2,14 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IActiveResolutionRid, IActiveStafferRid, IGameClock, IGameStateRid, IPlayerRid } from "./BrandedIDs";
+import {
+    IActiveResolutionRid,
+    IActiveStafferRid,
+    IGameClock,
+    IGameStateRid,
+    INotificationRid,
+    IPlayerRid,
+} from "./BrandedIDs";
 import { IPossibleStaffer } from "./generatedStaffers";
 import { IPossibleEvent } from "./IEvent";
 import { IBasicResolution } from "./IResolution";
@@ -84,6 +91,7 @@ export interface IHistoricalGameState {
 }
 
 export interface INotification {
+    notificationRid: INotificationRid;
     gameStateRid: IGameStateRid;
     notificationDetails: IPossibleNotification;
     toPlayerRid: IPlayerRid;

@@ -89,12 +89,12 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
                 <div className={styles.singleVoteCategory}>
                     <div className={styles.yes}>Yes</div>
                     <div className={styles.divider} />
-                    <div>{roundToThousand(totalYes / (totalYes + totalNo))}%</div>
+                    <div>{roundToThousand((totalYes / (totalYes + totalNo)) * 100)}%</div>
                 </div>
                 <div className={styles.singleVoteCategory}>
                     <div className={styles.no}>No</div>
                     <div className={styles.divider} />
-                    <div>{roundToThousand(totalNo / (totalYes + totalNo))}%</div>
+                    <div>{roundToThousand((totalNo / (totalYes + totalNo)) * 100)}%</div>
                 </div>
                 {resolution.state === "active" && (
                     <div className={styles.onTrackTo}>

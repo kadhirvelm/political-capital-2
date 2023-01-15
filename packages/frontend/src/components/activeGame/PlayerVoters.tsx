@@ -66,6 +66,14 @@ export const PlayerVoters: React.FC<{
         setCastVotes(newCastVotesDefaultState);
     }, [voters]);
 
+    React.useEffect(() => {
+        if (activeResolutionRid !== undefined) {
+            return;
+        }
+
+        setCastVotes({});
+    }, [activeResolutionRid]);
+
     const renderIndependentVotes = (totalVotes: number) => {
         return (
             <div className={styles.independentVoter}>
@@ -99,14 +107,6 @@ export const PlayerVoters: React.FC<{
                 >
                     {totalVotes} Yes
                 </div>
-                {/* <div
-                    className={classNames(styles.vote, { [styles.abstain]: stafferVote === "abstain" })}
-                    onClick={
-                        maybeExistingVote === undefined ? onSwitchVote(voter.activeStafferRid, "abstain") : undefined
-                    }
-                >
-                    Abstain
-                </div> */}
                 <div
                     className={classNames(styles.vote, { [styles.noVote]: stafferVote === "failed" })}
                     onClick={
@@ -151,14 +151,12 @@ export const PlayerVoters: React.FC<{
         }
 
         const totalYes = votesCastByPlayerVoters.filter((vote) => vote.vote === "passed").length;
-        // const totalAbstain = votesCastByPlayerVoters.filter((vote) => vote.vote === "abstain").length;
         const totalNo = votesCastByPlayerVoters.filter((vote) => vote.vote === "failed").length;
 
         return (
             <div className={styles.alreadyCastVotes}>
                 <div>{"("}</div>
                 <div>{totalYes} Yes,</div>
-                {/* <div>{totalAbstain} Abstain,</div> */}
                 <div>{totalNo} No</div>
                 <div>{")"}</div>
             </div>

@@ -12,6 +12,7 @@ import { getStaffersOfCategory } from "../../utility/categorizeStaffers";
 import { summaryStaffers } from "../../utility/partySummarizer";
 import { roundToHundred, roundToThousand } from "../../utility/roundTo";
 import { StafferCard } from "../common/StafferCard";
+import { PlayerName } from "../common/StafferName";
 import { ActivateStaffer } from "./ActivateStaffer";
 import { PartySummary } from "./PartySummary";
 import styles from "./PlayerParty.module.scss";
@@ -30,6 +31,7 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
         return null;
     }
 
+    const playerDetails = fullGameState.players[playerRid];
     const activePlayer = fullGameState.activePlayers[playerRid];
     const playerStaffers = fullGameState.activePlayersStaffers[playerRid];
 
@@ -129,12 +131,16 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
 
     return (
         <div className={styles.overallContainer}>
-            <div className={styles.resourcesContainer}>
-                <div className={styles.singleResource}>
-                    <div>Political capital</div>
-                    <div>{roundToHundred(activePlayer.politicalCapital).toLocaleString()}</div>
+            <div className={styles.withPlayerName}>
+                <PlayerName player={playerDetails} activePlayer={activePlayer} />
+                <div className={styles.resourcesContainer}>
+                    <div className={styles.name}>{playerDetails.name}</div>
+                    <div className={styles.singleResource}>
+                        <div>Political capital</div>
+                        <div>{roundToHundred(activePlayer.politicalCapital).toLocaleString()}</div>
+                    </div>
+                    <PartySummary playerRid={playerRid} />
                 </div>
-                <PartySummary playerRid={playerRid} />
             </div>
             {renderBody()}
         </div>

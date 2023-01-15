@@ -15,12 +15,14 @@
     display: flex;
     flex-direction: column;
     border: 1px solid $gray;
-    border-radius: 3px;
+    border-radius: 5px;
 }
 
 .leaderboardTable {
     display: flex;
     flex-direction: column;
+    background: white;
+    border-radius: 5px;
 
     > :nth-child(even) {
         background: rgba($gray, 0.1);
@@ -34,8 +36,35 @@
     gap: 10px;
 }
 
-.name {
+.playerDetailsContainer {
     display: flex;
+    align-items: center;
+}
+
+.playerDetails {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.playerName {
+    display: flex;
+    align-content: center;
+    font-size: 18px;
+
+    > :not(:last-child) {
+        margin-right: 5px;
+    }
+}
+
+.politicalCapitalContainer {
+    display: flex;
+    align-items: center;
+}
+
+.politicalCapital {
+    color: $gray;
+    margin-right: 10px;
 }
 
 .details {

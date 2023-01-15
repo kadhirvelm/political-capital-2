@@ -16,16 +16,15 @@ import {
 } from "@chakra-ui/react";
 import { PlayerServiceFrontend } from "@pc2/api";
 import * as React from "react";
-import { getOrCreateBrowserRid, useHandlePlayerAndSocketRegistration } from "../../hooks/handlePlayerRegistration";
+import { getOrCreateBrowserRid } from "../../hooks/handlePlayerRegistration";
 import { usePoliticalCapitalDispatch, usePoliticalCapitalSelector } from "../../store/createStore";
 import { setPlayer } from "../../store/playerState";
 import { checkIsError } from "../../utility/alertOnError";
 
 export const RegisterPlayerModal: React.FC<{}> = ({}) => {
     const toast = useToast();
-    useHandlePlayerAndSocketRegistration();
-
     const dispatch = usePoliticalCapitalDispatch();
+
     const isConnectedToServer = usePoliticalCapitalSelector((s) => s.playerState.isConnectedToServer);
     const player = usePoliticalCapitalSelector((s) => s.playerState.player);
 

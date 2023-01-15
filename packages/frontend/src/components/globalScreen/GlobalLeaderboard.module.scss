@@ -8,13 +8,15 @@
     display: flex;
     flex-direction: column;
     border: 1px solid $gray;
-    border-radius: 3px;
+    border-radius: 5px;
     font-size: 1.5vw;
 }
 
 .leaderboardTable {
     display: flex;
     flex-direction: column;
+    border-radius: 5px;
+    background: white;
 
     > :nth-child(even) {
         background: rgba($gray, 0.1);
@@ -23,28 +25,38 @@
 
 .singleRow {
     display: flex;
-    flex-direction: column;
-    padding: 10px;
-
-    &.first {
-        background: rgba($yellow, 0.75);
-    }
-
-    &.second {
-        background: rgba($gray, 0.4);
-    }
-
-    &.third {
-        background: rgba($brown, 0.4);
-    }
+    align-items: center;
+    padding: 1.5vh 1vw;
 }
 
-.details {
+.playerIcon {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin-right: 1vw;
+}
+
+.playerDetailsContainer {
+    display: flex;
+    flex-direction: column;
 }
 
 .name {
     display: flex;
+    font-size: 2vw;
+
+    > :not(:last-child) {
+        margin-right: 1vw;
+    }
+}
+
+.politicalCapitalContainer {
+    display: flex;
+
+    > :first-child {
+        margin-right: 1vw;
+    }
+}
+
+.politicalCapital {
+    color: $gray;
+    margin-right: 10px;
 }
