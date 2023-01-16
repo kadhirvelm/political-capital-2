@@ -5,14 +5,8 @@
 import { TOTAL_DAYS_IN_GAME } from "../constants/game";
 import { IGameClock } from "../types/BrandedIDs";
 import { IActiveStaffer, IPassedGameModifier } from "../types/politicalCapitalTwo";
-import {
-    getStafferAcquisitionCost,
-    getStafferAcquisitionTime,
-    getStafferDetails,
-    getTotalPayout,
-    IActiveOrPossibleStaffer,
-    isGenerator,
-} from "../utils/staffer";
+import { getStafferDetails, getTotalPayout, IActiveOrPossibleStaffer, isGenerator } from "../utils/staffer";
+import { getTotalCostForStaffer, getTotalTimeCost } from "./costs";
 
 export function getPotentialPayoutForStaffer(
     staffer: IActiveOrPossibleStaffer,
@@ -25,8 +19,8 @@ export function getPotentialPayoutForStaffer(
         return 0;
     }
 
-    const costToAcquire = getStafferAcquisitionCost(staffer, passedGameModifiers, activePlayerStaffers);
-    const timeToAcquire = getStafferAcquisitionTime(staffer, passedGameModifiers, activePlayerStaffers);
+    const costToAcquire = getTotalCostForStaffer(staffer, passedGameModifiers, activePlayerStaffers);
+    const timeToAcquire = getTotalTimeCost(staffer, passedGameModifiers, activePlayerStaffers);
     const totalPayoutPerDay = getTotalPayout(
         { ...stafferDetails, state: "active" } as IActiveOrPossibleStaffer,
         passedGameModifiers,
