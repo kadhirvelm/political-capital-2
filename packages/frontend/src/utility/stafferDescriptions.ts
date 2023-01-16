@@ -41,7 +41,9 @@ export const descriptionOfStaffer = (gameModifiers: IResolvedGameModifiersForEac
         veteranInitiate: `An adept member of the shadow government, ready to take on greater responsibility`,
         lobbyist: `Get paid ${getPercent(
             LOBBYIST_MODIFIER.payoutPerPlayer ?? 0,
-        )} more political capital from resolutions.`,
+        )} more political capital from resolutions. Earn ${getPercent(
+            LOBBYIST_MODIFIER.earlyVotingBonus ?? 0,
+        )} more from early voting bonuses.`,
         politicalSpy: `Allows viewing of enemy political parties and political capital`,
         informant: `Allows viewing the cast votes ahead of tallying`,
     };

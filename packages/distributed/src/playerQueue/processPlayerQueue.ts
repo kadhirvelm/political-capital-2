@@ -5,6 +5,8 @@
 import {
     DEFAULT_STAFFER,
     getEarlyVoteBonus,
+    getEarlyVotingBonusModifier,
+    getPayoutPerPlayerModifier,
     getStafferAcquisitionCost,
     getStafferAcquisitionTime,
     getTotalAllowedVotes,
@@ -45,6 +47,7 @@ async function getPayoutForPlayer(
     activePlayerStaffers: ActiveStaffer[],
     playerRid: IPlayerRid,
     gameClock: IGameClock,
+    passedGameModifiers: IPassedGameModifier[],
 ): Promise<number> {
     const [activeResolution, allVotesForResolution] = await Promise.all([
         ActiveResolution.findOne({ where: { gameStateRid, activeResolutionRid: eventDetails.activeResolutionRid } }),
@@ -67,9 +70,10 @@ async function getPayoutForPlayer(
         thisPlayersStaffers.includes(vote.activeStafferRid),
     );
 
+    const modifier = getPayoutPerPlayerModifier(passedGameModifiers, activePlayerStaffers);
     const thisPlayerCorrectVotesPercentage = thisPlayersCorrectVotes.length / Math.max(allCorrectVotes.length, 1);
     const totalEarnedPoliticalCapital =
-        activeResolution.resolutionDetails.politicalCapitalPayout * thisPlayerCorrectVotesPercentage;
+        activeResolution.resolutionDetails.politicalCapitalPayout * thisPlayerCorrectVotesPercentage * modifier;
 
     SendNotificationToPlayerQueue.add({
         gameStateRid,
@@ -79,7 +83,9 @@ async function getPayoutForPlayer(
             message: `You earned ${_.round(totalEarnedPoliticalCapital, 1)} political capital by having ${_.round(
                 thisPlayerCorrectVotesPercentage * 100,
                 2,
-            )}% of the ${activeResolution.state === "passed" ? "Yes" : "No"} votes.`,
+            )}% of the ${activeResolution.state === "passed" ? "Yes" : "No"} votes.${
+                modifier !== 1 ? ` ${_.round(modifier - 1, 2)}% modifier on amount earned.` : ""
+            }`,
         },
         createdOn: gameClock,
     });
@@ -132,7 +138,8 @@ async function handleEarlyVotingPayouts(
         return 0;
     }
 
-    const bonusPerVote = getEarlyVoteBonus(gameClock, accordingTallyEvent.resolvesOn);
+    const modifier = getEarlyVotingBonusModifier(passedGameModifiers, playerActiveStaffers);
+    const bonusPerVote = getEarlyVoteBonus(gameClock, accordingTallyEvent.resolvesOn) * modifier;
 
     const totalVotes = earlyVotingPayouts
         .map((vote) => {
@@ -162,7 +169,7 @@ async function handleEarlyVotingPayouts(
                 type: "game-notification",
                 message: `You earned ${_.round(totalPaidOut, 2)} political capital by voting ${
                     accordingTallyEvent.resolvesOn - gameClock
-                } days early.`,
+                } days early.${modifier !== 1 ? ` ${_.round(modifier - 1, 2)}% modifier on amount earned.` : ""}`,
             },
             status: "read",
             createdOn: gameClock,
@@ -307,6 +314,7 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
             activePlayerStaffers,
             playerRid,
             gameClock,
+            passedGameModifiers,
         );
         activePlayer.politicalCapital += isNaN(totalPayoutForPlayer) ? 0 : totalPayoutForPlayer;
     }

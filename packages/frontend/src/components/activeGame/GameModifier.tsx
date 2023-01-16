@@ -72,7 +72,9 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier; isGlobalScre
             <div className={styles.resolutionModifierContainer}>
                 {maybeRenderModifier(gameModifier.timePerResolution, "time per resolution")}
                 {maybeRenderModifier(gameModifier.timeBetweenResolutions, "time between resolutions")}
-                {maybeRenderModifier(gameModifier.payoutPerResolution, "political capital payout per vote")}
+                {maybeRenderModifier(gameModifier.payoutPerResolution, "total political capital per resolution")}
+                {maybeRenderModifier(gameModifier.payoutPerPlayer, "political capital voting payout")}
+                {maybeRenderModifier(gameModifier.earlyVotingBonus, "early voting bonus")}
             </div>
         );
     }

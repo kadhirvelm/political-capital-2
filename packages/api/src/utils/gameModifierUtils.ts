@@ -178,7 +178,12 @@ export function isStafferTrainingDisabled(
 }
 
 function getResolutionModifier(
-    modifierKey: "timePerResolution" | "timeBetweenResolutions" | "payoutPerResolution" | "payoutPerPlayer",
+    modifierKey:
+        | "timePerResolution"
+        | "timeBetweenResolutions"
+        | "payoutPerResolution"
+        | "payoutPerPlayer"
+        | "earlyVotingBonus",
     allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
 ) {
     const relevantModifiers = allPassedGameModifiers
@@ -230,4 +235,16 @@ export function getPayoutPerPlayerModifier(
     }
 
     return getResolutionModifier("payoutPerPlayer", allPassedGameModifiers);
+}
+
+export function getEarlyVotingBonusModifier(
+    allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
+    activePlayerStaffers: IActiveStaffer[],
+) {
+    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = allPassedGameModifiers;
+    if (activePlayerStaffers.find((s) => s.stafferDetails.type === "lobbyist")?.state === "active") {
+        finalModifiers.push({ modifier: LOBBYIST_MODIFIER, createdOn: 0 as IGameClock });
+    }
+
+    return getResolutionModifier("earlyVotingBonus", allPassedGameModifiers);
 }

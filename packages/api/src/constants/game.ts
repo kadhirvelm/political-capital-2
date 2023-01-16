@@ -30,5 +30,6 @@ export const CHIEF_OF_STAFF_MODIFIER: IStafferEffect = {
 
 export const LOBBYIST_MODIFIER: IResolutionEffect = {
     payoutPerPlayer: 0.1,
+    earlyVotingBonus: 0.1,
     type: "resolution-effect",
 };

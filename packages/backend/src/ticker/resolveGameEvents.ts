@@ -69,10 +69,7 @@ async function createNewResolution(gameState: GameState, passedGameModifiers: IP
 
     const currentStage = getCurrentStage(gameState.gameClock);
     const allowedResolutions = ALL_RESOLUTIONS.filter((resolution) => {
-        return (
-            !alreadySeenResolutions.includes(resolution.title) &&
-            (resolution.stage === "all" || resolution.stage === currentStage)
-        );
+        return !alreadySeenResolutions.includes(resolution.title) && resolution.stage === currentStage;
     });
     const randomResolution = _.sample(allowedResolutions);
 
@@ -135,10 +132,14 @@ async function resolveResolution(
     }
 
     const timePerResolutionModifier = getTimePerResolutionModifier(passedGameModifiers);
-    const finalTimePerResolution = Math.max(TIME_FOR_EACH_RESOLUTION_IN_DAYS * timePerResolutionModifier, 5);
+    const finalTimePerResolution = Math.round(
+        Math.max(TIME_FOR_EACH_RESOLUTION_IN_DAYS * timePerResolutionModifier, 5),
+    );
 
     const timeBetweenResolutionsModifier = getTimeBetweenResolutionsModifier(passedGameModifiers);
-    const finalTimeBetweenResolutions = Math.max(TIME_BETWEEN_RESOLUTIONS_IN_DAYS * timeBetweenResolutionsModifier, 1);
+    const finalTimeBetweenResolutions = Math.round(
+        Math.max(TIME_BETWEEN_RESOLUTIONS_IN_DAYS * timeBetweenResolutionsModifier, 1),
+    );
 
     const timeForAnotherResolution =
         gameState.gameClock + finalTimePerResolution + finalTimeBetweenResolutions < TOTAL_DAYS_IN_GAME;
