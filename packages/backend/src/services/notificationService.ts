@@ -9,7 +9,7 @@ import { sendMessageToPlayer } from "./socketService";
 export async function createNewNotification(
     payload: INotificationService["createNewNotification"]["payload"],
 ): Promise<INotificationService["createNewNotification"]["response"]> {
-    const newlyCreatedNotification = await ActiveNotification.create({ ...payload, status: "unread" });
+    const newlyCreatedNotification = await ActiveNotification.create(payload);
 
     sendMessageToPlayer(newlyCreatedNotification.toPlayerRid, {
         type: "new-notification",

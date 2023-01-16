@@ -14,7 +14,7 @@ export async function sendNotificationToPlayer(job: Job<ISendNotificationToPlaye
         gameStateRid: job.data.gameStateRid,
         notificationDetails: job.data.notificationDetails,
         activeNotificationRid: v4() as IActiveNotificationRid,
-        status: "unread",
+        status: job.data.status ?? "unread",
         toPlayerRid: job.data.playerRid,
     };
 

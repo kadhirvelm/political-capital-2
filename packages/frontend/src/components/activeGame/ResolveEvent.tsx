@@ -25,7 +25,7 @@ export const ResolveEvent: React.FC<{
     }
 
     const renderEventDetails = () => {
-        return IEvent.visit(event.eventDetails, {
+        return IEvent.visit<JSX.Element | undefined>(event.eventDetails, {
             startHiringStaffer: (startHiring) => (
                 <div>
                     <div className={styles.title}>Start recruiting</div>
@@ -99,6 +99,7 @@ export const ResolveEvent: React.FC<{
                     </div>
                 );
             },
+            payoutEarlyVoting: () => <div>Payout early voting</div>,
             newResolution: () => <div>Create new resolution</div>,
             tallyResolution: () => <div>Tally current resolution</div>,
             unknown: () => <div />,
@@ -224,6 +225,7 @@ export const MinimalResolveEvent: React.FC<{
                     </>
                 );
             },
+            payoutEarlyVoting: () => <div />,
             newResolution: () => <div />,
             tallyResolution: () => <div />,
             unknown: () => <div />,

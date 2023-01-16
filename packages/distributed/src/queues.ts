@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IGameClock, IGameStateRid, IPlayerRid, IPossibleNotification } from "@pc2/api";
+import { IActiveNotification, IGameClock, IGameStateRid, IPlayerRid, IPossibleNotification } from "@pc2/api";
 import queue from "bull";
 
 const connection = {
@@ -26,6 +26,7 @@ export interface ISendNotificationToPlayer {
     gameStateRid: IGameStateRid;
     playerRid: IPlayerRid;
     notificationDetails: IPossibleNotification;
+    status?: IActiveNotification["status"];
     createdOn: IGameClock;
 }
 export const SendNotificationToPlayerQueue = new queue<ISendNotificationToPlayer>(

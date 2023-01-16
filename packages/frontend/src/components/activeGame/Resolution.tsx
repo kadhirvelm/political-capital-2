@@ -3,7 +3,7 @@
  */
 
 import { Card, CardBody } from "@chakra-ui/react";
-import { IActiveResolution, IEvent } from "@pc2/api";
+import { getEarlyVoteBonus, IActiveResolution, IEvent } from "@pc2/api";
 import classNames from "classnames";
 import { flatten } from "lodash-es";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
@@ -123,6 +123,16 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
                         <div className={styles.tallyOn}>Will tally on</div>
                         {tallyOnEvent !== undefined ? getFakeDate(tallyOnEvent.resolvesOn) : "Pending"}
                     </div>
+                    {tallyOnEvent !== undefined && (
+                        <div className={styles.earlyVotingContainer}>
+                            <div className={styles.earlyVoting}>Current early voting bonus</div>
+                            <div>
+                                {roundToHundred(
+                                    getEarlyVoteBonus(fullGameState.gameState.gameClock, tallyOnEvent.resolvesOn),
+                                )}
+                            </div>
+                        </div>
+                    )}
                     {maybeRenderTotalVotesCast()}
                 </div>
             );

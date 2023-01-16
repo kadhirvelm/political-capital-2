@@ -39,6 +39,13 @@ export interface IFinishTrainingStaffer extends IBasicEvent {
     type: "finish-training-staffer";
 }
 
+export interface IPayoutEarlyVoting extends IBasicEvent {
+    playerRid: IPlayerRid;
+    activeStafferRid: IActiveStafferRid;
+    onActiveResolutionRid: IActiveResolutionRid;
+    type: "payout-early-voting";
+}
+
 export interface INewResolution extends IBasicEvent {
     type: "new-resolution";
 }
@@ -53,6 +60,7 @@ interface IAllEvents {
     finishHiringStaffer: IFinishHiringStaffer;
     startTrainingStaffer: IStartTrainingStaffer;
     finishTrainingStaffer: IFinishTrainingStaffer;
+    payoutEarlyVoting: IPayoutEarlyVoting;
     newResolution: INewResolution;
     tallyResolution: ITallyResolution;
     unknown: never;
@@ -75,6 +83,10 @@ export namespace IEvent {
 
     export const isFinishTrainingStaffer = (event: IPossibleEvent): event is IFinishTrainingStaffer => {
         return event.type === "finish-training-staffer";
+    };
+
+    export const isPayoutEarlyVoting = (event: IPossibleEvent): event is IPayoutEarlyVoting => {
+        return event.type === "payout-early-voting";
     };
 
     export const isNewResolution = (event: IPossibleEvent): event is INewResolution => {
@@ -100,6 +112,10 @@ export namespace IEvent {
 
         if (isFinishTrainingStaffer(value)) {
             return visitor.finishTrainingStaffer(value);
+        }
+
+        if (isPayoutEarlyVoting(value)) {
+            return visitor.payoutEarlyVoting(value);
         }
 
         if (isNewResolution(value)) {

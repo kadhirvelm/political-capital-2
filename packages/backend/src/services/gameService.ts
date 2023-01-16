@@ -150,6 +150,21 @@ async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<I
                         finishTrainingStaffer.activeStafferRid
                     ].push(resolveEvent);
                 },
+                payoutEarlyVoting: (payoutEarlyVoting) => {
+                    indexedResolveEvents.players[payoutEarlyVoting.playerRid] = indexedResolveEvents.players[
+                        payoutEarlyVoting.playerRid
+                    ] ?? { overall: [], staffers: {} };
+
+                    indexedResolveEvents.players[payoutEarlyVoting.playerRid].staffers[
+                        payoutEarlyVoting.activeStafferRid
+                    ] =
+                        indexedResolveEvents.players[payoutEarlyVoting.playerRid].staffers[
+                            payoutEarlyVoting.activeStafferRid
+                        ] ?? [];
+                    indexedResolveEvents.players[payoutEarlyVoting.playerRid].staffers[
+                        payoutEarlyVoting.activeStafferRid
+                    ].push(resolveEvent);
+                },
                 newResolution: () => {
                     indexedResolveEvents.game.push(resolveEvent);
                 },

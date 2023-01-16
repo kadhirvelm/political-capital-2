@@ -61,8 +61,10 @@ async function doesExceedLimitForPlayer(
             where: { gameStateRid: gameStateRid, playerRid, stafferDetails: { type: stafferType } },
         }),
         type === "recruiting"
-            ? ResolveGameEvent.findAll({ where: { gameStateRid, eventDetails: partialStartHiring } })
-            : ResolveGameEvent.findAll({ where: { gameStateRid, eventDetails: partialStartTraining } }),
+            ? ResolveGameEvent.findAll({ where: { gameStateRid, eventDetails: partialStartHiring, state: "active" } })
+            : ResolveGameEvent.findAll({
+                  where: { gameStateRid, eventDetails: partialStartTraining, state: "active" },
+              }),
     ]);
 
     const totalStaffersOfType = existingStaffersOfType.length + soonToBeStaffersOfType.length;
@@ -395,7 +397,19 @@ export async function castVote(
         });
     }
 
-    await ActiveResolutionVote.bulkCreate(newActiveVotes);
+    const payoutEarlyVoting: IResolveGameEvent = {
+        gameStateRid: payload.gameStateRid,
+        resolvesOn: (gameState.gameClock + 1) as IGameClock,
+        eventDetails: {
+            playerRid: votingStaffer.playerRid,
+            activeStafferRid: votingStaffer.activeStafferRid,
+            onActiveResolutionRid: payload.activeResolutionRid,
+            type: "payout-early-voting",
+        },
+        state: "active",
+    };
+
+    await Promise.all([ActiveResolutionVote.bulkCreate(newActiveVotes), ResolveGameEvent.create(payoutEarlyVoting)]);
 
     return {
         votes: newActiveVotes,

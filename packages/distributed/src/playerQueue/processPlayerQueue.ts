@@ -4,10 +4,13 @@
 
 import {
     DEFAULT_STAFFER,
+    getEarlyVoteBonus,
     getStafferAcquisitionCost,
     getStafferAcquisitionTime,
+    getTotalAllowedVotes,
     getTotalPayout,
     IActivePlayer,
+    IActiveStaffer,
     IActiveStafferRid,
     IEvent,
     IFinishHiringStaffer,
@@ -15,6 +18,7 @@ import {
     IGameClock,
     IGameStateRid,
     IPassedGameModifier,
+    IPayoutEarlyVoting,
     IPlayerRid,
     IStartHiringStaffer,
     IStartTrainingStaffer,
@@ -102,7 +106,73 @@ async function handleFinishHiringOrTraining(
     return updateStaffersToActive;
 }
 
-export async function handleStartHiringOrTraining(
+async function handleEarlyVotingPayouts(
+    gameStateRid: IGameStateRid,
+    earlyVotingPayouts: IPayoutEarlyVoting[],
+    earlyVotingPayoutsModels: ResolveGameEvent[],
+    playerActiveStaffers: IActiveStaffer[],
+    passedGameModifiers: IPassedGameModifier[],
+    gameClock: IGameClock,
+    playerRid: IPlayerRid,
+): Promise<number> {
+    // Look for the according tally event with the active resolution rid
+    const payoutForResolution = earlyVotingPayouts[0].onActiveResolutionRid;
+    const accordingTallyEvent = await ResolveGameEvent.findOne({
+        where: {
+            gameStateRid,
+            eventDetails: {
+                activeResolutionRid: payoutForResolution,
+                type: "tally-resolution",
+            },
+            state: "active",
+        },
+    });
+
+    if (accordingTallyEvent == null) {
+        return 0;
+    }
+
+    const bonusPerVote = getEarlyVoteBonus(gameClock, accordingTallyEvent.resolvesOn);
+
+    const totalVotes = earlyVotingPayouts
+        .map((vote) => {
+            const accordingStaffer = playerActiveStaffers.find((s) => s.activeStafferRid === vote.activeStafferRid);
+            if (accordingStaffer === undefined) {
+                return 0;
+            }
+
+            return getTotalAllowedVotes(accordingStaffer.stafferDetails, passedGameModifiers);
+        })
+        .reduce((a, b) => a + b, 0);
+
+    await Promise.all(
+        earlyVotingPayoutsModels.map((event) => {
+            event.state = "complete";
+            return event.save();
+        }),
+    );
+
+    const totalPaidOut = totalVotes * bonusPerVote;
+
+    if (totalPaidOut > 0) {
+        SendNotificationToPlayerQueue.add({
+            gameStateRid,
+            playerRid,
+            notificationDetails: {
+                type: "game-notification",
+                message: `You earned ${_.round(totalPaidOut, 2)} political capital by voting ${
+                    accordingTallyEvent.resolvesOn - gameClock
+                } days early.`,
+            },
+            status: "read",
+            createdOn: gameClock,
+        });
+    }
+
+    return totalPaidOut;
+}
+
+async function handleStartHiringOrTraining(
     gameStateRid: IGameStateRid,
     activePlayer: IActivePlayer,
     startHiringOrTraining: Array<IStartHiringStaffer | IStartTrainingStaffer>,
@@ -274,6 +344,23 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
                 ? "active"
                 : "disabled";
         });
+    }
+
+    // Then handle any early voting payouts
+    const earlyVotingPayouts = handleEventsForPlayer.filter((event) => IEvent.isPayoutEarlyVoting(event.eventDetails));
+    if (earlyVotingPayouts.length > 0) {
+        const deltaInPoliticalCapitalFromEarlyPayouts = await handleEarlyVotingPayouts(
+            gameStateRid,
+            earlyVotingPayouts.map((e) => e.eventDetails) as IPayoutEarlyVoting[],
+            earlyVotingPayouts,
+            activePlayerStaffers,
+            passedGameModifiers,
+            gameClock,
+            playerRid,
+        );
+        activePlayer.politicalCapital += isNaN(deltaInPoliticalCapitalFromEarlyPayouts)
+            ? 0
+            : deltaInPoliticalCapitalFromEarlyPayouts;
     }
 
     // Then any payouts from staffers

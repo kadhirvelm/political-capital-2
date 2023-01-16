@@ -193,6 +193,7 @@ export async function resolveGameEvents(gameState: GameState) {
                 startHiringStaffer: () => Promise.resolve({}),
                 finishTrainingStaffer: () => Promise.resolve({}),
                 startTrainingStaffer: () => Promise.resolve({}),
+                payoutEarlyVoting: () => Promise.resolve({}),
                 newResolution: () => {
                     return Promise.all([createNewResolution(gameState, passedGameModifiers), completeEvent(gameEvent)]);
                 },

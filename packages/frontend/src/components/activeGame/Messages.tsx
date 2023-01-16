@@ -191,34 +191,6 @@ export const Messages: React.FC<{}> = () => {
                 </Button>
             </div>
             <div className={styles.messageCategory}>
-                <div className={styles.messageCategoryTitle}>Game messages ({gameMessages.length})</div>
-                <div className={styles.messageCategoryContainer}>
-                    {maybeRenderMessages(
-                        gameMessages.map((gameMessage) => {
-                            if (INotification.isGame(gameMessage.notificationDetails)) {
-                                return (
-                                    <div className={styles.singleMessage} key={gameMessage.activeNotificationRid}>
-                                        <div>
-                                            <PCAvatar sizeOverride="lg" />
-                                        </div>
-                                        <div className={styles.messageDetails}>
-                                            <div className={styles.nameAndMessage}>
-                                                {gameMessage.notificationDetails.message}
-                                            </div>
-                                            <div className={styles.description}>
-                                                Sent on {getFakeDate(gameMessage.createdOn)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            }
-
-                            return <div>Unknown game message</div>;
-                        }),
-                    )}
-                </div>
-            </div>
-            <div className={styles.messageCategory}>
                 <div className={styles.messageCategoryTitle}>Player messages ({playerMessages.length})</div>
                 <div className={styles.messageCategoryContainer}>
                     {maybeRenderMessages(
@@ -271,6 +243,34 @@ export const Messages: React.FC<{}> = () => {
                             }
 
                             return <div className={styles.singleMessage}>Unknown player message</div>;
+                        }),
+                    )}
+                </div>
+            </div>
+            <div className={styles.messageCategory}>
+                <div className={styles.messageCategoryTitle}>Game messages ({gameMessages.length})</div>
+                <div className={styles.messageCategoryContainer}>
+                    {maybeRenderMessages(
+                        gameMessages.map((gameMessage) => {
+                            if (INotification.isGame(gameMessage.notificationDetails)) {
+                                return (
+                                    <div className={styles.singleMessage} key={gameMessage.activeNotificationRid}>
+                                        <div>
+                                            <PCAvatar sizeOverride="lg" />
+                                        </div>
+                                        <div className={styles.messageDetails}>
+                                            <div className={styles.nameAndMessage}>
+                                                {gameMessage.notificationDetails.message}
+                                            </div>
+                                            <div className={styles.description}>
+                                                Sent on {getFakeDate(gameMessage.createdOn)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            return <div>Unknown game message</div>;
                         }),
                     )}
                 </div>

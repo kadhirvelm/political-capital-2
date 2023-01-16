@@ -43,6 +43,16 @@
     margin-right: 12px;
 }
 
+.earlyVotingContainer {
+    display: flex;
+    align-items: center;
+}
+
+.earlyVoting {
+    color: $gray;
+    margin-right: 12px;
+}
+
 .totalVotes {
     display: flex;
     flex-direction: column;
