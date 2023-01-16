@@ -32,6 +32,7 @@
     border: 1px solid $gray;
     padding: 5px 10px;
     margin: 15px 0;
+    background: white;
 }
 
 .minusIcon {
@@ -40,12 +41,10 @@
 
 .stafferModifier {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     margin-top: 5px;
-
-    > :not(:last-child) {
-        margin-right: 3px;
-    }
+    gap: 5px;
 }
 
 .modifierSentence {
@@ -67,4 +66,40 @@
 .affects {
     color: $gray;
     padding-right: 7px;
+}
+
+.categoryTag {
+    border-radius: 3px;
+    padding: 3px 5px;
+    display: flex;
+    align-items: center;
+    border: 1px solid $gray;
+}
+
+.noCategory {
+    @extend %noCategory;
+}
+
+.voter {
+    @extend %voter;
+}
+
+.generator {
+    @extend %generator;
+}
+
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}
+
+.shadowGovernment {
+    @extend %shadowGovernment;
+
+    .description {
+        color: white;
+    }
 }

@@ -10,6 +10,7 @@ import {
     allTrainers,
     allVoters,
     DEFAULT_STAFFER,
+    getStafferCategory,
     IGameModifier,
     IStafferEffect,
 } from "@pc2/api";
@@ -76,59 +77,71 @@ export const GameModifier: React.FC<{ gameModifier?: IGameModifier; isGlobalScre
         );
     }
 
-    const renderStaffer = (staffer: IStafferEffect["staffersAffected"][number], index: number) => {
-        const maybeRenderAnd = () => (index !== 0 ? ", and " : "");
-
+    const renderStaffer = (staffer: IStafferEffect["staffersAffected"][number]) => {
         if (staffer === "everyone") {
-            return <div key="everyone">{maybeRenderAnd()}Everyone</div>;
+            return (
+                <div className={classNames(styles.categoryTag, styles.noCategory)} key="everyone">
+                    Everyone
+                </div>
+            );
         }
 
         if (staffer === "voter") {
             return (
-                <div key="voter">
-                    {maybeRenderAnd()}
-                    {allVoters.join(", and ")}
+                <div className={classNames(styles.categoryTag, styles.voter)} key="generator">
+                    All voters: {allVoters.map((s) => s.displayName).join(", ")}
                 </div>
             );
         }
 
         if (staffer === "generator") {
             return (
-                <div key="generator">
-                    {maybeRenderAnd()}
-                    {allGenerators.map((s) => s.displayName).join(", and ")}
+                <div className={classNames(styles.categoryTag, styles.generator)} key="generator">
+                    All generators: {allGenerators.map((s) => s.displayName).join(", ")}
                 </div>
             );
         }
 
         if (staffer === "recruit") {
             return (
-                <div key="recruit">
-                    {maybeRenderAnd()}
-                    {allRecruits.map((s) => s.displayName).join(", and ")}
+                <div className={classNames(styles.categoryTag, styles.recruit)} key="recruit">
+                    All recruiters: {allRecruits.map((s) => s.displayName).join(", ")}
                 </div>
             );
         }
 
         if (staffer === "trainer") {
             return (
-                <div key="trainer">
-                    {maybeRenderAnd()}
-                    {allTrainers.map((s) => s.displayName).join(", and ")}
+                <div className={classNames(styles.categoryTag, styles.trainer)} key="trainer">
+                    All trainers: {allTrainers.map((s) => s.displayName).join(", ")}
                 </div>
             );
         }
 
         if (staffer === "shadowGovernment") {
             return (
-                <div key="shadowGovernment">
-                    {maybeRenderAnd()}
-                    {allShadowGovernment.map((s) => s.displayName).join(", and ")}
+                <div className={classNames(styles.categoryTag, styles.shadowGovernment)} key="shadowGovernment">
+                    All shadow government: {allShadowGovernment.map((s) => s.displayName).join(", and ")}
                 </div>
             );
         }
 
-        return <div key={staffer}>{`${maybeRenderAnd()}${DEFAULT_STAFFER[staffer].displayName}s`}</div>;
+        const defaultStaffer = DEFAULT_STAFFER[staffer];
+        const stafferCategory = getStafferCategory(defaultStaffer);
+
+        return (
+            <div
+                className={classNames(styles.categoryTag, {
+                    [styles.noCategory]: stafferCategory === undefined,
+                    [styles.voter]: stafferCategory === "voter",
+                    [styles.generator]: stafferCategory === "generator",
+                    [styles.trainer]: stafferCategory === "trainer",
+                    [styles.recruit]: stafferCategory === "recruit",
+                    [styles.shadowGovernment]: stafferCategory === "shadowGovernment",
+                })}
+                key={staffer}
+            >{`${DEFAULT_STAFFER[staffer].displayName}s`}</div>
+        );
     };
 
     return (
