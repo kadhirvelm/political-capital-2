@@ -122,6 +122,7 @@ export const TrainerActivation: React.FC<{
                         <div className={styles.singleTrainee} key={staffer.activeStafferRid}>
                             <div
                                 className={classNames(styles.currentPosition, {
+                                    [styles.noCategory]: category === undefined,
                                     [styles.voter]: category === "voter",
                                     [styles.generator]: category === "generator",
                                     [styles.trainer]: category === "trainer",
@@ -177,6 +178,7 @@ export const TrainerActivation: React.FC<{
                                             <div
                                                 className={classNames(styles.newPosition, {
                                                     [styles.disabled]: isDisabled,
+                                                    [styles.noCategory]: newStafferCategory === undefined,
                                                     [styles.voter]: newStafferCategory === "voter" && !isDisabled,
                                                     [styles.generator]:
                                                         newStafferCategory === "generator" && !isDisabled,
@@ -312,7 +314,7 @@ export const TrainerActivation: React.FC<{
                 <div className={styles.result}>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Current PC</div>
-                        <div>{currentPoliticalCapital.toLocaleString()}</div>
+                        <div>{roundToHundred(currentPoliticalCapital).toLocaleString()}</div>
                     </div>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Remaining</div>

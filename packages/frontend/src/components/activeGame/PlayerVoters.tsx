@@ -21,7 +21,7 @@ import { addVotes } from "../../store/gameState";
 import { checkIsError } from "../../utility/alertOnError";
 import { StafferName } from "../common/StafferName";
 import styles from "./PlayerVoters.module.scss";
-import { ResolveEvent } from "./ResolveEvent";
+import { MinimalResolveEvent } from "./ResolveEvent";
 
 export const PlayerVoters: React.FC<{
     gameStateRid: IGameStateRid;
@@ -30,7 +30,9 @@ export const PlayerVoters: React.FC<{
     const toast = useToast();
     const dispatch = usePoliticalCapitalDispatch();
 
-    const isPaused = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState?.gameState.state !== "active");
+    const isGameActive = usePoliticalCapitalSelector(
+        (s) => s.localGameState.fullGameState?.gameState.state === "active",
+    );
     const voters = usePoliticalCapitalSelector(getVoters);
     const votesCastByPlayerVoters = usePoliticalCapitalSelector(getVotesAlreadyCast(activeResolutionRid));
     const votesAlreadyCastOnResolution = usePoliticalCapitalSelector((s) => {
@@ -51,16 +53,16 @@ export const PlayerVoters: React.FC<{
         [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote["vote"];
     }>({});
 
-    const getStafferExistingVote = (activeStafferRid: IActiveStafferRid) =>
+    const getStafferCastVoteOnResolution = (activeStafferRid: IActiveStafferRid) =>
         votesAlreadyCastOnResolution?.[activeStafferRid]?.[0];
 
     React.useEffect(() => {
         const newCastVotesDefaultState: { [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote["vote"] } = {};
 
         voters.forEach((voter) => {
-            const maybeExistingVote = getStafferExistingVote(voter.staffer.activeStafferRid);
             newCastVotesDefaultState[voter.staffer.activeStafferRid] =
-                maybeExistingVote?.vote ?? castVotes[voter.staffer.activeStafferRid] ?? "abstain";
+                getStafferCastVoteOnResolution(voter.staffer.activeStafferRid)?.vote ??
+                castVotes[voter.staffer.activeStafferRid];
         });
 
         setCastVotes(newCastVotesDefaultState);
@@ -85,8 +87,7 @@ export const PlayerVoters: React.FC<{
     };
 
     const onSwitchVote = (activeStafferRid: IActiveStafferRid, newVote: IActiveResolutionVote["vote"]) => () => {
-        const maybeExistingVote = getStafferExistingVote(activeStafferRid);
-        if (maybeExistingVote !== undefined || newVote === "abstain") {
+        if (getStafferCastVoteOnResolution(activeStafferRid) !== undefined) {
             return;
         }
 
@@ -94,24 +95,19 @@ export const PlayerVoters: React.FC<{
     };
 
     const renderNormalVotes = (voter: IActiveStaffer, totalVotes: number) => {
-        const stafferVote = castVotes[voter.activeStafferRid] ?? "abstain";
-        const maybeExistingVote = getStafferExistingVote(voter.activeStafferRid);
+        const stafferVote = castVotes[voter.activeStafferRid];
 
         return (
             <div className={styles.voteOptionContainer}>
                 <div
                     className={classNames(styles.vote, { [styles.yesVote]: stafferVote === "passed" })}
-                    onClick={
-                        maybeExistingVote === undefined ? onSwitchVote(voter.activeStafferRid, "passed") : undefined
-                    }
+                    onClick={onSwitchVote(voter.activeStafferRid, "passed")}
                 >
                     {totalVotes} Yes
                 </div>
                 <div
                     className={classNames(styles.vote, { [styles.noVote]: stafferVote === "failed" })}
-                    onClick={
-                        maybeExistingVote === undefined ? onSwitchVote(voter.activeStafferRid, "failed") : undefined
-                    }
+                    onClick={onSwitchVote(voter.activeStafferRid, "failed")}
                 >
                     {totalVotes} No
                 </div>
@@ -119,18 +115,21 @@ export const PlayerVoters: React.FC<{
         );
     };
 
-    const onCastVote = (activeStafferRid: IActiveStafferRid) => async () => {
-        if (activeResolutionRid === undefined) {
+    const onCastVote = (votingStaffer: IActiveStaffer) => async () => {
+        if (!isVoter(votingStaffer.stafferDetails)) {
             return;
         }
 
-        const vote = castVotes[activeStafferRid] ?? "abstain";
+        const vote = votingStaffer.stafferDetails.isIndependent ? "passed" : castVotes[votingStaffer.activeStafferRid];
+        if (activeResolutionRid === undefined || vote === undefined) {
+            return;
+        }
 
         setIsLoading(true);
         const newVotes = checkIsError(
             await PoliticalCapitalTwoServiceFrontend.castVote({
                 gameStateRid,
-                votingStafferRid: activeStafferRid,
+                votingStafferRid: votingStaffer.activeStafferRid,
                 activeResolutionRid,
                 vote,
             }),
@@ -177,10 +176,14 @@ export const PlayerVoters: React.FC<{
                     }
 
                     const totalVotes = resolvedGameModifiers[stafferDetails.type].effectiveness;
-                    const maybeExistingVote = getStafferExistingVote(voter.staffer.activeStafferRid);
-
-                    const canStafferVote =
+                    const hasPlayerSetVotes =
                         castVotes[voter.staffer.activeStafferRid] !== undefined || stafferDetails.isIndependent;
+
+                    const canStillCastVote =
+                        getStafferCastVoteOnResolution(voter.staffer.activeStafferRid) === undefined &&
+                        activeResolution?.state === "active";
+                    const isCastVotesDisabled =
+                        !isGameActive || !hasPlayerSetVotes || activeResolution?.state !== "active";
 
                     return (
                         <div
@@ -195,7 +198,7 @@ export const PlayerVoters: React.FC<{
                                 </div>
                                 {voter.activeEvent !== undefined && (
                                     <div className={styles.activeEvent}>
-                                        <ResolveEvent event={voter.activeEvent} />
+                                        <MinimalResolveEvent event={voter.activeEvent} />
                                     </div>
                                 )}
                             </div>
@@ -204,13 +207,12 @@ export const PlayerVoters: React.FC<{
                                     {stafferDetails.isIndependent
                                         ? renderIndependentVotes(totalVotes)
                                         : renderNormalVotes(voter.staffer, totalVotes)}
-                                    {maybeExistingVote === undefined && (
+                                    {canStillCastVote && (
                                         <Button
                                             isLoading={isLoading}
-                                            disabled={
-                                                isPaused || activeResolution?.state !== "active" || !canStafferVote
-                                            }
-                                            onClick={onCastVote(voter.staffer.activeStafferRid)}
+                                            disabled={isCastVotesDisabled}
+                                            colorScheme={hasPlayerSetVotes ? "blue" : undefined}
+                                            onClick={onCastVote(voter.staffer)}
                                         >
                                             Cast votes
                                         </Button>

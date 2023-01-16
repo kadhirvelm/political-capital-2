@@ -3,25 +3,25 @@
  */
 
 import { implementEndpoints, IService } from "../common/generics";
-import { INotificationRid, IPlayerRid } from "../types/BrandedIDs";
-import { INotification } from "../types/politicalCapitalTwo";
+import { IActiveNotificationRid, IPlayerRid } from "../types/BrandedIDs";
+import { IActiveNotification } from "../types/politicalCapitalTwo";
 
 export interface INotificationService extends IService {
     createNewNotification: {
-        payload: INotification;
+        payload: IActiveNotification;
         response: {};
     };
     getAllNotifications: {
         payload: {
             playerRid: IPlayerRid;
         };
-        response: INotification[];
+        response: IActiveNotification[];
     };
     markNotificationAsRead: {
         payload: {
-            notificationRid: INotificationRid;
+            activeNotificationRid: IActiveNotificationRid;
         };
-        response: INotification;
+        response: IActiveNotification;
     };
 }
 
@@ -31,7 +31,7 @@ const { backend, frontend } = implementEndpoints<INotificationService>({
         method: "post",
     },
     getAllNotifications: {
-        slug: "/notification-serivce/get-all-notifications",
+        slug: "/notification-service/get-all-notifications",
         method: "post",
     },
     markNotificationAsRead: {

@@ -9,11 +9,19 @@
     width: 200px;
     min-height: 150px;
 
+    &.noCategory.noCategory {
+        @extend %noCategory;
+
+        &.isBusy {
+            background: rgba($light-gray, 0.025);
+        }
+    }
+
     &.voter.voter {
         @extend %voter;
 
         &.isBusy {
-            background: rgba($green, 0.05);
+            background: rgba($green, 0.025);
         }
     }
 
@@ -21,7 +29,7 @@
         @extend %generator;
 
         &.isBusy {
-            background: rgba($blue, 0.05);
+            background: rgba($blue, 0.025);
         }
     }
 
@@ -29,7 +37,7 @@
         @extend %trainer;
 
         &.isBusy {
-            background: rgba($purple, 0.05);
+            background: rgba($purple, 0.025);
         }
     }
 
@@ -37,7 +45,7 @@
         @extend %recruit;
 
         &.isBusy {
-            background: rgba($red, 0.05);
+            background: rgba($red, 0.025);
         }
     }
 

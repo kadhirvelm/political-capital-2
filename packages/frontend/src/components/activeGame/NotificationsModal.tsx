@@ -12,8 +12,7 @@ import {
     ModalOverlay,
     useToast,
 } from "@chakra-ui/react";
-import { NotificationServiceFrontend } from "@pc2/api";
-import { INotification } from "@pc2/api/dist/types/INotification";
+import { INotification, NotificationServiceFrontend } from "@pc2/api";
 import { noop } from "lodash-es";
 import * as React from "react";
 import { useDispatch } from "react-redux";
@@ -51,9 +50,9 @@ export const NotificationsModal: React.FC<{}> = () => {
                         <AnonymousAvatar />
                     </div>
                     <div className={styles.messageDetailsContainer}>
-                        <div className={styles.nameAndMessage}>
-                            <div>Unknown - </div>
-                            <div>{anonymous.message}</div>
+                        <div className={styles.messageSenderAndText}>
+                            <div className={styles.description}>Unknown</div>
+                            <div className={styles.messageText}>{anonymous.message}</div>
                         </div>
                         <div className={styles.date}>Sent on {getFakeDate(maybeTopNotification.createdOn)}</div>
                     </div>
@@ -68,9 +67,9 @@ export const NotificationsModal: React.FC<{}> = () => {
                             <PlayerName player={accordingPlayer} activePlayer={accordingActivePlayer} />
                         </div>
                         <div className={styles.messageDetailsContainer}>
-                            <div className={styles.nameAndMessage}>
-                                <div>{accordingPlayer.name} - </div>
-                                <div>{betweenPlayers.message}</div>
+                            <div className={styles.messageSenderAndText}>
+                                <div>{accordingPlayer.name}</div>
+                                <div className={styles.messageText}>{betweenPlayers.message}</div>
                             </div>
                             <div className={styles.date}>Sent on {getFakeDate(maybeTopNotification.createdOn)}</div>
                         </div>
@@ -83,9 +82,9 @@ export const NotificationsModal: React.FC<{}> = () => {
                         <PCAvatar />
                     </div>
                     <div className={styles.messageDetailsContainer}>
-                        <div className={styles.nameAndMessage}>
-                            <div>Game message - </div>
-                            <div>{game.message}</div>
+                        <div className={styles.messageSenderAndText}>
+                            <div className={styles.description}>Game message</div>
+                            <div className={styles.messageText}>{game.message}</div>
                         </div>
                         <div className={styles.date}>Sent on {getFakeDate(maybeTopNotification.createdOn)}</div>
                     </div>
@@ -103,7 +102,7 @@ export const NotificationsModal: React.FC<{}> = () => {
         setIsLoading(true);
         const updatedNotification = checkIsError(
             await NotificationServiceFrontend.markNotificationAsRead({
-                notificationRid: maybeTopNotification.notificationRid,
+                activeNotificationRid: maybeTopNotification.activeNotificationRid,
             }),
             toast,
         );

@@ -13,8 +13,7 @@ import {
     ModalOverlay,
     useToast,
 } from "@chakra-ui/react";
-import { INotificationRid, IPlayerRid, NotificationServiceFrontend } from "@pc2/api";
-import { INotification } from "@pc2/api/dist/types/INotification";
+import { IActiveNotificationRid, INotification, IPlayerRid, NotificationServiceFrontend } from "@pc2/api";
 import classNames from "classnames";
 import * as React from "react";
 import { v4 } from "uuid";
@@ -24,7 +23,7 @@ import { getFakeDate } from "../common/ServerStatus";
 import { AnonymousAvatar, PCAvatar, PlayerName } from "../common/StafferName";
 import styles from "./Messages.module.scss";
 
-const MESSAGES_TO_SEND = ["How will you vote?", "Can we meet?", "Yes", "No", "Not sure yet", "Okay"];
+const MESSAGES_TO_SEND = ["How will you vote?", "Can we meet?", "Yes", "No", "Not sure yet"];
 
 const SendMessages: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
     const toast = useToast();
@@ -104,7 +103,7 @@ const SendMessages: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOp
         setIsLoading(true);
         checkIsError(
             await NotificationServiceFrontend.createNewNotification({
-                notificationRid: v4() as INotificationRid,
+                activeNotificationRid: v4() as IActiveNotificationRid,
                 gameStateRid: fullGameState.gameState.gameStateRid,
                 notificationDetails: {
                     fromPlayer: player.playerRid,
@@ -136,7 +135,11 @@ const SendMessages: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOp
                     <Button className={styles.cancelButton}>Cancel</Button>
                     <Button
                         colorScheme="green"
-                        disabled={toPlayerRid === undefined || message === undefined}
+                        disabled={
+                            toPlayerRid === undefined ||
+                            message === undefined ||
+                            fullGameState.gameState.state !== "active"
+                        }
                         isLoading={isLoading}
                         onClick={sendMessage}
                     >
@@ -172,6 +175,14 @@ export const Messages: React.FC<{}> = () => {
         )
         .sort((a, b) => (a.createdOn > b.createdOn ? -1 : 1));
 
+    const maybeRenderMessages = (messages: React.ReactNode[]) => {
+        if (messages.length === 0) {
+            return <div className={styles.description}>No messages</div>;
+        }
+
+        return messages;
+    };
+
     return (
         <div className={styles.viewMessagesContainer}>
             <div className={styles.sendNewMessage}>
@@ -180,84 +191,88 @@ export const Messages: React.FC<{}> = () => {
                 </Button>
             </div>
             <div className={styles.messageCategory}>
-                <div className={styles.messageCategoryTitle}>Game messages - {gameMessages.length}</div>
+                <div className={styles.messageCategoryTitle}>Game messages ({gameMessages.length})</div>
                 <div className={styles.messageCategoryContainer}>
-                    {gameMessages.map((gameMessage) => {
-                        if (INotification.isGame(gameMessage.notificationDetails)) {
-                            return (
-                                <div className={styles.singleMessage}>
-                                    <div>
-                                        <PCAvatar sizeOverride="lg" />
-                                    </div>
-                                    <div className={styles.messageDetails}>
-                                        <div className={styles.nameAndMessage}>
-                                            <div>Game message - </div>
-                                            <div>{gameMessage.notificationDetails.message}</div>
+                    {maybeRenderMessages(
+                        gameMessages.map((gameMessage) => {
+                            if (INotification.isGame(gameMessage.notificationDetails)) {
+                                return (
+                                    <div className={styles.singleMessage} key={gameMessage.activeNotificationRid}>
+                                        <div>
+                                            <PCAvatar sizeOverride="lg" />
                                         </div>
-                                        <div className={styles.description}>
-                                            Sent on {getFakeDate(gameMessage.createdOn)}
+                                        <div className={styles.messageDetails}>
+                                            <div className={styles.nameAndMessage}>
+                                                {gameMessage.notificationDetails.message}
+                                            </div>
+                                            <div className={styles.description}>
+                                                Sent on {getFakeDate(gameMessage.createdOn)}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        }
+                                );
+                            }
 
-                        return <div>Unknown game message</div>;
-                    })}
+                            return <div>Unknown game message</div>;
+                        }),
+                    )}
                 </div>
             </div>
             <div className={styles.messageCategory}>
-                <div className={styles.messageCategoryTitle}>Player messages - {playerMessages.length}</div>
+                <div className={styles.messageCategoryTitle}>Player messages ({playerMessages.length})</div>
                 <div className={styles.messageCategoryContainer}>
-                    {playerMessages.map((playerMessage) => {
-                        if (INotification.isAnonymous(playerMessage.notificationDetails)) {
-                            return (
-                                <div className={styles.singleMessage}>
-                                    <div>
-                                        <AnonymousAvatar sizeOverride="lg" />
-                                    </div>
-                                    <div className={styles.messageDetails}>
-                                        <div className={styles.nameAndMessage}>
-                                            <div>Anonymous - </div>
-                                            <div>{playerMessage.notificationDetails.message}</div>
+                    {maybeRenderMessages(
+                        playerMessages.map((playerMessage) => {
+                            if (INotification.isAnonymous(playerMessage.notificationDetails)) {
+                                return (
+                                    <div className={styles.singleMessage} key={playerMessage.activeNotificationRid}>
+                                        <div>
+                                            <AnonymousAvatar sizeOverride="lg" />
                                         </div>
-                                        <div className={styles.description}>
-                                            Sent on {getFakeDate(playerMessage.createdOn)}
+                                        <div className={styles.messageDetails}>
+                                            <div className={styles.nameAndMessage}>
+                                                <div className={styles.description}>Anonymous</div>
+                                                <div>{playerMessage.notificationDetails.message}</div>
+                                            </div>
+                                            <div className={styles.description}>
+                                                Sent on {getFakeDate(playerMessage.createdOn)}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        }
+                                );
+                            }
 
-                        if (INotification.isBetweenPlayers(playerMessage.notificationDetails)) {
-                            const accordingPlayer = fullGameState.players[playerMessage.notificationDetails.fromPlayer];
-                            const accordingActivePlayer =
-                                fullGameState.activePlayers[playerMessage.notificationDetails.fromPlayer];
+                            if (INotification.isBetweenPlayers(playerMessage.notificationDetails)) {
+                                const accordingPlayer =
+                                    fullGameState.players[playerMessage.notificationDetails.fromPlayer];
+                                const accordingActivePlayer =
+                                    fullGameState.activePlayers[playerMessage.notificationDetails.fromPlayer];
 
-                            return (
-                                <div className={styles.singleMessage}>
-                                    <div>
-                                        <PlayerName
-                                            player={accordingPlayer}
-                                            activePlayer={accordingActivePlayer}
-                                            sizeOverride="lg"
-                                        />
-                                    </div>
-                                    <div className={styles.messageDetails}>
-                                        <div className={styles.nameAndMessage}>
-                                            <div>{accordingPlayer.name} - </div>
-                                            <div>{playerMessage.notificationDetails.message}</div>
+                                return (
+                                    <div className={styles.singleMessage} key={playerMessage.activeNotificationRid}>
+                                        <div>
+                                            <PlayerName
+                                                player={accordingPlayer}
+                                                activePlayer={accordingActivePlayer}
+                                                sizeOverride="lg"
+                                            />
                                         </div>
-                                        <div className={styles.description}>
-                                            Sent on {getFakeDate(playerMessage.createdOn)}
+                                        <div className={styles.messageDetails}>
+                                            <div className={styles.nameAndMessage}>
+                                                <div>{accordingPlayer.name}</div>
+                                                <div>{playerMessage.notificationDetails.message}</div>
+                                            </div>
+                                            <div className={styles.description}>
+                                                Sent on {getFakeDate(playerMessage.createdOn)}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        }
+                                );
+                            }
 
-                        return <div className={styles.singleMessage}>Unknown player message</div>;
-                    })}
+                            return <div className={styles.singleMessage}>Unknown player message</div>;
+                        }),
+                    )}
                 </div>
             </div>
             <SendMessages

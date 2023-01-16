@@ -7,7 +7,7 @@ import {
     IActiveStafferRid,
     IGameClock,
     IGameStateRid,
-    INotificationRid,
+    IActiveNotificationRid,
     IPlayerRid,
 } from "./BrandedIDs";
 import { IPossibleStaffer } from "./generatedStaffers";
@@ -53,7 +53,7 @@ export interface IActiveResolutionVote {
     gameStateRid: IGameStateRid;
     activeResolutionRid: IActiveResolutionRid;
     activeStafferRid: IActiveStafferRid;
-    vote: "passed" | "failed" | "abstain";
+    vote: "passed" | "failed";
 }
 
 export interface IActiveStaffer {
@@ -90,8 +90,8 @@ export interface IHistoricalGameState {
     snapshot: Array<{ playerRid: IPlayerRid; politicalCapital: number }>;
 }
 
-export interface INotification {
-    notificationRid: INotificationRid;
+export interface IActiveNotification {
+    activeNotificationRid: IActiveNotificationRid;
     gameStateRid: IGameStateRid;
     notificationDetails: IPossibleNotification;
     toPlayerRid: IPlayerRid;

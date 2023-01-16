@@ -3,13 +3,13 @@
  */
 
 import { INotificationService } from "@pc2/api";
-import { Notification } from "@pc2/distributed-compute";
+import { ActiveNotification } from "@pc2/distributed-compute";
 import { sendMessageToPlayer } from "./socketService";
 
 export async function createNewNotification(
     payload: INotificationService["createNewNotification"]["payload"],
 ): Promise<INotificationService["createNewNotification"]["response"]> {
-    const newlyCreatedNotification = await Notification.create({ ...payload, status: "unread" });
+    const newlyCreatedNotification = await ActiveNotification.create({ ...payload, status: "unread" });
 
     sendMessageToPlayer(newlyCreatedNotification.toPlayerRid, {
         type: "new-notification",
@@ -22,16 +22,16 @@ export async function createNewNotification(
 export async function getAllNotifications(
     payload: INotificationService["getAllNotifications"]["payload"],
 ): Promise<INotificationService["getAllNotifications"]["response"]> {
-    const allNotificationsForPlayer = await Notification.findAll({ where: { toPlayerRid: payload.playerRid } });
+    const allNotificationsForPlayer = await ActiveNotification.findAll({ where: { toPlayerRid: payload.playerRid } });
     return allNotificationsForPlayer;
 }
 
 export async function markNotificationAsRead(
     payload: INotificationService["markNotificationAsRead"]["payload"],
 ): Promise<INotificationService["markNotificationAsRead"]["response"]> {
-    const updatedNotification = await Notification.update(
+    const updatedNotification = await ActiveNotification.update(
         { status: "read" },
-        { where: { notificationRid: payload.notificationRid }, returning: true },
+        { where: { activeNotificationRid: payload.activeNotificationRid }, returning: true },
     );
 
     return updatedNotification[1][0];

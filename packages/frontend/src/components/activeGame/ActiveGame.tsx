@@ -67,16 +67,16 @@ export const ActiveGame: React.FC<{}> = () => {
             return "Your party";
         }
 
+        if (currentView === "messages") {
+            return "Messages";
+        }
+
         if (currentView === "leaderboard") {
             return "Leaderboard";
         }
 
         if (currentView === "game-modifiers") {
             return "Game modifiers";
-        }
-
-        if (currentView === "messages") {
-            return "Your messages";
         }
 
         if (currentView === "staffers-ladders") {
@@ -131,9 +131,10 @@ export const ActiveGame: React.FC<{}> = () => {
                     <MenuList>
                         <MenuItem onClick={changeCurrentView("active-resolution")}>Active resolution</MenuItem>
                         <MenuItem onClick={changeCurrentView("your-party")}>Your party</MenuItem>
+                        <MenuItem onClick={changeCurrentView("messages")}>Messages</MenuItem>
+                        <MenuDivider />
                         <MenuItem onClick={changeCurrentView("leaderboard")}>Leaderboard</MenuItem>
                         <MenuItem onClick={changeCurrentView("game-modifiers")}>Game modifiers</MenuItem>
-                        <MenuItem onClick={changeCurrentView("messages")}>Your messages</MenuItem>
                         <MenuDivider />
                         <MenuItem onClick={changeCurrentView("staffers-ladders")}>Staffer ladders</MenuItem>
                         <MenuDivider />

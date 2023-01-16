@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - KM
  */
 
-import { IGameClock, IGameStateRid, IPlayerRid } from "@pc2/api";
+import { IGameClock, IGameStateRid, IPlayerRid, IPossibleNotification } from "@pc2/api";
 import queue from "bull";
 
 const connection = {
@@ -21,3 +21,14 @@ export interface IUpdatePlayerQueue {
     gameClock: IGameClock;
 }
 export const UpdatePlayerQueue = new queue<IUpdatePlayerQueue>("update-player-queue", connection);
+
+export interface ISendNotificationToPlayer {
+    gameStateRid: IGameStateRid;
+    playerRid: IPlayerRid;
+    notificationDetails: IPossibleNotification;
+    createdOn: IGameClock;
+}
+export const SendNotificationToPlayerQueue = new queue<ISendNotificationToPlayer>(
+    "send-notification-to-player",
+    connection,
+);

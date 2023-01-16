@@ -78,6 +78,7 @@ export const StafferCard: React.FC<{ staffer: IActiveStaffer; isPlayerStaffer?: 
     return (
         <Card
             className={classNames(styles.stafferCard, {
+                [styles.noCategory]: stafferCategory === undefined,
                 [styles.voter]: stafferCategory === "voter",
                 [styles.generator]: stafferCategory === "generator",
                 [styles.trainer]: stafferCategory === "trainer",

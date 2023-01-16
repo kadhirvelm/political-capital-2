@@ -11,7 +11,7 @@
 
 .avatarContainer {
     display: flex;
-    margin-right: 10px;
+    margin-right: 15px;
 }
 
 .messageDetailsContainer {
@@ -19,14 +19,18 @@
     flex-direction: column;
 }
 
-.nameAndMessage {
+.messageSenderAndText {
     display: flex;
-    align-items: center;
-    font-size: 18px;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
 
-    > :first-child {
-        margin-right: 3px;
-    }
+.description {
+    color: $gray;
+}
+
+.messageText {
+    font-size: 18px;
 }
 
 .date {

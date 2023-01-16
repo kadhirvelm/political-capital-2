@@ -9,6 +9,7 @@ import { usePoliticalCapitalSelector } from "../../store/createStore";
 import { isResolveGameEvent, IUserFacingResolveEvents } from "../../store/gameState";
 import { descriptionOfStaffer } from "../../utility/stafferDescriptions";
 import { getFakeDate } from "../common/ServerStatus";
+import { StafferName } from "../common/StafferName";
 import styles from "./ResolveEvent.module.scss";
 
 export const ResolveEvent: React.FC<{
@@ -43,18 +44,14 @@ export const ResolveEvent: React.FC<{
                     (staffer) => staffer.activeStafferRid === finishHiring.activeStafferRid,
                 );
 
+                if (hiringStaffer === undefined) {
+                    return <div>Unknown staffer</div>;
+                }
+
                 return (
                     <div>
                         <div className={styles.title}>Finish recruiting</div>
-                        <div>{hiringStaffer?.stafferDetails.displayName}</div>
-                        <div>
-                            {hiringStaffer !== undefined &&
-                                DEFAULT_STAFFER[hiringStaffer.stafferDetails.type].displayName}
-                        </div>
-                        <div className={styles.description}>
-                            {hiringStaffer !== undefined &&
-                                descriptionOfStaffer(resolvedGameModifiers)[hiringStaffer.stafferDetails.type]}
-                        </div>
+                        <StafferName staffer={hiringStaffer} showType showDescription />
                     </div>
                 );
             },
@@ -91,18 +88,14 @@ export const ResolveEvent: React.FC<{
                     (staffer) => staffer.activeStafferRid === finishTraining.activeStafferRid,
                 );
 
+                if (trainingStaffer === undefined) {
+                    return <div>Unknown staffer</div>;
+                }
+
                 return (
                     <div>
                         <div className={styles.title}>Finish training</div>
-                        <div>{trainingStaffer?.stafferDetails.displayName}</div>
-                        <div>
-                            {trainingStaffer !== undefined &&
-                                `to ${DEFAULT_STAFFER[trainingStaffer?.stafferDetails.type].displayName}`}
-                        </div>
-                        <div className={styles.description}>
-                            {trainingStaffer !== undefined &&
-                                descriptionOfStaffer(resolvedGameModifiers)[trainingStaffer.stafferDetails.type]}
-                        </div>
+                        <StafferName staffer={trainingStaffer} showType showDescription />
                     </div>
                 );
             },

@@ -126,6 +126,10 @@
     cursor: not-allowed;
 }
 
+.noCategory {
+    @extend %noCategory;
+}
+
 .voter {
     @extend %voter;
 }

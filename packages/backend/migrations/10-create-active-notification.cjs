@@ -2,8 +2,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("Notification", {
-            notificationRid: {
+        await queryInterface.createTable("ActiveNotification", {
+            activeNotificationRid: {
                 allowNull: false,
                 primaryKey: true,
                 type: Sequelize.STRING,
@@ -25,9 +25,9 @@ module.exports = {
             },
         });
 
-        await queryInterface.addIndex("Notification", ["gameStateRid"]);
+        await queryInterface.addIndex("ActiveNotification", ["gameStateRid"]);
     },
     async down(queryInterface) {
-        await queryInterface.dropTable("Notification");
+        await queryInterface.dropTable("ActiveNotification");
     },
 };

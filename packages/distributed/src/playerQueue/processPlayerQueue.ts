@@ -15,12 +15,14 @@ import {
     IGameClock,
     IGameStateRid,
     IPassedGameModifier,
+    IPlayerRid,
     IStartHiringStaffer,
     IStartTrainingStaffer,
     ITallyResolution,
 } from "@pc2/api";
 import { DoneCallback, Job } from "bull";
 import crypto from "crypto";
+import _ from "lodash";
 import { Op } from "sequelize";
 import {
     ActivePlayer,
@@ -30,13 +32,15 @@ import {
     PassedGameModifier,
     ResolveGameEvent,
 } from "../models";
-import { IProcessPlayerQueue, UpdatePlayerQueue } from "../queues";
+import { IProcessPlayerQueue, SendNotificationToPlayerQueue, UpdatePlayerQueue } from "../queues";
 import { getStafferOfType } from "../utils/getStafferOfType";
 
 async function getPayoutForPlayer(
     gameStateRid: IGameStateRid,
     eventDetails: ITallyResolution,
     activePlayerStaffers: ActiveStaffer[],
+    playerRid: IPlayerRid,
+    gameClock: IGameClock,
 ): Promise<number> {
     const [activeResolution, allVotesForResolution] = await Promise.all([
         ActiveResolution.findOne({ where: { gameStateRid, activeResolutionRid: eventDetails.activeResolutionRid } }),
@@ -58,9 +62,25 @@ async function getPayoutForPlayer(
     const thisPlayersCorrectVotes = allCorrectVotes.filter((vote) =>
         thisPlayersStaffers.includes(vote.activeStafferRid),
     );
-    const thisPlayerCorrectVotesPercentage = thisPlayersCorrectVotes.length / allCorrectVotes.length;
 
-    return activeResolution.resolutionDetails.politicalCapitalPayout * thisPlayerCorrectVotesPercentage;
+    const thisPlayerCorrectVotesPercentage = thisPlayersCorrectVotes.length / Math.max(allCorrectVotes.length, 1);
+    const totalEarnedPoliticalCapital =
+        activeResolution.resolutionDetails.politicalCapitalPayout * thisPlayerCorrectVotesPercentage;
+
+    SendNotificationToPlayerQueue.add({
+        gameStateRid,
+        playerRid,
+        notificationDetails: {
+            type: "game-notification",
+            message: `You earned ${_.round(totalEarnedPoliticalCapital, 1)} political capital by having ${_.round(
+                thisPlayerCorrectVotesPercentage * 100,
+                2,
+            )}% of the ${activeResolution.state === "passed" ? "Yes" : "No"} votes.`,
+        },
+        createdOn: gameClock,
+    });
+
+    return totalEarnedPoliticalCapital;
 }
 
 async function handleFinishHiringOrTraining(
@@ -215,8 +235,10 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
             gameStateRid,
             possibleTallyEvent.eventDetails,
             activePlayerStaffers,
+            playerRid,
+            gameClock,
         );
-        activePlayer.politicalCapital += totalPayoutForPlayer;
+        activePlayer.politicalCapital += isNaN(totalPayoutForPlayer) ? 0 : totalPayoutForPlayer;
     }
 
     const handleEventsForPlayer = await ResolveGameEvent.findAll({
@@ -258,7 +280,7 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
     const deltaInPoliticalCapital = activePlayerStaffers
         .map((activeStaffer) => getTotalPayout(activeStaffer, passedGameModifiers))
         .reduce((previous, next) => previous + next, 0);
-    activePlayer.politicalCapital += deltaInPoliticalCapital;
+    activePlayer.politicalCapital += isNaN(deltaInPoliticalCapital) ? 0 : deltaInPoliticalCapital;
 
     // And finally start any trainings or hirings
     const startHiringOrTraining = handleEventsForPlayer.filter(
@@ -276,7 +298,9 @@ export async function handlePlayerProcessor(job: Job<IProcessPlayerQueue>, done:
             activePlayerStaffers,
             passedGameModifiers,
         );
-        activePlayer.politicalCapital -= deltaInPoliticalCapitalFromHiringAndTraining;
+        activePlayer.politicalCapital -= isNaN(deltaInPoliticalCapitalFromHiringAndTraining)
+            ? 0
+            : deltaInPoliticalCapitalFromHiringAndTraining;
     }
 
     // Each process would have updated the total political capital of the player, so we'll need to save

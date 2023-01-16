@@ -23,6 +23,7 @@ import {
 } from "@pc2/api";
 import { createSelector } from "@reduxjs/toolkit";
 import { State } from "../store/createStore";
+import { roundToThousand } from "../utility/roundTo";
 
 export const DEFAULT_STAFFER_MODIFIERS = {
     costToAcquire: 1,
@@ -48,7 +49,7 @@ const getEffectivenessNumber = (passedGameModifiers: IPassedGameModifier[], staf
     }
 
     if (isGenerator(staffer)) {
-        return getTotalPayout(staffer, passedGameModifiers);
+        return roundToThousand(getTotalPayout(staffer, passedGameModifiers));
     }
 
     if (isRecruit(staffer)) {

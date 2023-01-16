@@ -55,7 +55,7 @@ export const PCAvatar: React.FC<{ sizeOverride?: "lg" }> = ({ sizeOverride }) =>
             size={sizeOverride ?? "xl"}
             name="Political Capital 2"
             showBorder
-            src={`https://api.dicebear.com/5.x/fun-emoji/svg?seed=Political Capital 2`}
+            src={`https://api.dicebear.com/5.x/lorelei-neutral/svg?seed=Political%20Capital%202`}
         />
     );
 };
@@ -67,7 +67,7 @@ export const AnonymousAvatar: React.FC<{ sizeOverride?: "lg" }> = ({ sizeOverrid
             size={sizeOverride ?? "xl"}
             name="Anonymous"
             showBorder
-            src={`https://api.dicebear.com/5.x/identicon/svg?seed=Anonymous`}
+            src={`http://${window.location.hostname}:3002/anonymous.png`}
         />
     );
 };

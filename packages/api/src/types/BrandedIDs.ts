@@ -14,4 +14,4 @@ export type IActiveResolutionRid = string & { _brand: "activeResolutionRid" };
 
 export type IActiveStafferRid = string & { _brand: "activeStafferRid" };
 
-export type INotificationRid = string & { _brand: "notificationRid" };
+export type IActiveNotificationRid = string & { _brand: "activeNotificationRid" };

@@ -3,10 +3,10 @@
  */
 
 import {
+    IActiveNotification,
     IActiveResolutionVote,
     IActiveStafferRid,
     IFullGameState,
-    INotification,
     IPartialResolveGameEvent,
     IPlayerRid,
     IPossibleEvent,
@@ -37,8 +37,8 @@ export interface IUserFacingIndexedResolveEvents {
 export interface ILocalGameState {
     fullGameState: IFullGameState | undefined;
     resolveEvents: IUserFacingIndexedResolveEvents | undefined;
-    notifications: INotification[];
-    viewingNotifications: INotification[];
+    notifications: IActiveNotification[];
+    viewingNotifications: IActiveNotification[];
 }
 
 const initialState: ILocalGameState = {
@@ -64,18 +64,20 @@ const gameState = createSlice({
                 unknown: () => {},
             });
         },
-        setNotifications: (state, action: PayloadAction<INotification[]>) => {
+        setNotifications: (state, action: PayloadAction<IActiveNotification[]>) => {
             state.notifications = action.payload;
         },
-        setViewingNotifications: (state, action: PayloadAction<INotification[]>) => {
+        setViewingNotifications: (state, action: PayloadAction<IActiveNotification[]>) => {
             state.viewingNotifications = action.payload;
         },
-        markNotificationAsRead: (state, action: PayloadAction<INotification>) => {
-            const index = state.notifications.findIndex((n) => n.notificationRid === action.payload.notificationRid);
+        markNotificationAsRead: (state, action: PayloadAction<IActiveNotification>) => {
+            const index = state.notifications.findIndex(
+                (n) => n.activeNotificationRid === action.payload.activeNotificationRid,
+            );
             state.notifications.splice(index, 1, action.payload);
 
             state.viewingNotifications = state.viewingNotifications.filter(
-                (n) => n.notificationRid !== action.payload.notificationRid,
+                (n) => n.activeNotificationRid !== action.payload.activeNotificationRid,
             );
         },
         addGameEventToStaffer: (

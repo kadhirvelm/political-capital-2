@@ -47,14 +47,14 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
         return (
             <div className={styles.staffersInCategory}>
                 {staffersInCategory.map((staffer) => {
-                    const canActivateCard = isViewingSelf && (category === "recruit" || category === "trainer");
+                    const canActivateCard =
+                        isViewingSelf &&
+                        (category === "recruit" || category === "trainer") &&
+                        staffer.state === "active";
+                    const effectiveness = resolvedGameModifiers[staffer.stafferDetails.type].effectiveness;
 
-                    const isActivateEnabled = (() => {
-                        if (!isViewingSelf) {
-                            return false;
-                        }
-
-                        if (!isRecruit(staffer) && !isTrainer(staffer)) {
+                    const canActivateMore = (() => {
+                        if (!canActivateCard) {
                             return false;
                         }
 
@@ -62,11 +62,8 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
                             resolveEvents?.players[playerRid]?.staffers[staffer.activeStafferRid]?.filter(
                                 (e) => e.state === "active" || e.state === "pending",
                             ) ?? [];
-                        if (isRecruit(staffer)) {
-                            return staffer.recruitCapacity !== activeEvents.length;
-                        }
 
-                        return staffer.trainingCapacity !== activeEvents.length;
+                        return effectiveness > activeEvents.length;
                     })();
 
                     return (
@@ -75,7 +72,7 @@ export const PlayerParty: React.FC<{ playerRid: IPlayerRid }> = ({ playerRid }) 
                             {canActivateCard && (
                                 <Button
                                     className={styles.chevronRight}
-                                    disabled={!isActivateEnabled}
+                                    colorScheme={canActivateMore ? "green" : undefined}
                                     rightIcon={<ChevronRightIcon />}
                                     onClick={activateStaffer(staffer)}
                                 >

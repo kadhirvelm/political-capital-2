@@ -3,13 +3,20 @@
  */
 
 import { BullAdapter, createBullBoard, ExpressAdapter } from "@bull-board/express";
-import { handlePlayerProcessor, ProcessPlayerQueue, UpdatePlayerQueue } from "@pc2/distributed-compute";
+import {
+    handlePlayerProcessor,
+    ProcessPlayerQueue,
+    SendNotificationToPlayerQueue,
+    UpdatePlayerQueue,
+} from "@pc2/distributed-compute";
 import { Express } from "express";
+import { sendNotificationToPlayer } from "./sendNotificationToPlayer";
 import { handleUpdatePlayerProcessor } from "./updatePlayer";
 
 function setupPlayerQueueProcessor() {
     ProcessPlayerQueue.process(3, handlePlayerProcessor);
     UpdatePlayerQueue.process(1, handleUpdatePlayerProcessor);
+    SendNotificationToPlayerQueue.process(1, sendNotificationToPlayer);
 }
 
 export function configureAllQueueProcessors(app: Express) {

@@ -7,7 +7,7 @@ import { IActiveResolution, IEvent } from "@pc2/api";
 import classNames from "classnames";
 import { flatten } from "lodash-es";
 import { usePoliticalCapitalSelector } from "../../store/createStore";
-import { roundToHundred, roundToThousand } from "../../utility/roundTo";
+import { roundToHundred } from "../../utility/roundTo";
 import { getFakeDate } from "../common/ServerStatus";
 import { GameModifier } from "./GameModifier";
 import styles from "./Resolution.module.scss";
@@ -89,12 +89,12 @@ export const Resolution: React.FC<{ resolution: IActiveResolution; isGlobalScree
                 <div className={styles.singleVoteCategory}>
                     <div className={styles.yes}>Yes</div>
                     <div className={styles.divider} />
-                    <div>{roundToThousand((totalYes / (totalYes + totalNo)) * 100)}%</div>
+                    <div>{roundToHundred((totalYes / (totalYes + totalNo)) * 100)}%</div>
                 </div>
                 <div className={styles.singleVoteCategory}>
                     <div className={styles.no}>No</div>
                     <div className={styles.divider} />
-                    <div>{roundToThousand((totalNo / (totalYes + totalNo)) * 100)}%</div>
+                    <div>{roundToHundred((totalNo / (totalYes + totalNo)) * 100)}%</div>
                 </div>
                 {resolution.state === "active" && (
                     <div className={styles.onTrackTo}>

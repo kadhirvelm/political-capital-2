@@ -262,7 +262,7 @@ export const RecruiterActivation: React.FC<{
                 <div className={styles.result}>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Current PC</div>
-                        <div>{currentPoliticalCapital.toLocaleString()}</div>
+                        <div>{roundToHundred(currentPoliticalCapital).toLocaleString()}</div>
                     </div>
                     <div className={styles.modalSentence}>
                         <div className={styles.description}>Remaining</div>

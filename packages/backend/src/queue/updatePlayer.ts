@@ -12,6 +12,7 @@ export async function handleUpdatePlayerProcessor(job: Job<IUpdatePlayerQueue>, 
     const updatedPlayers = totalPlayersUpdate.filter((u) => u.lastUpdatedGameClock === job.data.gameClock);
 
     if (updatedPlayers.length !== totalPlayersUpdate.length) {
+        done();
         return;
     }
 

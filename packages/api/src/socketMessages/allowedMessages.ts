@@ -5,7 +5,7 @@
 import { IActiveGameService } from "../services/activeGameService";
 import { IGlobalScreenIdentifier } from "../types/BrandedIDs";
 import { IVisit } from "../types/IVisit";
-import { INotification, IPlayer } from "../types/politicalCapitalTwo";
+import { IActiveNotification, IPlayer } from "../types/politicalCapitalTwo";
 
 export interface IUpdateGameStateMessage {
     newGameState: IActiveGameService["getGameState"]["response"];
@@ -13,7 +13,7 @@ export interface IUpdateGameStateMessage {
 }
 
 export interface IReceivedNewNotification {
-    notification: INotification;
+    notification: IActiveNotification;
     type: "new-notification";
 }
 
