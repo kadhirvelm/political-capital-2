@@ -254,7 +254,7 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 1",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -264,7 +264,7 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 2",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -274,7 +274,7 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 3",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -284,7 +284,7 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 4",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.6,
     },
@@ -292,7 +292,7 @@ const MIDDLE: IOmitStaged[] = [
 
 const LATE: IOmitStaged[] = [
     {
-        title: "Under construction",
+        title: "Under construction 5",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -302,7 +302,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 6",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -312,7 +312,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 7",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -322,7 +322,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 8",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -332,7 +332,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 9",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -342,7 +342,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 10",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -352,7 +352,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 11",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -362,7 +362,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 12",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -372,7 +372,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 13",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -382,7 +382,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 14",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -392,7 +392,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 15",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -401,7 +401,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 16",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -410,7 +410,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 17",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -419,7 +419,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 18",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -428,7 +428,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 19",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -439,7 +439,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 20",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -450,7 +450,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 21",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -461,7 +461,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 22",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -472,7 +472,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 23",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
@@ -483,7 +483,7 @@ const LATE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
+        title: "Under construction 24",
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 2,
     },

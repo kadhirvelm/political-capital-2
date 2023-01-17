@@ -229,22 +229,22 @@ export function getPayoutPerPlayerModifier(
     allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     activePlayerStaffers: IActiveStaffer[],
 ) {
-    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = allPassedGameModifiers;
+    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = allPassedGameModifiers.slice();
     if (activePlayerStaffers.find((s) => s.stafferDetails.type === "lobbyist")?.state === "active") {
         finalModifiers.push({ modifier: LOBBYIST_MODIFIER, createdOn: 0 as IGameClock });
     }
 
-    return getResolutionModifier("payoutPerPlayer", allPassedGameModifiers);
+    return getResolutionModifier("payoutPerPlayer", finalModifiers);
 }
 
 export function getEarlyVotingBonusModifier(
     allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
     activePlayerStaffers: IActiveStaffer[],
 ) {
-    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = allPassedGameModifiers;
+    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = allPassedGameModifiers.slice();
     if (activePlayerStaffers.find((s) => s.stafferDetails.type === "lobbyist")?.state === "active") {
         finalModifiers.push({ modifier: LOBBYIST_MODIFIER, createdOn: 0 as IGameClock });
     }
 
-    return getResolutionModifier("earlyVotingBonus", allPassedGameModifiers);
+    return getResolutionModifier("earlyVotingBonus", finalModifiers);
 }

@@ -84,7 +84,7 @@ async function getPayoutForPlayer(
                 thisPlayerCorrectVotesPercentage * 100,
                 2,
             )}% of the ${activeResolution.state === "passed" ? "Yes" : "No"} votes.${
-                modifier !== 1 ? ` ${_.round(modifier - 1, 2)}% modifier on amount earned.` : ""
+                modifier !== 1 ? ` ${_.round((modifier - 1) * 100, 2)}% modifier on amount earned.` : ""
             }`,
         },
         createdOn: gameClock,
@@ -169,7 +169,9 @@ async function handleEarlyVotingPayouts(
                 type: "game-notification",
                 message: `You earned ${_.round(totalPaidOut, 2)} political capital by voting ${
                     accordingTallyEvent.resolvesOn - gameClock
-                } days early.${modifier !== 1 ? ` ${_.round(modifier - 1, 2)}% modifier on amount earned.` : ""}`,
+                } days early.${
+                    modifier !== 1 ? ` ${_.round((modifier - 1) * 100, 2)}% modifier on amount earned.` : ""
+                }`,
             },
             status: "read",
             createdOn: gameClock,

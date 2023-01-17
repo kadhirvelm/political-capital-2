@@ -40,7 +40,7 @@ export function getStafferAcquisitionTime(
 ) {
     const stafferDetails = getStafferDetails(staffer);
 
-    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = passedGameModifiers;
+    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = passedGameModifiers.slice();
     if (activePlayerStaffers.find((s) => s.stafferDetails.type === "chiefOfStaff")?.state === "active") {
         finalModifiers.push({ modifier: CHIEF_OF_STAFF_MODIFIER, createdOn: 0 as IGameClock });
     }
@@ -57,12 +57,12 @@ export function getStafferAcquisitionCost(
 ) {
     const stafferDetails = getStafferDetails(staffer);
 
-    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = passedGameModifiers;
+    const finalModifiers: Array<IPassedGameModifier | IActivePlayerModifier> = passedGameModifiers.slice();
     if (activePlayerStaffers.find((s) => s.stafferDetails.type === "accountant")?.state === "active") {
         finalModifiers.push({ modifier: ACCOUNTANT_MODIFIER, createdOn: 0 as IGameClock });
     }
 
-    const costModifier = getCostToAcquireModifier(passedGameModifiers, staffer);
+    const costModifier = getCostToAcquireModifier(finalModifiers, staffer);
 
     return Math.round(stafferDetails.costToAcquire * costModifier);
 }

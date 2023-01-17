@@ -30,7 +30,7 @@ export const StafferLadders: React.FC<{}> = () => {
         const finalTimeToAcquire = resolvedGameModifiers[staffer.type].timeToAcquire;
 
         return (
-            <div className={styles.withIndicator}>
+            <div className={styles.withIndicator} key={staffer.displayName}>
                 {hasParent && (
                     <div
                         className={classNames(styles.topHalf, {

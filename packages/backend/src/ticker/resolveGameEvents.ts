@@ -30,7 +30,7 @@ import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
 
-function getCurrentStage(gameClock: IGameClock): IBasicResolution["stage"] {
+export function getCurrentStage(gameClock: IGameClock): IBasicResolution["stage"] {
     const thirds = TOTAL_DAYS_IN_GAME * 0.3333;
 
     if (gameClock < thirds) {
