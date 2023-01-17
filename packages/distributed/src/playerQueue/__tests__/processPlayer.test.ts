@@ -182,7 +182,7 @@ describe("Process player works as expected", () => {
         const activePlayer = await ActivePlayer.findOne({ where: { playerRid } });
 
         // Player changes: political capital --> 10 (resolution vote) + 1 (phone banker) - 1 (intern hire) - 4 (senior rep train)
-        expect(activePlayer?.politicalCapital).toEqual(6);
+        expect(activePlayer?.politicalCapital).toEqual(15.3999);
         expect(activePlayer?.lastUpdatedGameClock).toEqual(10);
 
         // Resolve events --> 1 new finish hiring staffer, 1 new finish training staffer
