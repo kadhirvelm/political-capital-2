@@ -22,7 +22,7 @@ const EARLY: IOmitStaged[] = [
     {
         title: "Robots require rain",
         description:
-            "The coalition of robots think their part of the metropolis doesn't get enough rain. They'd like to petition for more rain.",
+            "The coalition of robots think their part of the metropolis doesn't get enough rain. They'd like to use the generators to petition for more.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["generator"],
@@ -31,8 +31,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "The swamp industry is taking over",
+        description:
+            "Big swamp wants to lower regulatory standards on what is a 'cookie.' Unfortunately they pay well for marketing positions.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["generator"],
@@ -41,8 +42,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Kittens 'R Us",
+        description:
+            "The conglomerate of cats needs more representation. They want to provide tax incentives for cat families to have more kittens.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["voter"],
@@ -51,8 +53,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "The noisy neighbors",
+        description:
+            "The neighboring sentient tree civilization keeps sending delegates to howl at us. Should we send some representatives to howl back?",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["voter"],
@@ -61,8 +64,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Everyone needs public transport",
+        description:
+            "Should we increase the funding for public transport to the outer reaches of the metropolis, allowing more citizens to come to the capital? Do we want that kind of citizen here?",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["recruit"],
@@ -71,8 +75,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Increase the minimum anchovy",
+        description:
+            "The cats think the anchovies in the metropolis are too small. We should increase regulation requiring a higher minimum anchovy. Anchovy? Sorry we meant minimum wage.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["recruit"],
@@ -81,8 +86,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Lower robot power requirements",
+        description:
+            "Young robots don't have the same opportunities the previous generations had. This removes the requirement for new generation robots to have phone chargers installed.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["trainer"],
@@ -91,8 +97,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "The monsters pay too much",
+        description:
+            "The union of monsters has been paying top dollar for educators. This will add 2 toilet paper rolls and 1 banana as a signing bonus for educators that join the government.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["trainer"],
@@ -101,8 +108,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "The shadows are moving",
+        description:
+            "It seems the shadow government REDACTED. REDACTED. REDACTED. Therefore, this gives them the bananas they request.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["shadowGovernment"],
@@ -111,8 +119,9 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Lights everywhere",
+        description:
+            "In order to combat the shadow government, this adds more flood lights to the city, shining a light on all the seedy activity. That should slow it down.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["shadowGovernment"],
@@ -121,16 +130,41 @@ const EARLY: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Let's be happy",
+        description:
+            "The government thinks everyone is working too hard. This makes the popular swamp hard seltzer a public good.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            staffersAffected: ["everyone"],
+            timeToAcquire: 0.1,
+            costToAcquire: -0.1,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Everyone needs to work",
+        description: "GET TO WORK, IMMEDIATELY. No more milk breaks, get back to work!",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            staffersAffected: ["everyone"],
+            timeToAcquire: -0.1,
+            costToAcquire: 0.1,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Rename the official sports team",
+        description:
+            "After much debate, this proposes renaming the national sports team from 'The scary citizens' to 'The kind of nice citizens'.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.2,
     },
 ];
 
 const MIDDLE: IOmitStaged[] = [
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Put the government on social media",
+        description:
+            "The freshly minted voters don't find us relatable. This puts the government on the popular SwampTok, that should fix the problem.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 0.8,
         gameModifier: {
             payoutPerResolution: 0.2,
@@ -138,8 +172,9 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Restrict government propaganda",
+        description:
+            "We've had too many viral videos on SwampTok. People are paying too much attention. This cuts our social media presence back.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.2,
         gameModifier: {
             payoutPerResolution: -0.2,
@@ -147,8 +182,9 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "The rich need to help",
+        description:
+            "The elite of the metropolis aren't paying attention to us. This increases the allowed political donation cap.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             payoutPerPlayer: 0.2,
@@ -156,8 +192,9 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "The rich need to leave",
+        description:
+            "The elite of the metropolis have their hands in everything, especially the cookies. We need our snacks back. This limits the intervention of the rich in government affairs.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             payoutPerPlayer: -0.2,
@@ -186,8 +223,9 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Swamp Industries wants you to vote",
+        description:
+            "Swamp Industries is offering to add a little something extra when representatives do their job. This allows their altruism to go unchecked.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             earlyVotingBonus: 0.15,
@@ -195,8 +233,9 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Swamp Industries needs dividends",
+        description:
+            "Swamp Industries has come to collect from the government. This starts the painful process of paying back the bailout we took from them.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             earlyVotingBonus: -0.1,
@@ -204,8 +243,9 @@ const MIDDLE: IOmitStaged[] = [
         },
     },
     {
-        title: "Under construction",
-        description: "Under construction",
+        title: "Open the floodgates",
+        description:
+            "This increases the public education budget, getting the funding from the public sanitation fund and the handicapped veterans institute.",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["everyone"],
@@ -243,6 +283,11 @@ const MIDDLE: IOmitStaged[] = [
             type: "staffer-effect",
         },
     },
+    {
+        title: "Under construction",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.6,
+    },
 ];
 
 const LATE: IOmitStaged[] = [
@@ -261,6 +306,16 @@ const LATE: IOmitStaged[] = [
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
+            staffersAffected: ["voter"],
+            timeToAcquire: 1,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Under construction",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
             staffersAffected: ["generator"],
             effectiveness: 0.5,
             type: "staffer-effect",
@@ -272,7 +327,7 @@ const LATE: IOmitStaged[] = [
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
             staffersAffected: ["generator"],
-            timeToAcquire: -0.5,
+            timeToAcquire: 0.5,
             type: "staffer-effect",
         },
     },
@@ -291,8 +346,28 @@ const LATE: IOmitStaged[] = [
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
+            staffersAffected: ["recruit"],
+            timeToAcquire: 0.5,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Under construction",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
             staffersAffected: ["trainer"],
             costToAcquire: -0.75,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Under construction",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            staffersAffected: ["trainer"],
+            timeToAcquire: 0.5,
             type: "staffer-effect",
         },
     },
@@ -311,6 +386,16 @@ const LATE: IOmitStaged[] = [
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
+            staffersAffected: ["shadowGovernment"],
+            costToAcquire: 0.5,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Under construction",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
             earlyVotingBonus: 0.25,
             type: "resolution-effect",
         },
@@ -320,7 +405,25 @@ const LATE: IOmitStaged[] = [
         description: "Under construction",
         politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
         gameModifier: {
+            earlyVotingBonus: -0.25,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "Under construction",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
             payoutPerResolution: 0.25,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "Under construction",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            payoutPerResolution: -0.25,
             type: "resolution-effect",
         },
     },
@@ -382,7 +485,7 @@ const LATE: IOmitStaged[] = [
     {
         title: "Under construction",
         description: "Under construction",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.5,
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 2,
     },
 ];
 
