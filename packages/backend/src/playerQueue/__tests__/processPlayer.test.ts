@@ -20,7 +20,7 @@ import {
     initializeModels,
     ResolveGameEvent,
 } from "../../models";
-import { IProcessPlayerQueue } from "../../queues";
+import { IProcessPlayerQueue } from "../../queue/queues";
 import { initDB, teardownDB } from "../../testUtilities/setupTests";
 import { handlePlayerProcessor } from "../processPlayerQueue";
 

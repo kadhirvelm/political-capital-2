@@ -12,7 +12,7 @@ import { configureAllRoutes } from "./routes/configureAllRoutes";
 import { configureSecurity } from "./security/configureSecurity";
 import { startGameClockTicker } from "./ticker/gameClock";
 import { configureAllQueueProcessors } from "./queue/configureAllQueueProcessors";
-import { initializeModels } from "@pc2/distributed-compute";
+import { initializeModels } from "./models";
 
 // Initialize the socket service
 import "./services/socketService";

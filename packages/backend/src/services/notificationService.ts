@@ -3,8 +3,8 @@
  */
 
 import { INotificationService } from "@pc2/api";
-import { ActiveNotification } from "@pc2/distributed-compute";
 import { sendMessageToPlayer } from "./socketService";
+import { ActiveNotification } from "../models";
 
 export async function createNewNotification(
     payload: INotificationService["createNewNotification"]["payload"],

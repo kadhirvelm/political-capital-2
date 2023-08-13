@@ -18,17 +18,17 @@ import {
     TIME_FOR_EACH_RESOLUTION_IN_DAYS,
     TOTAL_DAYS_IN_GAME,
 } from "@pc2/api";
-import {
-    ActivePlayer,
-    ActiveResolution,
-    ActiveResolutionVote,
-    GameState,
-    PassedGameModifier,
-    ResolveGameEvent,
-} from "@pc2/distributed-compute";
 import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
+import {
+    GameState,
+    ActiveResolution,
+    ActivePlayer,
+    ResolveGameEvent,
+    ActiveResolutionVote,
+    PassedGameModifier,
+} from "../models";
 
 export function getCurrentStage(gameClock: IGameClock, totalResolutions: number): IBasicResolution["stage"] {
     if (totalResolutions === 4) {

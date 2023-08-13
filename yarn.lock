@@ -3562,7 +3562,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/globals@npm:^29.3.1, @jest/globals@npm:^29.6.2":
+"@jest/globals@npm:^29.6.2":
   version: 29.6.2
   resolution: "@jest/globals@npm:29.6.2"
   dependencies:
@@ -4723,7 +4723,6 @@ __metadata:
   dependencies:
     "@bull-board/express": ^4.9.0
     "@pc2/api": 1.0.0
-    "@pc2/distributed-compute": 1.0.0
     "@types/body-parser": ^1.19.2
     "@types/bull": ^4.10.0
     "@types/compression": ^1.7.2
@@ -4764,28 +4763,6 @@ __metadata:
     uuid: ^9.0.0
     webpack: ^5.0.0
     ws: ^8.11.0
-  languageName: unknown
-  linkType: soft
-
-"@pc2/distributed-compute@1.0.0, @pc2/distributed-compute@workspace:packages/distributed":
-  version: 0.0.0-use.local
-  resolution: "@pc2/distributed-compute@workspace:packages/distributed"
-  dependencies:
-    "@jest/globals": ^29.3.1
-    "@pc2/api": 1.0.0
-    "@types/lodash": ^4.14.191
-    "@types/node": ^18.11.17
-    "@types/validator": ^13.7.10
-    bull: ^4.10.2
-    jest: ^29.3.1
-    lodash: ^4.17.21
-    reflect-metadata: ^0.1.13
-    sequelize: ^6.28.0
-    sequelize-typescript: ^2.1.5
-    ts-jest: ^29.0.3
-    tslib: ^2.6.1
-    typescript: ^5.1.6
-    unique-names-generator: ^4.7.1
   languageName: unknown
   linkType: soft
 
@@ -5928,7 +5905,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.11.13, @types/node@npm:^18.11.17":
+"@types/node@npm:^18.11.13":
   version: 18.17.5
   resolution: "@types/node@npm:18.17.5"
   checksum: b8c658a99234b99425243c324b641ed7b9ceb6bee6b06421fdc9bb7c58f9a5552e353225cc549e6982462ac384abe1985022ed76e2e4728797f59b21f659ca2b
@@ -20416,7 +20393,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sequelize@npm:^6.26.0, sequelize@npm:^6.28.0":
+"sequelize@npm:^6.26.0":
   version: 6.32.1
   resolution: "sequelize@npm:6.32.1"
   dependencies:

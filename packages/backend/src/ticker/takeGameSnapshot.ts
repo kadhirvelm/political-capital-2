@@ -3,7 +3,7 @@
  */
 
 import { IHistoricalGameState } from "@pc2/api";
-import { ActivePlayer, GameState, HistoricalGameState } from "@pc2/distributed-compute";
+import { GameState, ActivePlayer, HistoricalGameState } from "../models";
 
 export async function takeGameSnapshot(activeGame: GameState) {
     const allPlayers = await ActivePlayer.findAll({ where: { gameStateRid: activeGame.gameStateRid } });

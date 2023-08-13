@@ -38,7 +38,7 @@ import {
     PassedGameModifier,
     ResolveGameEvent,
 } from "../models";
-import { IProcessPlayerQueue, SendNotificationToPlayerQueue, UpdatePlayerQueue } from "../queues";
+import { IProcessPlayerQueue, SendNotificationToPlayerQueue, UpdatePlayerQueue } from "../queue/queues";
 import { getStafferOfType } from "../utils/getStafferOfType";
 
 async function getPayoutForPlayer(

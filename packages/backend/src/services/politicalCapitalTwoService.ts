@@ -21,17 +21,17 @@ import {
     IStartTrainingStaffer,
     isVoter,
 } from "@pc2/api";
-import {
-    ActiveResolution,
-    ActiveResolutionVote,
-    ActiveStaffer,
-    GameState,
-    PassedGameModifier,
-    ResolveGameEvent,
-} from "@pc2/distributed-compute";
 import Express from "express";
 import _ from "lodash";
 import { Op } from "sequelize";
+import {
+    ActiveStaffer,
+    ResolveGameEvent,
+    ActiveResolution,
+    ActiveResolutionVote,
+    GameState,
+    PassedGameModifier,
+} from "../models";
 
 async function doesExceedLimitForPlayer(
     gameStateRid: IGameStateRid,
