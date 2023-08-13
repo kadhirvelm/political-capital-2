@@ -2,13 +2,13 @@
     "name": "frontend-stack",
     "version": "1.0.0",
     "description": "The frontend and backend",
-    "dependencies": {},
     "private": true,
     "devDependencies": {
         "@types/node": "^18.11.13",
         "@types/semver": "^7.3.13",
         "@typescript-eslint/eslint-plugin": "^5.46.0",
         "@typescript-eslint/parser": "^5.46.0",
+        "@yarnpkg/sdks": "^3.0.0-rc.48",
         "eslint": "^8.29.0",
         "eslint-config-airbnb-typescript": "^17.0.0",
         "eslint-config-prettier": "^8.5.0",
@@ -23,8 +23,8 @@
         "pm2": "^5.2.2",
         "prettier": "^2.8.1",
         "semver": "^7.3.8",
-        "tslib": "^2.4.1",
-        "typescript": "^4.9.4"
+        "tslib": "^2.6.1",
+        "typescript": "^5.1.6"
     },
     "workspaces": [
         "packages/*"
@@ -52,5 +52,6 @@
     "bugs": {
         "url": "https://github.com/kadhirvelm/political-capital-2/issues"
     },
-    "homepage": "https://github.com/kadhirvelm/political-capital-2.git"
+    "homepage": "https://github.com/kadhirvelm/political-capital-2.git",
+    "packageManager": "yarn@3.6.0"
 }
