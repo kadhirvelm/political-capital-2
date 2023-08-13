@@ -10,7 +10,7 @@ Round 2!
 4. Switch to using prisma as a dedicated package instead of sequelize
 5. Get CI working by switching the repo to a public one instead
 6. Switch from webpack to NextJS based build
-7. Switch from Lerna to turborepo
+7. Switch from Lerna to turborepo!
 
 8. Expose the resolution without voting for X time
 9. Allow voting, but change the early voting bonus to 3 stages - early, mid, and no bonus
