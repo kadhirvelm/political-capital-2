@@ -25,11 +25,13 @@ export const getVoters = createSelector(
     (state: State) => state.playerState.player,
     (state: State) => state.localGameState.fullGameState?.activePlayersStaffers,
     (state: State) => state.localGameState.resolveEvents,
+    (state: State) => state.localGameState.fullGameState,
     (
         gameModifiers: IResolvedGameModifiersForEachStaffer,
         playerState: IPlayer | undefined,
         activePlayersStaffers: IFullGameState["activePlayersStaffers"] | undefined,
         resolveEvent: IUserFacingIndexedResolveEvents | undefined,
+        gameState: IFullGameState | undefined,
     ): IVoterAndActiveEvent[] => {
         if (playerState === undefined || activePlayersStaffers === undefined || resolveEvent === undefined) {
             return [];
@@ -41,7 +43,7 @@ export const getVoters = createSelector(
             })
             .map((staffer) => ({
                 activeEvent: resolveEvent.players[playerState.playerRid]?.staffers[staffer.activeStafferRid]?.find(
-                    (event) => event.state === "active",
+                    (event) => event.state === "active" && (gameState?.gameState.gameClock ?? 0) < event.resolvesOn,
                 ),
                 staffer,
             }))

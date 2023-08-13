@@ -16,8 +16,6 @@ export interface IBasicResolution {
 
 type IOmitStaged = Omit<IBasicResolution, "stage">;
 
-// Robots, Monsters, Cats, Humans
-
 const EARLY: IOmitStaged[] = [
     {
         title: "Robots require rain",
@@ -161,136 +159,6 @@ const EARLY: IOmitStaged[] = [
 ];
 
 const MIDDLE: IOmitStaged[] = [
-    {
-        title: "Put the government on social media",
-        description:
-            "The freshly minted voters don't find us relatable. This puts the government on the popular SwampTok, that should fix the problem.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 0.8,
-        gameModifier: {
-            payoutPerResolution: 0.2,
-            type: "resolution-effect",
-        },
-    },
-    {
-        title: "Restrict government propaganda",
-        description:
-            "We've had too many viral videos on SwampTok. People are paying too much attention. This cuts our social media presence back.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.2,
-        gameModifier: {
-            payoutPerResolution: -0.2,
-            type: "resolution-effect",
-        },
-    },
-    {
-        title: "The rich need to help",
-        description:
-            "The elite of the metropolis aren't paying attention to us. This increases the allowed political donation cap.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            payoutPerPlayer: 0.2,
-            type: "resolution-effect",
-        },
-    },
-    {
-        title: "The rich need to leave",
-        description:
-            "The elite of the metropolis have their hands in everything, especially the cookies. We need our snacks back. This limits the intervention of the rich in government affairs.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            payoutPerPlayer: -0.2,
-            type: "resolution-effect",
-        },
-    },
-    {
-        title: "Too many decisions",
-        description:
-            "This government is making too many decision too quickly. We need to slow down before we do something stupid. The time increase might remove the last resolution.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            timeBetweenResolutions: 0.3,
-            type: "resolution-effect",
-        },
-    },
-    {
-        title: "Pass all the resolutions",
-        description:
-            "We need to look like we're working hard to keep these nice jobs. The increased speed might accommodate one more resolution.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            timeBetweenResolutions: -0.3,
-            timePerResolution: -0.3,
-            type: "resolution-effect",
-        },
-    },
-    {
-        title: "Swamp Industries wants you to vote",
-        description:
-            "Swamp Industries is offering to add a little something extra when representatives do their job. This allows their altruism to go unchecked.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            earlyVotingBonus: 0.15,
-            type: "resolution-effect",
-        },
-    },
-    {
-        title: "Swamp Industries needs dividends",
-        description:
-            "Swamp Industries has come to collect from the government. This starts the painful process of paying back the bailout we took from them.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            earlyVotingBonus: -0.1,
-            type: "resolution-effect",
-        },
-    },
-    {
-        title: "Open the floodgates",
-        description:
-            "This increases the public education budget, getting the funding from the public sanitation fund and the handicapped veterans institute.",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            staffersAffected: ["everyone"],
-            costToAcquire: -0.2,
-            type: "staffer-effect",
-        },
-    },
-    {
-        title: "Under construction 1",
-        description: "Under construction",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            staffersAffected: ["everyone"],
-            costToAcquire: 0.15,
-            type: "staffer-effect",
-        },
-    },
-    {
-        title: "Under construction 2",
-        description: "Under construction",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            staffersAffected: ["everyone"],
-            timeToAcquire: 0.15,
-            type: "staffer-effect",
-        },
-    },
-    {
-        title: "Under construction 3",
-        description: "Under construction",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
-        gameModifier: {
-            staffersAffected: ["everyone"],
-            timeToAcquire: -0.2,
-            type: "staffer-effect",
-        },
-    },
-    {
-        title: "Under construction 4",
-        description: "Under construction",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.6,
-    },
-];
-
-const LATE: IOmitStaged[] = [
     {
         title: "Under construction 5",
         description: "Under construction",
@@ -485,7 +353,137 @@ const LATE: IOmitStaged[] = [
     {
         title: "Under construction 24",
         description: "Under construction",
-        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 2,
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 3,
+    },
+];
+
+const LATE: IOmitStaged[] = [
+    {
+        title: "Put the government on social media",
+        description:
+            "The freshly minted voters don't find us relatable. This puts the government on the popular SwampTok, that should fix the problem.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 0.8,
+        gameModifier: {
+            payoutPerResolution: 0.2,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "Restrict government propaganda",
+        description:
+            "We've had too many viral videos on SwampTok. People are paying too much attention. This cuts our social media presence back.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.2,
+        gameModifier: {
+            payoutPerResolution: -0.2,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "The rich need to help",
+        description:
+            "The elite of the metropolis aren't paying attention to us. This increases the allowed political donation cap.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            payoutPerPlayer: 0.2,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "The rich need to leave",
+        description:
+            "The elite of the metropolis have their hands in everything, especially the cookies. We need our snacks back. This limits the intervention of the rich in government affairs.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            payoutPerPlayer: -0.2,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "Too many decisions",
+        description:
+            "This government is making too many decision too quickly. We need to slow down before we do something stupid. The time increase might remove the last resolution.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            timeBetweenResolutions: 0.3,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "Pass all the resolutions",
+        description:
+            "We need to look like we're working hard to keep these nice jobs. The increased speed might accommodate one more resolution.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            timeBetweenResolutions: -0.3,
+            timePerResolution: -0.3,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "Swamp Industries wants you to vote",
+        description:
+            "Swamp Industries is offering to add a little something extra when representatives do their job. This allows their altruism to go unchecked.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            earlyVotingBonus: 0.15,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "Swamp Industries needs dividends",
+        description:
+            "Swamp Industries has come to collect from the government. This starts the painful process of paying back the bailout we took from them.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            earlyVotingBonus: -0.1,
+            type: "resolution-effect",
+        },
+    },
+    {
+        title: "Open the floodgates",
+        description:
+            "This increases the public education budget, getting the funding from the public sanitation fund and the handicapped veterans institute.",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            staffersAffected: ["everyone"],
+            costToAcquire: -0.2,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Under construction 1",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            staffersAffected: ["everyone"],
+            costToAcquire: 0.15,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Under construction 2",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            staffersAffected: ["everyone"],
+            timeToAcquire: 0.15,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Under construction 3",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
+        gameModifier: {
+            staffersAffected: ["everyone"],
+            timeToAcquire: -0.2,
+            type: "staffer-effect",
+        },
+    },
+    {
+        title: "Under construction 4",
+        description: "Under construction",
+        politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.6,
     },
 ];
 

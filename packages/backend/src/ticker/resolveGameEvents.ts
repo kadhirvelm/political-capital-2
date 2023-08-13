@@ -30,15 +30,13 @@ import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
 
-export function getCurrentStage(gameClock: IGameClock): IBasicResolution["stage"] {
-    const thirds = TOTAL_DAYS_IN_GAME * 0.3333;
-
-    if (gameClock < thirds) {
-        return "early";
+export function getCurrentStage(gameClock: IGameClock, totalResolutions: number): IBasicResolution["stage"] {
+    if (totalResolutions === 4) {
+        return "middle";
     }
 
-    if (gameClock < thirds * 2) {
-        return "middle";
+    if (gameClock < TOTAL_DAYS_IN_GAME * 0.4) {
+        return "early";
     }
 
     return "late";
@@ -67,7 +65,7 @@ async function createNewResolution(gameState: GameState, passedGameModifiers: IP
 
     const alreadySeenResolutions = existingResolutions.map((resolution) => resolution.resolutionDetails.title);
 
-    const currentStage = getCurrentStage(gameState.gameClock);
+    const currentStage = getCurrentStage(gameState.gameClock, existingResolutions.length);
     const allowedResolutions = ALL_RESOLUTIONS.filter((resolution) => {
         return !alreadySeenResolutions.includes(resolution.title) && resolution.stage === currentStage;
     });

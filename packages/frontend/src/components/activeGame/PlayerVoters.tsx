@@ -185,6 +185,8 @@ export const PlayerVoters: React.FC<{
                     const isCastVotesDisabled =
                         !isGameActive || !hasPlayerSetVotes || activeResolution?.state !== "active";
 
+                    console.log(voter, "@@@");
+
                     return (
                         <div
                             className={classNames(styles.singleVote, {
