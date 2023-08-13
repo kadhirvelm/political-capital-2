@@ -1,0 +1,11 @@
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: "Roboto", sans-serif;
+  background: rgba(#FFEB3B, 0.08) !important;
+}
+
+body {
+  color: #1B2631;
+}
