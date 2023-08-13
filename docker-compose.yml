@@ -1,42 +1,42 @@
 version: "3.9"
 
 services:
-  political_capital_two:
-    image: node:18
-    container_name: political_capital_two
-    ports:
-      - "3000:3000"  # frontend
-      - "3002:3002"  # backend
-      - "3003:3003"  # websockets
-    volumes:
-      - ./:/usr/political-capital-two:rw
-    working_dir: /usr/political-capital-two
-    command: yarn dev
-    environment:
-      - ORIGIN=0.0.0.0
-      - DATABASE_HOST=host.docker.internal
-      - NODE_ENV=development
-  database:
-    image: postgres:15.1
-    container_name: database
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
-    command: redis-server
+    political_capital_two:
+        image: node:18
+        container_name: political_capital_two
+        ports:
+            - "3000:3000" # frontend
+            - "3002:3002" # backend
+            - "3003:3003" # websockets
+        volumes:
+            - ./:/usr/political-capital-two:rw
+        working_dir: /usr/political-capital-two
+        command: yarn dev
+        environment:
+            - ORIGIN=0.0.0.0
+            - DATABASE_HOST=host.docker.internal
+            - NODE_ENV=development
 
-  pgAdmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgAdmin
-    ports:
-      - "2000:80"
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
-      - PGADMIN_LISTEN_ADDRESS=0.0.0.0
-      - PGADMIN_DEFAULT_PASSWORD=admin
+    database:
+        image: postgres:15.1
+        container_name: database
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=admin
+    redis:
+        image: redis:latest
+        container_name: redis
+        ports:
+            - "6379:6379"
+        command: redis-server
+    pgAdmin:
+        image: dpage/pgadmin4:latest
+        container_name: pgAdmin
+        ports:
+            - "2000:80"
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+            - PGADMIN_LISTEN_ADDRESS=0.0.0.0
+            - PGADMIN_DEFAULT_PASSWORD=admin

@@ -19,7 +19,6 @@
         "eslint-plugin-react": "^7.31.11",
         "eslint-plugin-react-hooks": "^4.6.0",
         "jest": "29.3.1",
-        "lerna": "^6.1.0",
         "pm2": "^5.2.2",
         "prettier": "^2.8.1",
         "semver": "^7.3.8",
@@ -33,16 +32,11 @@
         "node": "^18.12.1"
     },
     "scripts": {
-        "build": "lerna run build",
-        "check:lock": "node scripts/cleanLock",
-        "clean": "node scripts/cleanPackages",
-        "clean:lock": "npx yarn-deduplicate yarn.lock",
-        "dev": "lerna run dev --parallel",
-        "deploy-development": "node scripts/deploy",
-        "lint": "lerna run lint",
-        "lint:fix": "lerna run lint:fix",
-        "update-version": "node scripts/upPackageVersions",
-        "test": "lerna run test"
+        "build": "turbo run build",
+        "dev": "turbo run dev --parallel",
+        "lint": "turbo run lint",
+        "lint:fix": "turbo run lint:fix",
+        "test": "turbo run test"
     },
     "repository": {
         "type": "git",
@@ -53,5 +47,8 @@
         "url": "https://github.com/kadhirvelm/political-capital-2/issues"
     },
     "homepage": "https://github.com/kadhirvelm/political-capital-2.git",
-    "packageManager": "yarn@3.6.0"
+    "packageManager": "yarn@3.6.0",
+    "dependencies": {
+        "turbo": "^1.10.12"
+    }
 }
