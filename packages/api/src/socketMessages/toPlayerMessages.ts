@@ -4,7 +4,7 @@
 
 import { type IActiveGameService } from "../services/activeGameService";
 import { type IActiveNotification } from "../types/politicalCapitalTwo";
-import { type VisitorPattern } from "../types/visit";
+import { type GenericType, type VisitorPattern } from "../types/visit";
 
 export interface IUpdateGameStateMessage {
   newGameState: IActiveGameService["getGameState"]["response"];
@@ -21,9 +21,9 @@ export interface IAllToPlayerMessages {
   updateGameState: IUpdateGameStateMessage;
 }
 
-export type IPossibleToPlayerMessages = IAllToPlayerMessages[keyof IAllToPlayerMessages];
+export type IPossibleToPlayerMessages = GenericType<IAllToPlayerMessages>;
 
-export const ToPlayerMessages: VisitorPattern<IAllToPlayerMessages, IPossibleToPlayerMessages> = {
+export const ToPlayerMessages: VisitorPattern<IAllToPlayerMessages> = {
   typeChecks: {
     receiveNotification: (message): message is IReceivedNewNotification => {
       return message.type === "new-notification";

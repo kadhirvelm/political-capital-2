@@ -15,7 +15,7 @@ import {
   type IRepresentative,
   type ITrainer,
   type IVoter,
-} from "../types/IStaffer";
+} from "../types/Staffer";
 import {
   type IActivePlayerModifier,
   type IActiveStaffer,

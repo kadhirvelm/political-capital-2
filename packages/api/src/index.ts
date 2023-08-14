@@ -20,7 +20,7 @@ export * from "./types/IEvent";
 export * from "./types/IGameModifier";
 export * from "./types/INotification";
 export * from "./types/IResolution";
-export * from "./types/IStaffer";
+export * from "./types/Staffer";
 export * from "./types/visit";
 export * from "./types/politicalCapitalTwo";
 export * from "./types/stafferLadderIndex";

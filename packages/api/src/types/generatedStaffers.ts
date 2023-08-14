@@ -5,64 +5,63 @@
 // NOTE: this is a generated file, please run yarn convert in the api package to regenerate it.
 
 import {
-  type IIntern,
-  type INewHire,
   type IAccountant,
-  type ISeasonedStaffer,
-  type IChiefOfStaff,
-  type IPoliticalCommentator,
-  type IHeadOfHr,
-  type IProfessor,
-  type IRepresentative,
-  type ISeniorRepresentative,
-  type IIndependentRepresentative,
-  type ISenator,
-  type ISeasonedSenator,
-  type IIndependentSenator,
-  type IPhoneBanker,
-  type ISocialMediaManager,
-  type IRecruiter,
-  type IHrManager,
   type IAdjunctInstructor,
-  type IProfessionalTrainer,
-  type IInitiate,
-  type IVeteranInitiate,
-  type ILobbyist,
-  type IPoliticalSpy,
+  type IChiefOfStaff,
+  type IHeadOfHr,
+  type IHrManager,
+  type IIndependentRepresentative,
+  type IIndependentSenator,
   type IInformant,
-} from "./IStaffer";
-import { type IVisit } from "./visit";
+  type IInitiate,
+  type IIntern,
+  type ILobbyist,
+  type INewHire,
+  type IPhoneBanker,
+  type IPoliticalCommentator,
+  type IPoliticalSpy,
+  type IProfessionalTrainer,
+  type IProfessor,
+  type IRecruiter,
+  type IRepresentative,
+  type ISeasonedSenator,
+  type ISeasonedStaffer,
+  type ISenator,
+  type ISeniorRepresentative,
+  type ISocialMediaManager,
+  type IVeteranInitiate,
+} from "./Staffer";
+import { type GenericType, type VisitorPattern } from "./visit";
 
 export interface IAllStaffers {
-  intern: IIntern;
-  newHire: INewHire;
   accountant: IAccountant;
-  seasonedStaffer: ISeasonedStaffer;
-  chiefOfStaff: IChiefOfStaff;
-  politicalCommentator: IPoliticalCommentator;
-  headOfHr: IHeadOfHr;
-  professor: IProfessor;
-  representative: IRepresentative;
-  seniorRepresentative: ISeniorRepresentative;
-  independentRepresentative: IIndependentRepresentative;
-  senator: ISenator;
-  seasonedSenator: ISeasonedSenator;
-  independentSenator: IIndependentSenator;
-  phoneBanker: IPhoneBanker;
-  socialMediaManager: ISocialMediaManager;
-  recruiter: IRecruiter;
-  hrManager: IHrManager;
   adjunctInstructor: IAdjunctInstructor;
-  professionalTrainer: IProfessionalTrainer;
-  initiate: IInitiate;
-  veteranInitiate: IVeteranInitiate;
-  lobbyist: ILobbyist;
-  politicalSpy: IPoliticalSpy;
+  chiefOfStaff: IChiefOfStaff;
+  headOfHr: IHeadOfHr;
+  hrManager: IHrManager;
+  independentRepresentative: IIndependentRepresentative;
+  independentSenator: IIndependentSenator;
   informant: IInformant;
-  unknown: never;
+  initiate: IInitiate;
+  intern: IIntern;
+  lobbyist: ILobbyist;
+  newHire: INewHire;
+  phoneBanker: IPhoneBanker;
+  politicalCommentator: IPoliticalCommentator;
+  politicalSpy: IPoliticalSpy;
+  professionalTrainer: IProfessionalTrainer;
+  professor: IProfessor;
+  recruiter: IRecruiter;
+  representative: IRepresentative;
+  seasonedSenator: ISeasonedSenator;
+  seasonedStaffer: ISeasonedStaffer;
+  senator: ISenator;
+  seniorRepresentative: ISeniorRepresentative;
+  socialMediaManager: ISocialMediaManager;
+  veteranInitiate: IVeteranInitiate;
 }
 
-export type IPossibleStaffer = IAllStaffers[keyof IAllStaffers];
+export type IPossibleStaffer = GenericType<IAllStaffers>;
 
 export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
   accountant: {
@@ -285,208 +284,161 @@ export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {
   },
 };
 
-export namespace IStaffer {
-  export const isIntern = (staffer: IPossibleStaffer): staffer is IIntern => {
-    return staffer.type === "intern";
-  };
-
-  export const isNewHire = (staffer: IPossibleStaffer): staffer is INewHire => {
-    return staffer.type === "newHire";
-  };
-
-  export const isAccountant = (staffer: IPossibleStaffer): staffer is IAccountant => {
-    return staffer.type === "accountant";
-  };
-
-  export const isSeasonedStaffer = (staffer: IPossibleStaffer): staffer is ISeasonedStaffer => {
-    return staffer.type === "seasonedStaffer";
-  };
-
-  export const isChiefOfStaff = (staffer: IPossibleStaffer): staffer is IChiefOfStaff => {
-    return staffer.type === "chiefOfStaff";
-  };
-
-  export const isPoliticalCommentator = (staffer: IPossibleStaffer): staffer is IPoliticalCommentator => {
-    return staffer.type === "politicalCommentator";
-  };
-
-  export const isHeadOfHr = (staffer: IPossibleStaffer): staffer is IHeadOfHr => {
-    return staffer.type === "headOfHr";
-  };
-
-  export const isProfessor = (staffer: IPossibleStaffer): staffer is IProfessor => {
-    return staffer.type === "professor";
-  };
-
-  export const isRepresentative = (staffer: IPossibleStaffer): staffer is IRepresentative => {
-    return staffer.type === "representative";
-  };
-
-  export const isSeniorRepresentative = (staffer: IPossibleStaffer): staffer is ISeniorRepresentative => {
-    return staffer.type === "seniorRepresentative";
-  };
-
-  export const isIndependentRepresentative = (staffer: IPossibleStaffer): staffer is IIndependentRepresentative => {
-    return staffer.type === "independentRepresentative";
-  };
-
-  export const isSenator = (staffer: IPossibleStaffer): staffer is ISenator => {
-    return staffer.type === "senator";
-  };
-
-  export const isSeasonedSenator = (staffer: IPossibleStaffer): staffer is ISeasonedSenator => {
-    return staffer.type === "seasonedSenator";
-  };
-
-  export const isIndependentSenator = (staffer: IPossibleStaffer): staffer is IIndependentSenator => {
-    return staffer.type === "independentSenator";
-  };
-
-  export const isPhoneBanker = (staffer: IPossibleStaffer): staffer is IPhoneBanker => {
-    return staffer.type === "phoneBanker";
-  };
-
-  export const isSocialMediaManager = (staffer: IPossibleStaffer): staffer is ISocialMediaManager => {
-    return staffer.type === "socialMediaManager";
-  };
-
-  export const isRecruiter = (staffer: IPossibleStaffer): staffer is IRecruiter => {
-    return staffer.type === "recruiter";
-  };
-
-  export const isHrManager = (staffer: IPossibleStaffer): staffer is IHrManager => {
-    return staffer.type === "hrManager";
-  };
-
-  export const isAdjunctInstructor = (staffer: IPossibleStaffer): staffer is IAdjunctInstructor => {
-    return staffer.type === "adjunctInstructor";
-  };
-
-  export const isProfessionalTrainer = (staffer: IPossibleStaffer): staffer is IProfessionalTrainer => {
-    return staffer.type === "professionalTrainer";
-  };
-
-  export const isInitiate = (staffer: IPossibleStaffer): staffer is IInitiate => {
-    return staffer.type === "initiate";
-  };
-
-  export const isVeteranInitiate = (staffer: IPossibleStaffer): staffer is IVeteranInitiate => {
-    return staffer.type === "veteranInitiate";
-  };
-
-  export const isLobbyist = (staffer: IPossibleStaffer): staffer is ILobbyist => {
-    return staffer.type === "lobbyist";
-  };
-
-  export const isPoliticalSpy = (staffer: IPossibleStaffer): staffer is IPoliticalSpy => {
-    return staffer.type === "politicalSpy";
-  };
-
-  export const isInformant = (staffer: IPossibleStaffer): staffer is IInformant => {
-    return staffer.type === "informant";
-  };
-
-  export const visit = <ReturnValue>(value: IPossibleStaffer, visitor: IVisit<IAllStaffers, ReturnValue>) => {
-    if (isIntern(value)) {
-      return visitor.intern(value);
-    }
-
-    if (isNewHire(value)) {
-      return visitor.newHire(value);
-    }
-
-    if (isAccountant(value)) {
+export const Staffer: VisitorPattern<IAllStaffers> = {
+  typeChecks: {
+    accountant: (staffer: IPossibleStaffer): staffer is IAccountant => {
+      return staffer.type === "accountant";
+    },
+    adjunctInstructor: (staffer: IPossibleStaffer): staffer is IAdjunctInstructor => {
+      return staffer.type === "adjunctInstructor";
+    },
+    chiefOfStaff: (staffer: IPossibleStaffer): staffer is IChiefOfStaff => {
+      return staffer.type === "chiefOfStaff";
+    },
+    headOfHr: (staffer: IPossibleStaffer): staffer is IHeadOfHr => {
+      return staffer.type === "headOfHr";
+    },
+    hrManager: (staffer: IPossibleStaffer): staffer is IHrManager => {
+      return staffer.type === "hrManager";
+    },
+    independentRepresentative: (staffer: IPossibleStaffer): staffer is IIndependentRepresentative => {
+      return staffer.type === "independentRepresentative";
+    },
+    independentSenator: (staffer: IPossibleStaffer): staffer is IIndependentSenator => {
+      return staffer.type === "independentSenator";
+    },
+    informant: (staffer: IPossibleStaffer): staffer is IInformant => {
+      return staffer.type === "informant";
+    },
+    initiate: (staffer: IPossibleStaffer): staffer is IInitiate => {
+      return staffer.type === "initiate";
+    },
+    intern: (staffer: IPossibleStaffer): staffer is IIntern => {
+      return staffer.type === "intern";
+    },
+    lobbyist: (staffer: IPossibleStaffer): staffer is ILobbyist => {
+      return staffer.type === "lobbyist";
+    },
+    newHire: (staffer: IPossibleStaffer): staffer is INewHire => {
+      return staffer.type === "newHire";
+    },
+    phoneBanker: (staffer: IPossibleStaffer): staffer is IPhoneBanker => {
+      return staffer.type === "phoneBanker";
+    },
+    politicalCommentator: (staffer: IPossibleStaffer): staffer is IPoliticalCommentator => {
+      return staffer.type === "politicalCommentator";
+    },
+    politicalSpy: (staffer: IPossibleStaffer): staffer is IPoliticalSpy => {
+      return staffer.type === "politicalSpy";
+    },
+    professionalTrainer: (staffer: IPossibleStaffer): staffer is IProfessionalTrainer => {
+      return staffer.type === "professionalTrainer";
+    },
+    professor: (staffer: IPossibleStaffer): staffer is IProfessor => {
+      return staffer.type === "professor";
+    },
+    recruiter: (staffer: IPossibleStaffer): staffer is IRecruiter => {
+      return staffer.type === "recruiter";
+    },
+    representative: (staffer: IPossibleStaffer): staffer is IRepresentative => {
+      return staffer.type === "representative";
+    },
+    seasonedSenator: (staffer: IPossibleStaffer): staffer is ISeasonedSenator => {
+      return staffer.type === "seasonedSenator";
+    },
+    seasonedStaffer: (staffer: IPossibleStaffer): staffer is ISeasonedStaffer => {
+      return staffer.type === "seasonedStaffer";
+    },
+    senator: (staffer: IPossibleStaffer): staffer is ISenator => {
+      return staffer.type === "senator";
+    },
+    seniorRepresentative: (staffer: IPossibleStaffer): staffer is ISeniorRepresentative => {
+      return staffer.type === "seniorRepresentative";
+    },
+    socialMediaManager: (staffer: IPossibleStaffer): staffer is ISocialMediaManager => {
+      return staffer.type === "socialMediaManager";
+    },
+    veteranInitiate: (staffer: IPossibleStaffer): staffer is IVeteranInitiate => {
+      return staffer.type === "veteranInitiate";
+    },
+  },
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  visit: (value, visitor) => {
+    if (Staffer.typeChecks.accountant(value)) {
       return visitor.accountant(value);
     }
-
-    if (isSeasonedStaffer(value)) {
-      return visitor.seasonedStaffer(value);
-    }
-
-    if (isChiefOfStaff(value)) {
-      return visitor.chiefOfStaff(value);
-    }
-
-    if (isPoliticalCommentator(value)) {
-      return visitor.politicalCommentator(value);
-    }
-
-    if (isHeadOfHr(value)) {
-      return visitor.headOfHr(value);
-    }
-
-    if (isProfessor(value)) {
-      return visitor.professor(value);
-    }
-
-    if (isRepresentative(value)) {
-      return visitor.representative(value);
-    }
-
-    if (isSeniorRepresentative(value)) {
-      return visitor.seniorRepresentative(value);
-    }
-
-    if (isIndependentRepresentative(value)) {
-      return visitor.independentRepresentative(value);
-    }
-
-    if (isSenator(value)) {
-      return visitor.senator(value);
-    }
-
-    if (isSeasonedSenator(value)) {
-      return visitor.seasonedSenator(value);
-    }
-
-    if (isIndependentSenator(value)) {
-      return visitor.independentSenator(value);
-    }
-
-    if (isPhoneBanker(value)) {
-      return visitor.phoneBanker(value);
-    }
-
-    if (isSocialMediaManager(value)) {
-      return visitor.socialMediaManager(value);
-    }
-
-    if (isRecruiter(value)) {
-      return visitor.recruiter(value);
-    }
-
-    if (isHrManager(value)) {
-      return visitor.hrManager(value);
-    }
-
-    if (isAdjunctInstructor(value)) {
+    if (Staffer.typeChecks.adjunctInstructor(value)) {
       return visitor.adjunctInstructor(value);
     }
-
-    if (isProfessionalTrainer(value)) {
-      return visitor.professionalTrainer(value);
+    if (Staffer.typeChecks.chiefOfStaff(value)) {
+      return visitor.chiefOfStaff(value);
     }
-
-    if (isInitiate(value)) {
-      return visitor.initiate(value);
+    if (Staffer.typeChecks.headOfHr(value)) {
+      return visitor.headOfHr(value);
     }
-
-    if (isVeteranInitiate(value)) {
-      return visitor.veteranInitiate(value);
+    if (Staffer.typeChecks.hrManager(value)) {
+      return visitor.hrManager(value);
     }
-
-    if (isLobbyist(value)) {
-      return visitor.lobbyist(value);
+    if (Staffer.typeChecks.independentRepresentative(value)) {
+      return visitor.independentRepresentative(value);
     }
-
-    if (isPoliticalSpy(value)) {
-      return visitor.politicalSpy(value);
+    if (Staffer.typeChecks.independentSenator(value)) {
+      return visitor.independentSenator(value);
     }
-
-    if (isInformant(value)) {
+    if (Staffer.typeChecks.informant(value)) {
       return visitor.informant(value);
     }
-
+    if (Staffer.typeChecks.initiate(value)) {
+      return visitor.initiate(value);
+    }
+    if (Staffer.typeChecks.intern(value)) {
+      return visitor.intern(value);
+    }
+    if (Staffer.typeChecks.lobbyist(value)) {
+      return visitor.lobbyist(value);
+    }
+    if (Staffer.typeChecks.newHire(value)) {
+      return visitor.newHire(value);
+    }
+    if (Staffer.typeChecks.phoneBanker(value)) {
+      return visitor.phoneBanker(value);
+    }
+    if (Staffer.typeChecks.politicalCommentator(value)) {
+      return visitor.politicalCommentator(value);
+    }
+    if (Staffer.typeChecks.politicalSpy(value)) {
+      return visitor.politicalSpy(value);
+    }
+    if (Staffer.typeChecks.professionalTrainer(value)) {
+      return visitor.professionalTrainer(value);
+    }
+    if (Staffer.typeChecks.professor(value)) {
+      return visitor.professor(value);
+    }
+    if (Staffer.typeChecks.recruiter(value)) {
+      return visitor.recruiter(value);
+    }
+    if (Staffer.typeChecks.representative(value)) {
+      return visitor.representative(value);
+    }
+    if (Staffer.typeChecks.seasonedSenator(value)) {
+      return visitor.seasonedSenator(value);
+    }
+    if (Staffer.typeChecks.seasonedStaffer(value)) {
+      return visitor.seasonedStaffer(value);
+    }
+    if (Staffer.typeChecks.senator(value)) {
+      return visitor.senator(value);
+    }
+    if (Staffer.typeChecks.seniorRepresentative(value)) {
+      return visitor.seniorRepresentative(value);
+    }
+    if (Staffer.typeChecks.socialMediaManager(value)) {
+      return visitor.socialMediaManager(value);
+    }
+    if (Staffer.typeChecks.veteranInitiate(value)) {
+      return visitor.veteranInitiate(value);
+    }
     return visitor.unknown(value);
-  };
-}
+  },
+};

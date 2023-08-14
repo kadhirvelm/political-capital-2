@@ -4,7 +4,7 @@
 
 import { type IGlobalScreenIdentifier } from "../types/BrandedIDs";
 import { type IPlayer } from "../types/politicalCapitalTwo";
-import { type VisitorPattern } from "../types/visit";
+import { type GenericType, type VisitorPattern } from "../types/visit";
 
 export interface IRegisterPlayer {
   player: IPlayer;
@@ -21,9 +21,9 @@ export interface IAllFromPlayerMessages {
   registerPlayer: IRegisterPlayer;
 }
 
-export type IPossibleFromPlayerMessages = IAllFromPlayerMessages[keyof IAllFromPlayerMessages];
+export type IPossibleFromPlayerMessages = GenericType<IAllFromPlayerMessages>;
 
-export const FromPlayerMessages: VisitorPattern<IAllFromPlayerMessages, IPossibleFromPlayerMessages> = {
+export const FromPlayerMessages: VisitorPattern<IAllFromPlayerMessages> = {
   typeChecks: {
     registerGlobalScreen: (message): message is IRegisterGlobalScreen => {
       return message.type === "register-global-screen";

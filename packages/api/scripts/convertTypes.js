@@ -4,26 +4,35 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 
+const getTypeFromInterface = (byNewLines) =>
+  byNewLines
+    .find((line) => line.match(/type: ".*"/g))
+    .match(/".*"/g)?.[0]
+    .toString()
+    .slice(1, -1) ?? "";
+
 function createImport(filteredToJustInterfaces) {
   const file = [];
 
   file.push("import {");
 
-  for (const string_ of filteredToJustInterfaces) {
-        const byNewLines = string_.split("\n");
+  const temporaryAdditions = [];
 
-    const type =
-      byNewLines
-        .at(-2)
-        .match(/".*"/g)?.[0]
-        .toString()
-        .slice(1, -1) ?? "";
+  for (const string_ of filteredToJustInterfaces) {
+    const byNewLines = string_.split("\n");
+
+    const type = getTypeFromInterface(byNewLines);
 
     const typeWithCasing = `${type[0].toUpperCase()}${type.slice(1)}`;
-    file.push(`\tI${typeWithCasing},`);
+    temporaryAdditions.push(`  type I${typeWithCasing},`);
   }
 
-  file.push('} from "./IStaffer";', 'import { IVisit } from "./IVisit";', "");
+  file.push(
+    ...temporaryAdditions.sort(),
+    '} from "./Staffer";',
+    'import { type GenericType, type VisitorPattern } from "./visit";',
+    "",
+  );
 
   return file;
 }
@@ -33,21 +42,18 @@ function createIAllStaffers(filteredToJustInterfaces) {
 
   file.push(`export interface IAllStaffers {`);
 
-  for (const string_ of filteredToJustInterfaces) {
-        const byNewLines = string_.split("\n");
+  const temporaryAdditions = [];
 
-    const type =
-      byNewLines
-        .at(-2)
-        .match(/".*"/g)?.[0]
-        .toString()
-        .slice(1, -1) ?? "";
+  for (const string_ of filteredToJustInterfaces) {
+    const byNewLines = string_.split("\n");
+
+    const type = getTypeFromInterface(byNewLines);
 
     const typeWithCasing = `${type[0].toUpperCase()}${type.slice(1)}`;
-    file.push(`\t${type}: I${typeWithCasing};`);
+    temporaryAdditions.push(`  ${type}: I${typeWithCasing};`);
   }
 
-  file.push(`\tunknown: never;`, `}`, "");
+  file.push(...temporaryAdditions.sort(), `}`, "");
 
   return file;
 }
@@ -57,15 +63,12 @@ function createDefaultStaffers(filteredToJustInterfaces) {
 
   file.push('export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {');
 
-  for (const string_ of filteredToJustInterfaces) {
-        const byNewLines = string_.split("\n");
+  const stafferAdditions = {};
 
-    const type =
-      byNewLines
-        .at(-2)
-        .match(/".*"/g)?.[0]
-        .toString()
-        .slice(1, -1) ?? "";
+  for (const string_ of filteredToJustInterfaces) {
+    const byNewLines = string_.split("\n");
+
+    const type = getTypeFromInterface(byNewLines);
 
     const partsByCasing = type
       .match(/[A-Z]?[a-z]+/g)
@@ -74,12 +77,23 @@ function createDefaultStaffers(filteredToJustInterfaces) {
       )
       .join(" ");
 
-    file.push(`\t${type}: {`, `\t\tdisplayName: \"${partsByCasing}\",`);
+    const displayName = `  displayName: "${partsByCasing}"`;
+
+    stafferAdditions[type] = {
+      [displayName]: displayName,
+    };
+
     for (const line of byNewLines.slice(1, -1)) {
-            file.push(`\t${line.slice(0, -1)},`);
-        }
-    file.push(`\t},`);
+      stafferAdditions[type][line.slice(0, -1)] = line;
+    }
   }
+
+  for (const stafferKey of Object.keys(stafferAdditions).sort()) {
+    const sortedKeys = Object.keys(stafferAdditions[stafferKey]).sort();
+
+    file.push(`  ${stafferKey}: {`, ...sortedKeys.map((key) => `  ${key},`), `  },`);
+  }
+
   file.push("};", "");
 
   return file;
@@ -88,60 +102,72 @@ function createDefaultStaffers(filteredToJustInterfaces) {
 function createStafferNamespace(filteredToJustInterfaces) {
   const file = [];
 
-  file.push("export namespace IStaffer {");
-  const VISITOR = [];
+  file.push("export const Staffer: VisitorPattern<IAllStaffers> = {", "  typeChecks: {");
+
+  const typeChecks = {};
 
   for (const string_ of filteredToJustInterfaces) {
-        const byNewLines = string_.split("\n");
+    const byNewLines = string_.split("\n");
 
-    const type =
-      byNewLines
-        .at(-2)
-        .match(/".*"/g)?.[0]
-        .toString()
-        .slice(1, -1) ?? "";
+    const type = getTypeFromInterface(byNewLines);
 
     const typeWithCasing = `${type[0].toUpperCase()}${type.slice(1)}`;
 
-    file.push(`\texport const is${typeWithCasing} = (staffer: IPossibleStaffer): staffer is I${typeWithCasing} => {`);
-    file.push(`\t\treturn staffer.type === \"${type}\";`, "\t};\n");
-
-    VISITOR.push(`\t\tif (is${typeWithCasing}(value)) {`, `\t\t\treturn visitor.${type}(value);`);
-    VISITOR.push(`\t\t}\n`);
+    typeChecks[type] = [
+      `    ${type}: (staffer: IPossibleStaffer): staffer is I${typeWithCasing} => {`,
+      `      return staffer.type === "${type}";`,
+      "    },",
+    ];
   }
 
-  file.push(
-    `\texport const visit = <ReturnValue>(value: IPossibleStaffer, visitor: IVisit<IAllStaffers, ReturnValue>) => {`,
-    ...VISITOR,
-  , `\t\treturn visitor.unknown(value);`, `\t};`);
+  const sortedKeys = Object.keys(typeChecks).sort();
+  for (const key of sortedKeys) {
+    file.push(...typeChecks[key]);
+  }
 
-  file.push("}", "");
+  const visitor = sortedKeys.map((key) => {
+    return `    if (Staffer.typeChecks.${key}(value)) {
+      return visitor.${key}(value);
+    }`;
+  });
+
+  file.push(
+    `  },`,
+    `  // eslint-disable-next-line sonarjs/cognitive-complexity`,
+    `  visit: (value, visitor) => {`,
+    ...visitor,
+    `    return visitor.unknown(value);`,
+    `  },`,
+    "};",
+    "",
+  );
 
   return file;
 }
 
 export function convertTypes() {
-  const rawTypes = readFileSync("./src/types/IStaffer.ts").toString();
+  const rawTypes = readFileSync("./src/types/Staffer.ts").toString();
 
   const allSplit = rawTypes.split(/(export.*{(.|\s)*?})/g);
   const filteredToJustInterfaces = allSplit.filter((s) => s.includes("interface") && s.includes("extends"));
 
   const FINAL_FILE = [
-    "/**",
-    " * Copyright (c) 2022 - KM",
-    "*/",
+    "/*",
+    " * Copyright 2023 KM.",
+    " */",
     "",
     "// NOTE: this is a generated file, please run yarn convert in the api package to regenerate it.",
     "",
   ];
 
-  FINAL_FILE.push(...createImport(filteredToJustInterfaces));
   FINAL_FILE.push(
+    ...createImport(filteredToJustInterfaces),
     ...createIAllStaffers(filteredToJustInterfaces),
-    "export type IPossibleStaffer = IAllStaffers[keyof IAllStaffers];",
-  , "");
-  FINAL_FILE.push(...createDefaultStaffers(filteredToJustInterfaces));
-  FINAL_FILE.push(...createStafferNamespace(filteredToJustInterfaces));
+    "export type IPossibleStaffer = GenericType<IAllStaffers>;",
+    "",
+    ...createDefaultStaffers(filteredToJustInterfaces),
+    ...createStafferNamespace(filteredToJustInterfaces),
+  );
 
   writeFileSync("./src/types/generatedStaffers.ts", FINAL_FILE.join("\n"));
 }
