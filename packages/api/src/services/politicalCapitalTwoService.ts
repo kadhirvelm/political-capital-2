@@ -1,64 +1,62 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
-import { implementEndpoints, IService } from "../common/generics";
-import { IActiveResolutionRid, IActiveStafferRid, IGameStateRid } from "../types/BrandedIDs";
-import { IPossibleEvent, IStartHiringStaffer, IStartTrainingStaffer } from "../types/IEvent";
-import { IActiveResolutionVote } from "../types/politicalCapitalTwo";
+
+import { type IImplementEndpoint, type IService } from "../common/generics";
+import { type IActiveResolutionRid, type IActiveStafferRid, type IGameStateRid } from "../types/BrandedIDs";
+import { type IPossibleEvent, type IStartHiringStaffer, type IStartTrainingStaffer } from "../types/IEvent";
+import { type IActiveResolutionVote } from "../types/politicalCapitalTwo";
 
 export interface IPartialResolveGameEvent<Event extends IPossibleEvent> {
-    gameStateRid: IGameStateRid;
-    eventDetails: Event;
-    state: "pending";
+  gameStateRid: IGameStateRid;
+  eventDetails: Event;
+  state: "pending";
 }
 
 export interface IPoliticalCapitalTwoService extends IService {
-    recruitStaffer: {
-        payload: {
-            gameStateRid: IGameStateRid;
-            recruitRequest: Omit<IStartHiringStaffer, "type">;
-        };
-        response: {
-            pendingEvent: IPartialResolveGameEvent<IStartHiringStaffer>;
-        };
+  recruitStaffer: {
+    payload: {
+      gameStateRid: IGameStateRid;
+      recruitRequest: Omit<IStartHiringStaffer, "type">;
     };
-    trainStaffer: {
-        payload: {
-            gameStateRid: IGameStateRid;
-            trainRequest: Omit<IStartTrainingStaffer, "type">;
-        };
-        response: {
-            pendingEvent: IPartialResolveGameEvent<IStartTrainingStaffer>;
-        };
+    response: {
+      pendingEvent: IPartialResolveGameEvent<IStartHiringStaffer>;
     };
-    castVote: {
-        payload: {
-            gameStateRid: IGameStateRid;
-            votingStafferRid: IActiveStafferRid;
-            activeResolutionRid: IActiveResolutionRid;
-            vote: IActiveResolutionVote["vote"];
-        };
-        response: {
-            votes: IActiveResolutionVote[];
-        };
+  };
+  trainStaffer: {
+    payload: {
+      gameStateRid: IGameStateRid;
+      trainRequest: Omit<IStartTrainingStaffer, "type">;
     };
+    response: {
+      pendingEvent: IPartialResolveGameEvent<IStartTrainingStaffer>;
+    };
+  };
+  castVote: {
+    payload: {
+      gameStateRid: IGameStateRid;
+      votingStafferRid: IActiveStafferRid;
+      activeResolutionRid: IActiveResolutionRid;
+      vote: IActiveResolutionVote["vote"];
+    };
+    response: {
+      votes: IActiveResolutionVote[];
+    };
+  };
 }
 
-const { backend, frontend } = implementEndpoints<IPoliticalCapitalTwoService>({
-    recruitStaffer: {
+export const PlayerCapitalTwoService: IImplementEndpoint<IPoliticalCapitalTwoService> = {
+  recruitStaffer: {
+    method: "post",
+    slug: "/recruit-staffer",
+  },
+  castVote: {
         method: "post",
-        slug: "/recruit-staffer",
+        slug: "/cast-vote",
     },
     trainStaffer: {
         method: "post",
         slug: "/train-staffer",
     },
-    castVote: {
-        method: "post",
-        slug: "/cast-vote",
-    },
-});
-
-export const PoliticalCapitalTwoServiceBackend = backend;
-export const PoliticalCapitalTwoServiceFrontend = frontend;
+};
