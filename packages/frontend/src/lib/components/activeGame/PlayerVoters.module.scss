@@ -1,0 +1,129 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.yesVote {
+    color: $white;
+
+    &.vote {
+        background: $green;
+    }
+}
+
+.noVote {
+    color: $white;
+
+    &.vote {
+        background: $red;
+    }
+}
+
+.abstain {
+    color: $white;
+
+    &.vote {
+        background: $dark-gray;
+    }
+}
+
+.availableVoters {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.availableVotersText {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.alreadyCastVotes {
+    align-items: center;
+    color: $gray;
+    display: flex;
+    margin-left: 10px;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}
+
+.votersContainer {
+    display: flex;
+    flex-direction: column;
+
+    > :not(:last-child) {
+        margin-bottom: 10px;
+    }
+}
+
+.singleVote {
+    background: $white;
+    border: 1px solid $gray;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+
+    &.disabled {
+        background: $light-gray;
+    }
+}
+
+.stafferDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.nameAndType {
+    align-items: center;
+    display: flex;
+}
+
+.activeEvent {
+    margin: 10px 0;
+}
+
+.votingContainer {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    padding-bottom: 5px;
+}
+
+.voteOptionContainer {
+    align-items: center;
+    display: flex;
+
+    > :first-child {
+        border-radius: 3px 0 0 3px;
+        border-right: 1px solid $gray;
+    }
+
+    > :last-child {
+        border-left: 1px solid $gray;
+        border-radius: 0 3px 3px 0;
+    }
+}
+
+.vote {
+    background: rgba($gray, 0.25);
+    display: flex;
+    padding: 8px 30px;
+}
+
+.independentVoter {
+    display: flex;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}
+
+.description {
+    color: $gray;
+}

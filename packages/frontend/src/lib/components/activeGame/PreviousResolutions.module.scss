@@ -1,0 +1,18 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.backButton {
+    margin-bottom: 10px;
+}
+
+.resolutionsContainer {
+    display: flex;
+    flex-direction: column;
+
+    > :not(:last-child) {
+        margin-bottom: 20px;
+    }
+}

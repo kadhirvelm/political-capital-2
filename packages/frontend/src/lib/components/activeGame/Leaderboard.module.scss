@@ -1,0 +1,95 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.overallContainer {
+    @extend %fadeIn;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard {
+    border: 1px solid $gray;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboardTable {
+    background: $white;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+
+    > :nth-child(even) {
+        background: rgba($gray, 0.1);
+    }
+}
+
+.singleRow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.playerDetailsContainer {
+    align-items: center;
+    display: flex;
+}
+
+.playerDetails {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.playerName {
+    align-content: center;
+    display: flex;
+    font-size: 18px;
+
+    > :not(:last-child) {
+        margin-right: 5px;
+    }
+}
+
+.politicalCapitalContainer {
+    align-items: center;
+    display: flex;
+}
+
+.politicalCapital {
+    color: $gray;
+    margin-right: 10px;
+}
+
+.details {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.detailedPartyView {
+    color: $gray;
+    display: flex;
+    margin: 10px 0;
+}
+
+.selector {
+    display: flex;
+    padding-bottom: 15px;
+}
+
+.selectorButton {
+    display: flex;
+    flex: 1;
+}
+
+.selectedText {
+    display: flex;
+    justify-content: flex-start;
+}

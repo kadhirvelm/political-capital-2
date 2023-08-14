@@ -1,0 +1,77 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.overallContainer {
+    @extend %fadeIn;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.withPlayerName {
+    align-items: center;
+    background: $white;
+    border: 1px solid $gray;
+    border-radius: 5px;
+    display: flex;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.name {
+    font-size: 18px;
+}
+
+.resourcesContainer {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.singleResource {
+    align-items: center;
+    display: flex;
+
+    > :first-child {
+        color: $gray;
+        margin-right: 10px;
+        width: 100px;
+    }
+}
+
+.staffers {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+
+    > :not(:last-child) {
+        padding-bottom: 15px;
+    }
+}
+
+.categoryTitle {
+    color: $gray;
+    margin-bottom: 5px;
+}
+
+.staffersInCategory {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.activateStafferContainer {
+    align-items: center;
+    display: flex;
+}
+
+.chevronRight {
+    margin-left: 10px;
+}
+
+.noneFound {
+    color: $gray;
+}

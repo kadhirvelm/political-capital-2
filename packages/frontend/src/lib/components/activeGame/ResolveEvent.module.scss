@@ -1,0 +1,53 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.singleHiringEvent {
+    background: $white;
+    border: 1px solid $gray;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.description {
+    color: $gray;
+}
+
+.eventBody {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+}
+
+.title {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.eventFooter {
+    box-shadow: 0 -1px rgba($gray, 0.25);
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px 10px;
+
+    > :first-child {
+        margin-right: 5px;
+    }
+}
+
+.minimalEvent {
+    display: flex;
+    flex-direction: column;
+}
+
+.minimalEventSentence {
+    display: flex;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}

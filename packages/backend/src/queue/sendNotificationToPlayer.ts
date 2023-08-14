@@ -3,10 +3,10 @@
  */
 
 import { IActiveNotificationRid, INotificationService } from "@pc2/api";
-import { ISendNotificationToPlayer } from "@pc2/distributed-compute";
 import { DoneCallback, Job } from "bull";
 import { v4 } from "uuid";
 import { createNewNotification } from "../services/notificationService";
+import { ISendNotificationToPlayer } from "./queues";
 
 export async function sendNotificationToPlayer(job: Job<ISendNotificationToPlayer>, done: DoneCallback) {
     const fullAssembledRequest: INotificationService["createNewNotification"]["payload"] = {

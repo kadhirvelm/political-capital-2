@@ -1,0 +1,193 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.description {
+    color: $gray;
+}
+
+.currentlyTraining {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.currentlyTrainingText {
+    margin-bottom: 10px;
+}
+
+.trainingEvents {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.train {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.atCapacity {
+    display: flex;
+    margin-top: 20px;
+}
+
+.noTraineesAvailable {
+    color: $gray;
+    display: flex;
+    padding-top: 10px;
+}
+
+.trainStaffer {
+    color: $gray;
+    margin-bottom: 10px;
+}
+
+.allTrainingPossibilities {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.staffers {
+    display: flex;
+    flex-direction: column;
+
+    > :not(:last-child) {
+        margin-bottom: 30px;
+    }
+}
+
+.categoryTitle {
+    color: $gray;
+    margin-bottom: 5px;
+}
+
+.staffersInCategory {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.singleTrainee {
+    display: flex;
+    flex-direction: column;
+}
+
+.nameContainer {
+    align-items: center;
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.positionType {
+    margin-left: 5px;
+}
+
+.currentPosition {
+    border: 1px solid rgba($gray, 0.25);
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+}
+
+.upgradeInto {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0 0 10px;
+}
+
+.withArrow {
+    align-items: center;
+    display: flex;
+}
+
+.arrow {
+    margin-right: 10px;
+}
+
+.newPosition {
+    border: 1px solid rgba($gray, 0.25);
+    border-radius: 3px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px 10px;
+}
+
+.disabled {
+    background: rgba($gray, 0.15);
+    cursor: not-allowed;
+}
+
+.noCategory {
+    @extend %noCategory;
+}
+
+.voter {
+    @extend %voter;
+}
+
+.generator {
+    @extend %generator;
+}
+
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}
+
+.shadowGovernment {
+    @extend %shadowGovernment;
+
+    .description {
+        color: $white;
+    }
+}
+
+.disabledReason {
+    color: $gray;
+    display: flex;
+    margin-top: 10px;
+}
+
+.modalBody {
+    display: flex;
+    flex-direction: column;
+}
+
+.modalSentence {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        margin-right: 5px;
+    }
+}
+
+.cost {
+    color: $red;
+}
+
+.result {
+    box-shadow: 0 -1px $gray;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.pausedGame {
+    color: $gray;
+    margin-right: 10px;
+}

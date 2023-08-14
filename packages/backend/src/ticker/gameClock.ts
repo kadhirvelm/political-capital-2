@@ -3,11 +3,12 @@
  */
 
 import { IGameClock, TOTAL_DAYS_IN_GAME } from "@pc2/api";
-import { ActivePlayer, GameState, ProcessPlayerQueue } from "@pc2/distributed-compute";
 import cron from "node-cron";
 import { sendGameStateToAllActiveGlobalScreens } from "../services/gameService";
 import { resolveGameEvents } from "./resolveGameEvents";
 import { takeGameSnapshot } from "./takeGameSnapshot";
+import { GameState, ActivePlayer } from "../models";
+import { ProcessPlayerQueue } from "../queue/queues";
 
 async function handleEndGame(activeGame: GameState) {
     activeGame.state = "complete";

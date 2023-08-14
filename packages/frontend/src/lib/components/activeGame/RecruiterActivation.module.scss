@@ -1,0 +1,152 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.description {
+    color: $gray;
+}
+
+.currentlyRecruiting {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.currentlyHiring {
+    margin-bottom: 10px;
+}
+
+.hiringEvents {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.recruitOptionsContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.atCapacity {
+    display: flex;
+    margin-top: 20px;
+}
+
+.jobPosting {
+    color: $gray;
+    margin-bottom: 10px;
+}
+
+.staffers {
+    display: flex;
+    flex-direction: column;
+
+    > :not(:last-child) {
+        margin-bottom: 30px;
+    }
+}
+
+.categoryTitle {
+    color: $gray;
+    margin-bottom: 5px;
+}
+
+.allJobPostingsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.singleJobPosting {
+    border: 1px solid rgba($gray, 0.25);
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px 10px;
+}
+
+.disabled {
+    background: rgba($gray, 0.15);
+    cursor: not-allowed;
+}
+
+.noCategory {
+    @extend %noCategory;
+}
+
+.voter {
+    @extend %voter;
+}
+
+.generator {
+    @extend %generator;
+}
+
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}
+
+.shadowGovernment {
+    @extend %shadowGovernment;
+
+    .description {
+        color: $white;
+    }
+}
+
+.trainsInto {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+
+    > :first-child {
+        margin-right: 5px;
+    }
+}
+
+.disabledReason {
+    color: $gray;
+    display: flex;
+    margin-top: 10px;
+}
+
+.modalBody {
+    display: flex;
+    flex-direction: column;
+}
+
+.modalSentence {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+        margin-right: 5px;
+    }
+}
+
+.cost {
+    color: $red;
+}
+
+.result {
+    box-shadow: 0 -1px $gray;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.pausedGame {
+    color: $gray;
+    margin-right: 10px;
+}

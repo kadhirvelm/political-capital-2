@@ -18,23 +18,23 @@ import {
     IPlayerRid,
     IResolveGameEvent,
 } from "@pc2/api";
-import {
-    ActivePlayer,
-    ActiveResolution,
-    ActiveResolutionVote,
-    ActiveStaffer,
-    GameState,
-    getStafferOfType,
-    HistoricalGameState,
-    PassedGameModifier,
-    Player,
-    ResolveGameEvent,
-} from "@pc2/distributed-compute";
 import Express from "express";
 import _ from "lodash";
 import { Op } from "sequelize";
 import { v4 } from "uuid";
 import { areThereActiveGlobalScreens, sendMessageToGlobalScreens, sendMessageToPlayer } from "./socketService";
+import {
+    GameState,
+    PassedGameModifier,
+    ActivePlayer,
+    ActiveResolution,
+    ActiveResolutionVote,
+    ActiveStaffer,
+    ResolveGameEvent,
+    Player,
+    HistoricalGameState,
+} from "../models";
+import { getStafferOfType } from "../utils/getStafferOfType";
 
 // This isn't strictly necessary, but given there's a second promise going out anyway, might as well optimize it
 async function indexResolveEvents(resolveEvents: IResolveGameEvent[]): Promise<IFullGameState["resolveEvents"]> {

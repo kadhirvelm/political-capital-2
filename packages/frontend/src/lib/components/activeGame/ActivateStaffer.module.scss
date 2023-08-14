@@ -1,0 +1,37 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.activateStaffer {
+    display: flex;
+    flex-direction: column;
+}
+
+.onBack {
+    align-items: center;
+    display: flex;
+    margin: 10px 0;
+}
+
+.activatingStaffer {
+    border: 1px solid rgba($gray, 0.25);
+    border-radius: 3px;
+    display: flex;
+    flex: 1;
+    margin: 10px 0;
+    padding: 5px 10px;
+}
+
+.description {
+    color: $gray;
+}
+
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}

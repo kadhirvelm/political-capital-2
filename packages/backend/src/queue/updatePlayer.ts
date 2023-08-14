@@ -2,10 +2,11 @@
  * Copyright (c) 2022 - KM
  */
 
-import { ActivePlayer, IUpdatePlayerQueue } from "@pc2/distributed-compute";
 import { Job, DoneCallback } from "bull";
 import { getGameState } from "../services/gameService";
 import { sendMessageToPlayer } from "../services/socketService";
+import { ActivePlayer } from "../models";
+import { IUpdatePlayerQueue } from "./queues";
 
 export async function handleUpdatePlayerProcessor(job: Job<IUpdatePlayerQueue>, done: DoneCallback) {
     const totalPlayersUpdate = await ActivePlayer.findAll({ where: { gameStateRid: job.data.gameStateRid } });

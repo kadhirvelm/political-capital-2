@@ -1,0 +1,105 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.positive {
+    color: $green;
+}
+
+.negative {
+    color: $red;
+}
+
+.resolutionModifierContainer {
+    border: 1px solid $gray;
+    border-radius: 3px;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px 0;
+    padding: 5px 10px;
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}
+
+.stafferModifierContainer {
+    background: $white;
+    border: 1px solid $gray;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    padding: 5px 10px;
+}
+
+.minusIcon {
+    margin-right: 5px;
+}
+
+.stafferModifier {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.modifierSentence {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+
+    &.isGlobalScreen {
+        > :not(:last-child) {
+            margin-right: 0.3vw;
+        }
+    }
+
+    > :not(:last-child) {
+        margin-right: 3px;
+    }
+}
+
+.affects {
+    color: $gray;
+    padding-right: 7px;
+}
+
+.categoryTag {
+    align-items: center;
+    border: 1px solid $gray;
+    border-radius: 3px;
+    display: flex;
+    padding: 3px 5px;
+}
+
+.noCategory {
+    @extend %noCategory;
+}
+
+.voter {
+    @extend %voter;
+}
+
+.generator {
+    @extend %generator;
+}
+
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}
+
+.shadowGovernment {
+    @extend %shadowGovernment;
+
+    .description {
+        color: $white;
+    }
+}
