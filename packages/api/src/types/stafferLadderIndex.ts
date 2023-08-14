@@ -1,18 +1,18 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
-import { DEFAULT_STAFFER, IAllStaffers } from "./generatedStaffers";
+import { DEFAULT_STAFFER, type IAllStaffers } from "./generatedStaffers";
 
 export const StafferLadderIndex: { [stafferType: string]: Array<Exclude<keyof IAllStaffers, "unknown">> } = (() => {
-    const stafferIndex: { [stafferType: string]: Array<Exclude<keyof IAllStaffers, "unknown">> } = {};
+  const stafferIndex: { [stafferType: string]: Array<Exclude<keyof IAllStaffers, "unknown">> } = {};
 
-    Object.values(DEFAULT_STAFFER).forEach((staffer) => {
-        staffer.upgradedFrom.forEach((upgradedFrom) => {
-            stafferIndex[upgradedFrom] = stafferIndex[upgradedFrom] ?? [];
-            stafferIndex[upgradedFrom].push(staffer.type);
-        });
-    });
+  for (const staffer of Object.values(DEFAULT_STAFFER)) {
+    for (const upgradedFrom of staffer.upgradedFrom) {
+      stafferIndex[upgradedFrom] = stafferIndex[upgradedFrom] ?? [];
+      stafferIndex[upgradedFrom].push(staffer.type);
+    }
+  }
 
-    return stafferIndex;
+  return stafferIndex;
 })();

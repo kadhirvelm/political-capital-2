@@ -55,13 +55,13 @@ export interface IActiveGameService extends IService {
     payload: {
       playerRid: IPlayerRid;
     };
-    response: {};
+    response: Record<string, never>;
   };
   joinActiveGame: {
     payload: {
       playerRid: IPlayerRid;
     };
-    response: {};
+    response: Record<string, never>;
   };
   changeReadyState: {
     payload: {
@@ -70,14 +70,14 @@ export interface IActiveGameService extends IService {
       isReady: boolean;
       avatarSet: IAvatarSet;
     };
-    response: {};
+    response: Record<string, never>;
   };
   changeActiveGameState: {
     payload: {
       gameStateRid: IGameStateRid;
       newState: IGameState["state"];
     };
-    response: {};
+    response: Record<string, never>;
   };
   getGameState: {
     payload: {
@@ -89,7 +89,7 @@ export interface IActiveGameService extends IService {
     payload: {
       globalScreenIdentifier: IGlobalScreenIdentifier;
     };
-    response: {};
+    response: Record<string, never>;
   };
   getHistoricalGame: {
     payload: {
@@ -103,26 +103,22 @@ export interface IActiveGameService extends IService {
 }
 
 export const ActiveGameService: IImplementEndpoint<IActiveGameService> = {
-  changeReadyState: {
-    method: "post",
-        slug: "/game-service/change-ready-state",
-  },
   changeActiveGameState: {
     method: "post",
-        slug: "/game-service/change-active-game-state",
+    slug: "/game-service/change-active-game-state",
+  },
+  changeReadyState: {
+    method: "post",
+    slug: "/game-service/change-ready-state",
   },
   createNewGame: {
     method: "post",
-        slug: "/game-service/create-new-game",
+    slug: "/game-service/create-new-game",
   },
   getActiveGameState: {
     method: "post",
-        slug: "/game-service/get-active-game-state",
+    slug: "/game-service/get-active-game-state",
   },
-  joinActiveGame: {
-        slug: "/game-service/join-active-game",
-        method: "post",
-    },
   getGameState: {
     method: "post",
     slug: "/game-service/get-game-state",
@@ -130,5 +126,9 @@ export const ActiveGameService: IImplementEndpoint<IActiveGameService> = {
   getHistoricalGame: {
     method: "post",
     slug: "/game-service/get-historical-game",
+  },
+  joinActiveGame: {
+    method: "post",
+    slug: "/game-service/join-active-game",
   },
 };

@@ -2,7 +2,6 @@
  * Copyright 2023 KM.
  */
 
-
 import { type IImplementEndpoint, type IService } from "../common/generics";
 import { type IActiveResolutionRid, type IActiveStafferRid, type IGameStateRid } from "../types/BrandedIDs";
 import { type IPossibleEvent, type IStartHiringStaffer, type IStartTrainingStaffer } from "../types/IEvent";
@@ -47,16 +46,16 @@ export interface IPoliticalCapitalTwoService extends IService {
 }
 
 export const PlayerCapitalTwoService: IImplementEndpoint<IPoliticalCapitalTwoService> = {
+  castVote: {
+    method: "post",
+    slug: "/cast-vote",
+  },
   recruitStaffer: {
     method: "post",
     slug: "/recruit-staffer",
   },
-  castVote: {
-        method: "post",
-        slug: "/cast-vote",
-    },
-    trainStaffer: {
-        method: "post",
-        slug: "/train-staffer",
-    },
+  trainStaffer: {
+    method: "post",
+    slug: "/train-staffer",
+  },
 };

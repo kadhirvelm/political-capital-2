@@ -1,8 +1,8 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
-import { IResolutionEffect, IStafferEffect } from "../types/IGameModifier";
+import { type IResolutionEffect, type IStafferEffect } from "../types/IGameModifier";
 
 export const TIME_BETWEEN_RESOLUTIONS_IN_DAYS = 6;
 
@@ -17,19 +17,19 @@ export const TOTAL_DAYS_IN_GAME = 365;
 export const BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER = 25;
 
 export const ACCOUNTANT_MODIFIER: IStafferEffect = {
-    staffersAffected: ["everyone"],
-    costToAcquire: -0.2,
-    type: "staffer-effect",
+  costToAcquire: -0.2,
+  staffersAffected: ["everyone"],
+  type: "staffer-effect",
 };
 
 export const CHIEF_OF_STAFF_MODIFIER: IStafferEffect = {
-    staffersAffected: ["everyone"],
-    timeToAcquire: -0.15,
-    type: "staffer-effect",
+  staffersAffected: ["everyone"],
+  timeToAcquire: -0.15,
+  type: "staffer-effect",
 };
 
 export const LOBBYIST_MODIFIER: IResolutionEffect = {
-    payoutPerPlayer: 0.1,
-    earlyVotingBonus: 0.1,
-    type: "resolution-effect",
+  earlyVotingBonus: 0.1,
+  payoutPerPlayer: 0.1,
+  type: "resolution-effect",
 };

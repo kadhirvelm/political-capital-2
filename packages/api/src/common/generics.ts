@@ -2,9 +2,6 @@
  * Copyright 2023 KM.
  */
 
-
-import type Express from "express";
-
 type IMethods = "get" | "post" | "put" | "delete";
 
 export interface IEndpoint<Payload, Response> {
@@ -12,7 +9,7 @@ export interface IEndpoint<Payload, Response> {
   response: Response;
 }
 
-export type IService = Record<string, IEndpoint<any, any>>;
+export type IService = Record<string, IEndpoint<unknown, unknown>>;
 
 export type IImplementEndpoint<Service extends IService> = {
   [Key in keyof Service]: {
@@ -24,7 +21,7 @@ export type IImplementEndpoint<Service extends IService> = {
 export type IBackendEndpoint<Service extends IService> = {
   [Key in keyof Service]: (
     payload: Service[Key]["payload"],
-    response: Express.Response,
+    response: unknown,
   ) => Promise<Service[Key]["response"] | undefined>;
 };
 
@@ -34,27 +31,3 @@ export type IFrontendEndpoint<Service extends IService> = {
     cookie?: string,
   ) => Promise<Service[Key]["response"] | { error: string }>;
 };
-
-function implementBackend<Service extends IService>(endpoints: IImplementEndpoint<Service>) {
-  return (app: Express.Express, backendImplementedEndpoints: IBackendEndpoint<Service>) => {
-    for (const endpoint of Object.entries(endpoints)) {
-            const [key, { method, slug }] = endpoint;
-            app[method](`/api${slug}`, async (request, response) => {
-                try {
-                    const payload = method === "get" ? Object.values(request.params)[0] : request.body;
-
-                    const responseData = await backendImplementedEndpoints[key](payload, response);
-                    if (responseData === undefined) {
-                        return;
-                    }
-
-                    response.status(200).send(JSON.stringify(responseData));
-                } catch (e) {
-                    // eslint-disable-next-line no-console
-                    console.error(e);
-                    response.status(500).send({ error: JSON.stringify(e) });
-                }
-            });
-        }
-  };
-}

@@ -2,7 +2,6 @@
  * Copyright 2023 KM.
  */
 
-
 import { type IImplementEndpoint, type IService } from "../common/generics";
 import { type IActiveNotificationRid, type IPlayerRid } from "../types/BrandedIDs";
 import { type IActiveNotification } from "../types/politicalCapitalTwo";
@@ -10,7 +9,7 @@ import { type IActiveNotification } from "../types/politicalCapitalTwo";
 export interface INotificationService extends IService {
   createNewNotification: {
     payload: IActiveNotification;
-    response: {};
+    response: Record<string, never>;
   };
   getAllNotifications: {
     payload: {
@@ -29,14 +28,14 @@ export interface INotificationService extends IService {
 export const NotificationService: IImplementEndpoint<INotificationService> = {
   createNewNotification: {
     method: "post",
-        slug: "/notification-service/create-new-notification",
+    slug: "/notification-service/create-new-notification",
   },
   getAllNotifications: {
     method: "post",
-        slug: "/notification-service/get-all-notifications",
+    slug: "/notification-service/get-all-notifications",
   },
   markNotificationAsRead: {
     method: "post",
-        slug: "/notification-service/mark-notification-as-read",
+    slug: "/notification-service/mark-notification-as-read",
   },
 };

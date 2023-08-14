@@ -6,7 +6,6 @@ module.exports = {
     },
     "extends": [
       "eslint:recommended",
-      "next/core-web-vitals",
       "turbo",
       "plugin:@typescript-eslint/eslint-recommended",
       "plugin:@typescript-eslint/recommended",
@@ -14,6 +13,7 @@ module.exports = {
       "plugin:sonarjs/recommended",
       "plugin:unicorn/recommended",
       "plugin:promise/recommended",
+      "plugin:typescript-sort-keys/recommended",
       "plugin:react/recommended",
       "prettier"
     ],
@@ -30,6 +30,7 @@ module.exports = {
     "plugins": [
       "@typescript-eslint",
       "sort-keys-fix",
+      "typescript-sort-keys",
       "promise",
       "react",
       "header",
@@ -56,7 +57,7 @@ module.exports = {
       "sort-keys": ["error", "asc", { "caseSensitive": true, "natural": false, "minKeys": 2 }],
       "react/jsx-sort-props": ["error"],
       "header/header": [2, "block", "\n * Copyright 2023 KM.\n ", 2],
-      "unicorn/filename-case": "camelCase",
+      "unicorn/filename-case": [2, { "case": "camelCase" }],
     },
     "settings": {
       "import/resolver": {
