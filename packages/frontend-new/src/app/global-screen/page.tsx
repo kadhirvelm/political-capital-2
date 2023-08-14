@@ -1,7 +1,5 @@
-export default function GlobalScreen() {
-    return (
-        <div>
-            Global screen here!
-        </div>
-    )
-} 
+import { GlobalScreen } from "../components/GlobalScreen";
+
+export default function GlobalScreenPage() {
+    return <GlobalScreen />;
+}

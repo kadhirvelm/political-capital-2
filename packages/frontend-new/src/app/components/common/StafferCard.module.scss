@@ -1,0 +1,103 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.stafferCard {
+    display: flex;
+    min-height: 150px;
+    width: 200px;
+
+    &.noCategory.noCategory {
+        @extend %noCategory;
+
+        &.isBusy {
+            background: rgba($light-gray, 0.025);
+        }
+    }
+
+    &.voter.voter {
+        @extend %voter;
+
+        &.isBusy {
+            background: rgba($green, 0.025);
+        }
+    }
+
+    &.generator.generator {
+        @extend %generator;
+
+        &.isBusy {
+            background: rgba($blue, 0.025);
+        }
+    }
+
+    &.trainer.trainer {
+        @extend %trainer;
+
+        &.isBusy {
+            background: rgba($purple, 0.025);
+        }
+    }
+
+    &.recruit.recruit {
+        @extend %recruit;
+
+        &.isBusy {
+            background: rgba($red, 0.025);
+        }
+    }
+
+    &.shadowGovernment.shadowGovernment {
+        @extend %shadowGovernment;
+
+        .name {
+            box-shadow: 0 1px $$white;
+        }
+
+        .busyContainer {
+            box-shadow: 0 -1px $$white;
+        }
+
+        .footer {
+            box-shadow: 0 -1px $$white;
+        }
+
+        &.description {
+            color: $$white;
+        }
+
+        &.isBusy {
+            background: rgba($black, 0.4);
+        }
+    }
+}
+
+.name {
+    align-items: center;
+    box-shadow: 0 1px $gray;
+    display: flex;
+    padding: 5px 10px;
+}
+
+.description {
+    display: flex;
+    flex: 1;
+    padding: 10px;
+}
+
+.busyContainer {
+    box-shadow: 0 -1px $gray;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.footer {
+    box-shadow: 0 -1px $gray;
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px 10px;
+}

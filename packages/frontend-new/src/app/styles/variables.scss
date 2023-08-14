@@ -1,0 +1,59 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+$green: #4caf50;
+$blue: #03a9f4;
+$orange: #ff5722;
+$red: #f44336;
+
+$yellow: #ffeb3b;
+$purple: #9c27b0;
+$teal: #4dd0e1;
+$brown: #795548;
+
+$light-gray: #eee;
+$gray: #9e9e9e;
+$dark-gray: #424242;
+$black: #1b2631;
+
+%noCategory {
+    background: #fdfefe;
+}
+
+%voter {
+    background: rgba($green, 0.15);
+}
+
+%generator {
+    background: rgba($blue, 0.15);
+}
+
+%trainer {
+    background: rgba($purple, 0.15);
+}
+
+%recruit {
+    background: rgba($red, 0.15);
+}
+
+%shadowGovernment {
+    background: rgba($black, 0.75);
+    color: #fdfefe;
+}
+
+$transition: cubic-bezier(0, 0.26, 0, 0.96);
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+%fadeIn {
+    animation: fadeIn 500ms $transition;
+}

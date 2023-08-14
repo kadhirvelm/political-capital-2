@@ -1,0 +1,114 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.lobbyMainContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.pc2 {
+    align-items: center;
+    display: flex;
+    font-size: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.createNewGame {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+}
+
+.playerActions {
+    display: flex;
+    margin: 20px;
+}
+
+.thisPlayerContainer {
+    align-items: center;
+    display: flex;
+    margin: 20px 0;
+}
+
+.playersContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: baseline;
+
+    > :not(:last-child) {
+        margin-bottom: 20px;
+    }
+}
+
+.allPlayersText {
+    align-items: center;
+    color: $gray;
+    display: flex;
+    margin: 20px 0;
+}
+
+.divider {
+    background: $gray;
+    display: flex;
+    flex: 1;
+    height: 1px;
+    margin-left: 10px;
+}
+
+.singlePlayer {
+    align-items: center;
+    border: 1px solid $gray;
+    border-radius: 5px;
+    display: flex;
+    padding: 10px;
+
+    &.ready {
+        background: rgba($green, 0.1);
+    }
+
+    &.notReady {
+        background: rgba($red, 0.1);
+    }
+
+    &.canStart {
+        background: rgba($blue, 0.1);
+    }
+}
+
+.playerNameContainer {
+    align-items: center;
+    display: flex;
+    margin-right: 15px;
+}
+
+.playerNameText {
+    display: flex;
+    flex: 1;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.playerDetails {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.playerNameAndReady {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    margin-bottom: 10px;
+}
+
+.dummyChevron {
+    width: 28px;
+}

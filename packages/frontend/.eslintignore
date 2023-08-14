@@ -1,7 +1,0 @@
-dist/*
-build/*
-node_modules/*
-*.d.ts
-webpack.config.js
-compiled_types/*
-**/.scss

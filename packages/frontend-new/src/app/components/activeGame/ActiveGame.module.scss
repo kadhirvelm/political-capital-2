@@ -1,0 +1,78 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.activeGameContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.endGameContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 50px 15px 15px;
+}
+
+.results {
+    color: $gray;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.menu {
+    align-items: center;
+    display: flex;
+    padding-bottom: 15px;
+}
+
+.quickSelection {
+    align-items: center;
+    display: flex;
+    margin-left: 15px;
+}
+
+.vote {
+    background: rgba($green, 0.15);
+    border: 1px solid $gray;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    margin-right: 15px;
+    padding: 5px 10px;
+    position: relative;
+}
+
+.support {
+    background: rgba($orange, 0.15);
+    border: 1px solid $gray;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    position: relative;
+}
+
+.hasActions {
+    background: $green;
+    border-radius: 50%;
+    bottom: -4px;
+    height: 10px;
+    position: absolute;
+    right: -4px;
+    width: 10px;
+}
+
+.number {
+    color: $gray;
+    margin-left: 10px;
+}
+
+.title {
+    display: flex;
+    font-size: 18px;
+    justify-content: center;
+    padding-bottom: 15px;
+}

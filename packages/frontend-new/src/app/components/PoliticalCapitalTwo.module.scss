@@ -1,0 +1,20 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../styles/variables";
+
+.rootContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    position: relative;
+}
+
+.loading {
+    align-items: center;
+    color: $gray;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+}

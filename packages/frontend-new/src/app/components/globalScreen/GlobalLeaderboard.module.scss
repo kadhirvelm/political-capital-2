@@ -1,0 +1,62 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.leaderboard {
+    border: 1px solid $gray;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5vw;
+}
+
+.leaderboardTable {
+    background: $white;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+
+    > :nth-child(even) {
+        background: rgba($gray, 0.1);
+    }
+}
+
+.singleRow {
+    align-items: center;
+    display: flex;
+    padding: 1.5vh 1vw;
+}
+
+.playerIcon {
+    display: flex;
+    margin-right: 1vw;
+}
+
+.playerDetailsContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    display: flex;
+    font-size: 2vw;
+
+    > :not(:last-child) {
+        margin-right: 1vw;
+    }
+}
+
+.politicalCapitalContainer {
+    display: flex;
+
+    > :first-child {
+        margin-right: 1vw;
+    }
+}
+
+.politicalCapital {
+    color: $gray;
+    margin-right: 10px;
+}

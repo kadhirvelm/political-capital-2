@@ -1,0 +1,106 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.staffersContainer {
+    @extend %fadeIn;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.withIndicator {
+    display: flex;
+}
+
+.singleLevel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.singleLevelDetails {
+    border: 1px solid rgba($gray, 0.25);
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+}
+
+.singleLevelParents {
+    display: flex;
+    flex-direction: column;
+}
+
+.description {
+    color: $gray;
+}
+
+.topHalf {
+    display: flex;
+    justify-content: center;
+    padding: 0 10px;
+
+    &.firstLine {
+        margin-top: 5px;
+    }
+
+    &.lastLine {
+        margin-bottom: 6px;
+    }
+}
+
+.topHalfLine {
+    background: $gray;
+    display: flex;
+    min-width: 1px;
+}
+
+.legend {
+    box-shadow: 0 1px $gray;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 10px;
+}
+
+.tagContainer {
+    align-items: center;
+    border: 1px solid $gray;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    padding: 5px 10px;
+}
+
+.noCategory {
+    @extend %noCategory;
+}
+
+.voter {
+    @extend %voter;
+}
+
+.generator {
+    @extend %generator;
+}
+
+.trainer {
+    @extend %trainer;
+}
+
+.recruit {
+    @extend %recruit;
+}
+
+.shadowGovernment {
+    @extend %shadowGovernment;
+
+    .description {
+        color: $white;
+    }
+}

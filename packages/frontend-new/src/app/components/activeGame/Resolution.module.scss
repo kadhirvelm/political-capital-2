@@ -1,0 +1,133 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.cardContainer {
+    display: flex;
+    flex: 1;
+}
+
+.description {
+    color: $gray;
+}
+
+.title {
+    margin-bottom: 10px;
+}
+
+.resolutionFooter {
+    display: flex;
+    flex-direction: column;
+}
+
+.payoutContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.politicalCapitalPayout {
+    color: $green;
+    margin-left: 10px;
+}
+
+.tallyContainer {
+    align-items: center;
+    display: flex;
+}
+
+.tallyOn {
+    color: $gray;
+    margin-right: 12px;
+}
+
+.earlyVotingContainer {
+    align-items: center;
+    display: flex;
+}
+
+.earlyVoting {
+    color: $gray;
+    margin-right: 12px;
+}
+
+.totalVotes {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+
+    > :not(:last-child) {
+        margin-bottom: 5px;
+    }
+}
+
+.onTrack {
+    display: flex;
+    flex-direction: column;
+}
+
+.singleVoteCategory {
+    align-items: center;
+    display: flex;
+    margin-left: 10px;
+}
+
+.total {
+    color: $gray;
+}
+
+.yes {
+    color: $green;
+}
+
+.abstain {
+    color: $dark-gray;
+}
+
+.no {
+    color: $red;
+}
+
+.divider {
+    background: rgba($gray, 0.5);
+    display: flex;
+    flex: 1;
+    height: 1px;
+    margin: 0 15px;
+}
+
+.onTrackTo {
+    align-items: center;
+    border-top: 1.5px solid $dark-gray;
+    display: flex;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.finalResults {
+    display: flex;
+    flex-direction: column;
+}
+
+.passed {
+    align-items: center;
+    background: $green;
+    border-radius: 3px;
+    color: $white;
+    display: flex;
+    justify-content: center;
+    padding: 5px 10px;
+}
+
+.failed {
+    align-items: center;
+    background: $red;
+    border-radius: 3px;
+    color: $white;
+    display: flex;
+    justify-content: center;
+    padding: 5px 10px;
+}

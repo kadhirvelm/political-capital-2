@@ -1,0 +1,30 @@
+/**
+ * Copyright (c) 2022 - KM
+ */
+
+@import "../../styles/variables";
+
+.overallContainer {
+    @extend %fadeIn;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.seePreviousResolutions {
+    align-items: center;
+    color: $gray;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+
+    > :first-child {
+        margin-right: 3px;
+    }
+}
+
+.resolveEventsContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
