@@ -49,5 +49,9 @@
         "url": "https://github.com/kadhirvelm/political-capital-2/issues"
     },
     "homepage": "https://github.com/kadhirvelm/political-capital-2.git",
-    "packageManager": "yarn@3.6.0"
+    "packageManager": "yarn@3.6.0",
+    "dependencies": {
+        "eslint-config-next": "^13.4.13",
+        "eslint-plugin-next": "^0.0.0"
+    }
 }

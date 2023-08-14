@@ -6,14 +6,12 @@ module.exports = {
         extraFileExtensions: [".cjs"],
     },
 
-    plugins: ["@typescript-eslint", "jest", "prettier", "import", "react-hooks"],
+    plugins: ["@typescript-eslint", "jest", "prettier", "import"],
 
     extends: [
+        "next/core-web-vitals",
         "airbnb-typescript",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:import/errors",
-        "plugin:import/warnings",
-        "plugin:import/typescript",
         "plugin:jest/recommended",
         "plugin:prettier/recommended",
     ],
