@@ -45,7 +45,7 @@ export interface IPoliticalCapitalTwoService extends IService {
   };
 }
 
-export const PlayerCapitalTwoService: IImplementEndpoint<IPoliticalCapitalTwoService> = {
+export const PoliticalCapitalTwoService: IImplementEndpoint<IPoliticalCapitalTwoService> = {
   castVote: {
     method: "post",
     slug: "/cast-vote",

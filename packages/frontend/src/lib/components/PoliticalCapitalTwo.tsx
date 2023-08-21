@@ -1,8 +1,8 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
-import { FC } from "react";
+import { type FC } from "react";
 import { useHandlePlayerAndSocketRegistration } from "../hooks/handlePlayerRegistration";
 import { usePoliticalCapitalSelector } from "../store/createStore";
 import { ActiveGame } from "./activeGame/ActiveGame";
@@ -14,41 +14,41 @@ import { RegisterPlayerModal } from "./registerPlayer/RegisterPlayerModal";
 type IRenderGameState = "loading" | "lobby" | "game";
 
 export const PoliticalCapitalTwo: FC<{}> = () => {
-    useHandlePlayerAndSocketRegistration();
+  useHandlePlayerAndSocketRegistration();
 
-    const isConnectedToServer = usePoliticalCapitalSelector((s) => s.playerState.isConnectedToServer);
-    const player = usePoliticalCapitalSelector((s) => s.playerState.player);
-    const activeGame = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
+  const isConnectedToServer = usePoliticalCapitalSelector((s) => s.playerState.isConnectedToServer);
+  const player = usePoliticalCapitalSelector((s) => s.playerState.player);
+  const activeGame = usePoliticalCapitalSelector((s) => s.localGameState.fullGameState);
 
-    const currentGameState: IRenderGameState = (() => {
-        if (!isConnectedToServer) {
-            return "loading";
-        }
+  const currentGameState: IRenderGameState = (() => {
+    if (!isConnectedToServer) {
+      return "loading";
+    }
 
-        if (player === undefined || activeGame === undefined || activeGame?.gameState.state === "waiting") {
-            return "lobby";
-        }
+    if (player === undefined || activeGame === undefined || activeGame?.gameState.state === "waiting") {
+      return "lobby";
+    }
 
-        return "game";
-    })();
+    return "game";
+  })();
 
-    const renderGameState = () => {
-        if (currentGameState === "loading") {
-            return <div className={styles.loading}>Loading…</div>;
-        }
+  const renderGameState = () => {
+    if (currentGameState === "loading") {
+      return <div className={styles.loading}>Loading…</div>;
+    }
 
-        if (currentGameState === "lobby") {
-            return <Lobby />;
-        }
+    if (currentGameState === "lobby") {
+      return <Lobby />;
+    }
 
-        return <ActiveGame />;
-    };
+    return <ActiveGame />;
+  };
 
-    return (
-        <div className={styles.rootContainer}>
-            <RegisterPlayerModal />
-            <ServerStatus />
-            {renderGameState()}
-        </div>
-    );
+  return (
+    <div className={styles.rootContainer}>
+      <RegisterPlayerModal />
+      <ServerStatus />
+      {renderGameState()}
+    </div>
+  );
 };

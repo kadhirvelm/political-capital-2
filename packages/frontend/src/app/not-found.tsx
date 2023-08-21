@@ -1,5 +1,7 @@
+/*
+ * Copyright 2023 KM.
+ */
+
 "use client";
 
-import RedirectToPlayer from "../lib/components/Redirect";
-
-export default RedirectToPlayer;
+export { default } from "../lib/components/Redirect";
