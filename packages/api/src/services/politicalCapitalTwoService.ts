@@ -8,12 +8,23 @@ import { type IPossibleEvent, type IStartHiringStaffer, type IStartTrainingStaff
 import { type IActiveResolutionVote } from "../types/politicalCapitalTwo";
 
 export interface IPartialResolveGameEvent<Event extends IPossibleEvent> {
-  gameStateRid: IGameStateRid;
   eventDetails: Event;
+  gameStateRid: IGameStateRid;
   state: "pending";
 }
 
 export interface IPoliticalCapitalTwoService extends IService {
+  castVote: {
+    payload: {
+      activeResolutionRid: IActiveResolutionRid;
+      gameStateRid: IGameStateRid;
+      vote: IActiveResolutionVote["vote"];
+      votingStafferRid: IActiveStafferRid;
+    };
+    response: {
+      votes: IActiveResolutionVote[];
+    };
+  };
   recruitStaffer: {
     payload: {
       gameStateRid: IGameStateRid;
@@ -30,17 +41,6 @@ export interface IPoliticalCapitalTwoService extends IService {
     };
     response: {
       pendingEvent: IPartialResolveGameEvent<IStartTrainingStaffer>;
-    };
-  };
-  castVote: {
-    payload: {
-      gameStateRid: IGameStateRid;
-      votingStafferRid: IActiveStafferRid;
-      activeResolutionRid: IActiveResolutionRid;
-      vote: IActiveResolutionVote["vote"];
-    };
-    response: {
-      votes: IActiveResolutionVote[];
     };
   };
 }

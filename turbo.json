@@ -8,6 +8,12 @@
       "dependsOn": [
         "^build"
       ],
+      "env": [
+        "TEST_DATABASE",
+        "NODE_ENV",
+        "ORIGIN",
+        "BACKEND_PORT",
+      ],
       "outputs": [
         "dist/**"
       ]

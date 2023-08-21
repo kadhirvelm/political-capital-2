@@ -3,7 +3,7 @@
  */
 
 import { type IPlayerRid } from "./BrandedIDs";
-import { type IVisit } from "./visit";
+import { type GenericType, type VisitorPattern } from "./visit";
 
 interface IBasicNotification {
   type: string;
@@ -25,43 +25,39 @@ export interface IGameNotification extends IBasicNotification {
   type: "game-notification";
 }
 
-interface IAllNotifications {
-  betweenPlayers: IBetweenPlayersNotification;
+export interface IAllNotifications {
   anonymous: IAnonymousNotification;
+  betweenPlayers: IBetweenPlayersNotification;
   game: IGameNotification;
-  unknown: never;
 }
 
-export type IPossibleNotification = IAllNotifications[keyof IAllNotifications];
+export type IPossibleNotification = GenericType<IAllNotifications>;
 
-export namespace INotification {
-  export const isBetweenPlayers = (
-    notification: IPossibleNotification,
-  ): notification is IBetweenPlayersNotification => {
-    return notification.type === "between-players";
-  };
-
-  export const isAnonymous = (notification: IPossibleNotification): notification is IAnonymousNotification => {
-    return notification.type === "anonymous";
-  };
-
-  export const isGame = (notification: IPossibleNotification): notification is IGameNotification => {
-    return notification.type === "game-notification";
-  };
-
-  export const visit = <ReturnValue>(value: IPossibleNotification, visitor: IVisit<IAllNotifications, ReturnValue>) => {
-    if (isBetweenPlayers(value)) {
-      return visitor.betweenPlayers(value);
-    }
-
-    if (isAnonymous(value)) {
+export const INotification: VisitorPattern<IAllNotifications> = {
+  typeChecks: {
+    anonymous: (notification: IPossibleNotification): notification is IAnonymousNotification => {
+      return notification.type === "anonymous";
+    },
+    betweenPlayers: (notification: IPossibleNotification): notification is IBetweenPlayersNotification => {
+      return notification.type === "between-players";
+    },
+    game: (notification: IPossibleNotification): notification is IGameNotification => {
+      return notification.type === "game-notification";
+    },
+  },
+  visit: (value, visitor) => {
+    if (INotification.typeChecks.anonymous(value)) {
       return visitor.anonymous(value);
     }
 
-    if (isGame(value)) {
+    if (INotification.typeChecks.betweenPlayers(value)) {
+      return visitor.betweenPlayers(value);
+    }
+
+    if (INotification.typeChecks.game(value)) {
       return visitor.game(value);
     }
 
     return visitor.unknown(value);
-  };
-}
+  },
+};

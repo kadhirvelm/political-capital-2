@@ -32,7 +32,6 @@ export const ToPlayerMessages: VisitorPattern<IAllToPlayerMessages> = {
       return message.type === "update-game-state";
     },
   },
-
   visit: (value, visitor) => {
     if (ToPlayerMessages.typeChecks.receiveNotification(value)) {
       return visitor.receiveNotification(value);

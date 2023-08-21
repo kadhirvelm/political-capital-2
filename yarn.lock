@@ -2537,6 +2537,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@pc2/api@workspace:packages/api"
   dependencies:
+    "@types/jest": ^29.5.3
     "@types/lodash": ^4.14.191
     "@types/node": ^20.5.0
     eslint: ^8.47.0
@@ -2557,7 +2558,6 @@ __metadata:
     "@types/compression": ^1.7.2
     "@types/cors": ^2.8.13
     "@types/express": ^4.17.14
-    "@types/jest": ^29.2.4
     "@types/lodash": ^4.14.191
     "@types/node": ^20.4.10
     "@types/node-cron": ^3.0.6
@@ -3230,7 +3230,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^29.2.4":
+"@types/jest@npm:*, @types/jest@npm:^29.2.4, @types/jest@npm:^29.5.3":
   version: 29.5.3
   resolution: "@types/jest@npm:29.5.3"
   dependencies:
@@ -7232,6 +7232,7 @@ __metadata:
   dependencies:
     "@eslint/eslintrc": ^2.1.2
     "@types/eslint": ^8.44.2
+    "@types/jest": ^29.5.3
     "@types/node": ^18.11.13
     "@types/semver": ^7.3.13
     "@typescript-eslint/eslint-plugin": ^6.3.0

@@ -2,7 +2,8 @@
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true,
-    "**/.next/*": true
+    "**/.next/*": true,
+    "**/dist/*": true,
   },
   "editor.formatOnSave": true,
   "editor.tabSize": 2,

@@ -4,7 +4,7 @@
 
 import { type IActiveResolutionRid, type IActiveStafferRid, type IPlayerRid } from "./BrandedIDs";
 import { type IAllStaffers } from "./generatedStaffers";
-import { type IVisit } from "./visit";
+import { type GenericType, type VisitorPattern } from "./visit";
 
 interface IBasicEvent {
   type: string;
@@ -18,31 +18,31 @@ export interface IStartHiringStaffer extends IBasicEvent {
 }
 
 export interface IFinishHiringStaffer extends IBasicEvent {
+  activeStafferRid: IActiveStafferRid;
   playerRid: IPlayerRid;
   recruiterRid: IActiveStafferRid;
-  activeStafferRid: IActiveStafferRid;
   type: "finish-hiring-staffer";
 }
 
 export interface IStartTrainingStaffer extends IBasicEvent {
-  playerRid: IPlayerRid;
-  trainerRid: IActiveStafferRid;
   activeStafferRid: IActiveStafferRid;
+  playerRid: IPlayerRid;
   toLevel: Exclude<keyof IAllStaffers, "unknown">;
+  trainerRid: IActiveStafferRid;
   type: "start-training-staffer";
 }
 
 export interface IFinishTrainingStaffer extends IBasicEvent {
+  activeStafferRid: IActiveStafferRid;
   playerRid: IPlayerRid;
   trainerRid: IActiveStafferRid;
-  activeStafferRid: IActiveStafferRid;
   type: "finish-training-staffer";
 }
 
 export interface IPayoutEarlyVoting extends IBasicEvent {
-  playerRid: IPlayerRid;
   activeStafferRid: IActiveStafferRid;
   onActiveResolutionRid: IActiveResolutionRid;
+  playerRid: IPlayerRid;
   type: "payout-early-voting";
 }
 
@@ -55,77 +55,77 @@ export interface ITallyResolution extends IBasicEvent {
   type: "tally-resolution";
 }
 
-interface IAllEvents {
-  startHiringStaffer: IStartHiringStaffer;
+export interface IAllEvents {
   finishHiringStaffer: IFinishHiringStaffer;
-  startTrainingStaffer: IStartTrainingStaffer;
   finishTrainingStaffer: IFinishTrainingStaffer;
-  payoutEarlyVoting: IPayoutEarlyVoting;
   newResolution: INewResolution;
+  payoutEarlyVoting: IPayoutEarlyVoting;
+  startHiringStaffer: IStartHiringStaffer;
+  startTrainingStaffer: IStartTrainingStaffer;
   tallyResolution: ITallyResolution;
-  unknown: never;
 }
 
-export type IPossibleEvent = IAllEvents[keyof IAllEvents];
+export type IPossibleEvent = GenericType<IAllEvents>;
 
-export namespace IEvent {
-  export const isStartHireStaffer = (event: IPossibleEvent): event is IStartHiringStaffer => {
-    return event.type === "start-hiring-staffer";
-  };
+export const IEvent: VisitorPattern<IAllEvents> = {
+  typeChecks: {
+    finishHiringStaffer: (event: IPossibleEvent): event is IFinishHiringStaffer => {
+      return event.type === "finish-hiring-staffer";
+    },
 
-  export const isFinishHiringStaffer = (event: IPossibleEvent): event is IFinishHiringStaffer => {
-    return event.type === "finish-hiring-staffer";
-  };
+    finishTrainingStaffer: (event: IPossibleEvent): event is IFinishTrainingStaffer => {
+      return event.type === "finish-training-staffer";
+    },
 
-  export const isStartTrainingStaffer = (event: IPossibleEvent): event is IStartTrainingStaffer => {
-    return event.type === "start-training-staffer";
-  };
+    newResolution: (event: IPossibleEvent): event is INewResolution => {
+      return event.type === "new-resolution";
+    },
 
-  export const isFinishTrainingStaffer = (event: IPossibleEvent): event is IFinishTrainingStaffer => {
-    return event.type === "finish-training-staffer";
-  };
+    payoutEarlyVoting: (event: IPossibleEvent): event is IPayoutEarlyVoting => {
+      return event.type === "payout-early-voting";
+    },
 
-  export const isPayoutEarlyVoting = (event: IPossibleEvent): event is IPayoutEarlyVoting => {
-    return event.type === "payout-early-voting";
-  };
+    startHiringStaffer: (event: IPossibleEvent): event is IStartHiringStaffer => {
+      return event.type === "start-hiring-staffer";
+    },
 
-  export const isNewResolution = (event: IPossibleEvent): event is INewResolution => {
-    return event.type === "new-resolution";
-  };
+    startTrainingStaffer: (event: IPossibleEvent): event is IStartTrainingStaffer => {
+      return event.type === "start-training-staffer";
+    },
 
-  export const isTallyResolution = (event: IPossibleEvent): event is ITallyResolution => {
-    return event.type === "tally-resolution";
-  };
-
-  export const visit = <ReturnValue>(value: IPossibleEvent, visitor: IVisit<IAllEvents, ReturnValue>) => {
-    if (isStartHireStaffer(value)) {
-      return visitor.startHiringStaffer(value);
-    }
-
-    if (isFinishHiringStaffer(value)) {
+    tallyResolution: (event: IPossibleEvent): event is ITallyResolution => {
+      return event.type === "tally-resolution";
+    },
+  },
+  visit: (value, visitor) => {
+    if (IEvent.typeChecks.finishHiringStaffer(value)) {
       return visitor.finishHiringStaffer(value);
     }
 
-    if (isStartTrainingStaffer(value)) {
-      return visitor.startTrainingStaffer(value);
-    }
-
-    if (isFinishTrainingStaffer(value)) {
+    if (IEvent.typeChecks.finishTrainingStaffer(value)) {
       return visitor.finishTrainingStaffer(value);
     }
 
-    if (isPayoutEarlyVoting(value)) {
-      return visitor.payoutEarlyVoting(value);
-    }
-
-    if (isNewResolution(value)) {
+    if (IEvent.typeChecks.newResolution(value)) {
       return visitor.newResolution(value);
     }
 
-    if (isTallyResolution(value)) {
+    if (IEvent.typeChecks.payoutEarlyVoting(value)) {
+      return visitor.payoutEarlyVoting(value);
+    }
+
+    if (IEvent.typeChecks.startHiringStaffer(value)) {
+      return visitor.startHiringStaffer(value);
+    }
+
+    if (IEvent.typeChecks.startTrainingStaffer(value)) {
+      return visitor.startTrainingStaffer(value);
+    }
+
+    if (IEvent.typeChecks.tallyResolution(value)) {
       return visitor.tallyResolution(value);
     }
 
     return visitor.unknown(value);
-  };
-}
+  },
+};

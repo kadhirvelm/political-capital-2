@@ -57,7 +57,7 @@ module.exports = {
       "sort-keys": ["error", "asc", { "caseSensitive": true, "natural": false, "minKeys": 2 }],
       "react/jsx-sort-props": ["error"],
       "header/header": [2, "block", "\n * Copyright 2023 KM.\n ", 2],
-      "unicorn/filename-case": [2, { "case": "camelCase" }],
+      "unicorn/filename-case": [2, { "cases": { "pascalCase": true, "camelCase": true, } }],
     },
     "settings": {
       "import/resolver": {

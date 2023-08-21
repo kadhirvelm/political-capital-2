@@ -2,7 +2,8 @@
  * Copyright 2023 KM.
  */
 
-import { type IFrontendEndpoint, type IImplementEndpoint, type IService, getBackendUrlFromFrontend } from "@pc2/api";
+import { type IFrontendEndpoint, type IImplementEndpoint, type IService } from "@pc2/api";
+import { getBackendUrlFromFrontend } from "./constants";
 
 function maybeRemoveVariableFromSlug(slug: string) {
   const allParts = slug.split("/");
@@ -15,6 +16,7 @@ function maybeRemoveVariableFromSlug(slug: string) {
 
 declare global {
   interface Window {
+    /* This is a magic function thrown on the window on the frontend that lets us invalidate the token whenever any request comes back as a 403. */
     onInvalidGame: () => void;
   }
 }
@@ -22,11 +24,11 @@ declare global {
 export function implementFrontend<Service extends IService>(
   endpoints: IImplementEndpoint<Service>,
 ): IFrontendEndpoint<Service> {
-  const endpointsWithRestRequest: IFrontendEndpoint<Service> = {} as any;
+  const endpointsWithRestRequest: IFrontendEndpoint<Service> = {} as IFrontendEndpoint<Service>;
 
-  Object.keys(endpoints).forEach((endpointKey: keyof Service) => {
+  for (const endpointKey of Object.keys(endpoints) as Array<keyof Service>) {
     const { method, slug } = endpoints[endpointKey];
-    endpointsWithRestRequest[endpointKey] = async (payload: any, cookie?: string) => {
+    endpointsWithRestRequest[endpointKey] = async (payload: unknown, cookie?: string) => {
       let rawResponse: globalThis.Response;
 
       const headers =
@@ -48,12 +50,11 @@ export function implementFrontend<Service extends IService>(
       } else {
         rawResponse = await fetch(`${hostname}/api${slug}`, {
           body: JSON.stringify(payload),
-                  headers,
+          headers,
           method: method.toUpperCase(),
         });
       }
 
-      // This is a magic function thrown on the window on the frontend that lets us invalidate the token whenever any request comes back as a 403.
       if (rawResponse.status === 403) {
         window.onInvalidGame();
         return;
@@ -61,7 +62,7 @@ export function implementFrontend<Service extends IService>(
 
       return (await rawResponse.json()) as Response;
     };
-  });
+  }
 
   return endpointsWithRestRequest;
 }

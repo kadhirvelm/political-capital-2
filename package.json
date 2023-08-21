@@ -61,6 +61,7 @@
     "packageManager": "yarn@3.6.0",
     "dependencies": {
         "@eslint/eslintrc": "^2.1.2",
+        "@types/jest": "^29.5.3",
         "eslint-config-next": "^13.4.13",
         "eslint-plugin-next": "^0.0.0"
     }

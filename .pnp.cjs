@@ -45,6 +45,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@eslint/eslintrc", "npm:2.1.2"],\
             ["@types/eslint", "npm:8.44.2"],\
+            ["@types/jest", "npm:29.5.3"],\
             ["@types/node", "npm:18.17.5"],\
             ["@types/semver", "npm:7.5.0"],\
             ["@typescript-eslint/eslint-plugin", "virtual:68d23443fca386bf3f628334f5daf0193c5a12398d75bcf0ee0d42c1b52e37afc71384b5d4a6e3a69796e4cfa4eec7cf34926de5951057ae78f4fa97becf9e9b#npm:6.3.0"],\
@@ -4359,6 +4360,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/api/",\
           "packageDependencies": [\
             ["@pc2/api", "workspace:packages/api"],\
+            ["@types/jest", "npm:29.5.3"],\
             ["@types/lodash", "npm:4.14.197"],\
             ["@types/node", "npm:20.5.0"],\
             ["eslint", "npm:8.47.0"],\
@@ -4381,7 +4383,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/compression", "npm:1.7.2"],\
             ["@types/cors", "npm:2.8.13"],\
             ["@types/express", "npm:4.17.17"],\
-            ["@types/jest", "npm:29.5.3"],\
             ["@types/lodash", "npm:4.14.197"],\
             ["@types/node", "npm:20.4.10"],\
             ["@types/node-cron", "npm:3.0.8"],\
@@ -10283,6 +10284,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["frontend-stack", "workspace:."],\
             ["@eslint/eslintrc", "npm:2.1.2"],\
             ["@types/eslint", "npm:8.44.2"],\
+            ["@types/jest", "npm:29.5.3"],\
             ["@types/node", "npm:18.17.5"],\
             ["@types/semver", "npm:7.5.0"],\
             ["@typescript-eslint/eslint-plugin", "virtual:68d23443fca386bf3f628334f5daf0193c5a12398d75bcf0ee0d42c1b52e37afc71384b5d4a6e3a69796e4cfa4eec7cf34926de5951057ae78f4fa97becf9e9b#npm:6.3.0"],\
@@ -16910,7 +16912,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/babel-jest", null],\
             ["@types/babel__core", null],\
             ["@types/esbuild", null],\
-            ["@types/jest", "npm:29.5.3"],\
+            ["@types/jest", null],\
             ["@types/jest__types", null],\
             ["@types/typescript", null],\
             ["babel-jest", null],\

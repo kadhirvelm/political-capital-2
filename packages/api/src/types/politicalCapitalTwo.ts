@@ -17,84 +17,84 @@ import { type IGameModifier } from "./IGameModifier";
 import { type IPossibleNotification } from "./INotification";
 
 export interface IPlayer {
-  playerRid: IPlayerRid;
   browserIdentifier: string;
   name: string;
+  playerRid: IPlayerRid;
 }
 
 export interface IGameState {
+  gameClock: IGameClock;
   gameStateRid: IGameStateRid;
   state: "waiting" | "active" | "paused" | "complete";
-  gameClock: IGameClock;
 }
 
 export type IAvatarSet = "robots" | "monsters" | "cats" | "humans";
 export const AvatarSet: IAvatarSet[] = ["robots", "monsters", "cats", "humans"];
 
 export interface IActivePlayer {
-  gameStateRid: IGameStateRid;
-  playerRid: IPlayerRid;
-  politicalCapital: number;
   approvalRating: number;
   avatarSet: IAvatarSet;
-  lastUpdatedGameClock: IGameClock;
+  gameStateRid: IGameStateRid;
   isReady: boolean;
+  lastUpdatedGameClock: IGameClock;
+  playerRid: IPlayerRid;
+  politicalCapital: number;
 }
 
 export interface IActiveResolution {
-  gameStateRid: IGameStateRid;
   activeResolutionRid: IActiveResolutionRid;
+  createdOn: IGameClock;
+  gameStateRid: IGameStateRid;
   resolutionDetails: IBasicResolution;
   state: "active" | "passed" | "failed";
-  createdOn: IGameClock;
 }
 
 export interface IActiveResolutionVote {
-  gameStateRid: IGameStateRid;
   activeResolutionRid: IActiveResolutionRid;
   activeStafferRid: IActiveStafferRid;
+  gameStateRid: IGameStateRid;
   vote: "passed" | "failed";
 }
 
 export interface IActiveStaffer {
+  activeStafferRid: IActiveStafferRid;
+  avatarSet: IAvatarSet;
   gameStateRid: IGameStateRid;
   playerRid: IPlayerRid;
-  activeStafferRid: IActiveStafferRid;
   stafferDetails: IPossibleStaffer;
-  avatarSet: IAvatarSet;
   state: "active" | "disabled";
 }
 
 export interface IResolveGameEvent {
+  eventDetails: IPossibleEvent;
   gameStateRid: IGameStateRid;
   resolvesOn: IGameClock;
-  eventDetails: IPossibleEvent;
   state: "active" | "complete";
 }
 
 export interface IPassedGameModifier {
-  gameStateRid: IGameStateRid;
-  fromActiveResolutionRid: IActiveResolutionRid;
-  modifier: IGameModifier;
   createdOn: IGameClock;
+  fromActiveResolutionRid: IActiveResolutionRid;
+  gameStateRid: IGameStateRid;
+  modifier: IGameModifier;
 }
 
 export interface IActivePlayerModifier {
-  modifier: IGameModifier;
   createdOn: IGameClock;
+  modifier: IGameModifier;
 }
 
 export interface IHistoricalGameState {
-  gameStateRid: IGameStateRid;
   gameClock: IGameClock;
+  gameStateRid: IGameStateRid;
   snapshot: Array<{ playerRid: IPlayerRid; politicalCapital: number }>;
 }
 
 export interface IActiveNotification {
   activeNotificationRid: IActiveNotificationRid;
+  createdOn: IGameClock;
   gameStateRid: IGameStateRid;
   notificationDetails: IPossibleNotification;
-  toPlayerRid: IPlayerRid;
-  createdOn: IGameClock;
   status: "unread" | "read";
+  toPlayerRid: IPlayerRid;
 }

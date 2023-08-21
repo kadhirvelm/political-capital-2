@@ -20,6 +20,8 @@ import {
   isVoter,
 } from "./staffer";
 
+const STAFFER_EFFECT = "resolution-effect";
+
 export function getStafferCategory(stafferDetails: IActiveOrPossibleStaffer): IStafferCategory | undefined {
   if (isVoter(stafferDetails)) {
     return "voter";
@@ -74,11 +76,7 @@ function isStafferInCategory(
     return true;
   }
 
-  if (category === "shadowGovernment" && isShadowGovernment(stafferDetails)) {
-    return true;
-  }
-
-  return false;
+  return category === "shadowGovernment" && isShadowGovernment(stafferDetails);
 }
 
 function getRelevantModifiersToStaffer(
@@ -86,7 +84,7 @@ function getRelevantModifiersToStaffer(
   activeStaffer: IActiveOrPossibleStaffer,
 ): Array<IPassedGameModifier | IActivePlayerModifier> {
   return allPassedGameModifiers.filter(({ modifier }) => {
-    if (modifier.type === "resolution-effect") {
+    if (modifier.type === STAFFER_EFFECT) {
       return false;
     }
 
@@ -109,7 +107,7 @@ function getStafferModifier(
 
   let newMultiplier = 1;
   for (const { modifier } of allRelevantModifiers) {
-    if (modifier.type === "resolution-effect") {
+    if (modifier.type === STAFFER_EFFECT) {
       continue;
     }
 
@@ -151,7 +149,7 @@ function getDisabledStaffers(
   const disabledStaffers: IStafferEffect["staffersAffected"][number][] = [];
 
   for (const { modifier } of allPassedGameModifiers) {
-    if (modifier.type === "resolution-effect") {
+    if (modifier.type === STAFFER_EFFECT) {
       continue;
     }
 
@@ -191,7 +189,7 @@ function getResolutionModifier(
   allPassedGameModifiers: Array<IPassedGameModifier | IActivePlayerModifier>,
 ) {
   const relevantModifiers = allPassedGameModifiers
-    .filter((modifier) => modifier.modifier.type === "resolution-effect")
+    .filter((modifier) => modifier.modifier.type === STAFFER_EFFECT)
     .sort((a, b) => (a.createdOn > b.createdOn ? 1 : -1));
 
   let newMultiplier = 1;

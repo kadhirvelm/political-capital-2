@@ -36,46 +36,46 @@ export interface IIndexedResolveEvents {
 }
 
 export interface IFullGameState {
-  gameState: IGameState;
-  passedGameModifiers: IPassedGameModifier[];
-  players: { [playerRid: IPlayerRid]: IPlayer };
   activePlayers: { [playerRid: IPlayerRid]: IActivePlayer };
-  activeResolutions: IActiveResolution[];
-  activePlayersVotes: {
-    [activeResolutionRid: IActiveResolutionRid]: { [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote[] };
-  };
   activePlayersStaffers: {
     [playerRid: IPlayerRid]: IActiveStaffer[];
   };
+  activePlayersVotes: {
+    [activeResolutionRid: IActiveResolutionRid]: { [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote[] };
+  };
+  activeResolutions: IActiveResolution[];
+  gameState: IGameState;
+  passedGameModifiers: IPassedGameModifier[];
+  players: { [playerRid: IPlayerRid]: IPlayer };
   resolveEvents: IIndexedResolveEvents;
 }
 
 export interface IActiveGameService extends IService {
+  changeActiveGameState: {
+    payload: {
+      gameStateRid: IGameStateRid;
+      newState: IGameState["state"];
+    };
+    response: Record<string, never>;
+  };
+  changeReadyState: {
+    payload: {
+      avatarSet: IAvatarSet;
+      gameStateRid: IGameStateRid;
+      isReady: boolean;
+      playerRid: IPlayerRid;
+    };
+    response: Record<string, never>;
+  };
   createNewGame: {
     payload: {
       playerRid: IPlayerRid;
     };
     response: Record<string, never>;
   };
-  joinActiveGame: {
+  getActiveGameState: {
     payload: {
-      playerRid: IPlayerRid;
-    };
-    response: Record<string, never>;
-  };
-  changeReadyState: {
-    payload: {
-      playerRid: IPlayerRid;
-      gameStateRid: IGameStateRid;
-      isReady: boolean;
-      avatarSet: IAvatarSet;
-    };
-    response: Record<string, never>;
-  };
-  changeActiveGameState: {
-    payload: {
-      gameStateRid: IGameStateRid;
-      newState: IGameState["state"];
+      globalScreenIdentifier: IGlobalScreenIdentifier;
     };
     response: Record<string, never>;
   };
@@ -85,12 +85,6 @@ export interface IActiveGameService extends IService {
     };
     response: IFullGameState;
   };
-  getActiveGameState: {
-    payload: {
-      globalScreenIdentifier: IGlobalScreenIdentifier;
-    };
-    response: Record<string, never>;
-  };
   getHistoricalGame: {
     payload: {
       gameStateRid: IGameStateRid;
@@ -99,6 +93,12 @@ export interface IActiveGameService extends IService {
       historicalGame: IHistoricalGameState[];
       players: IPlayer[];
     };
+  };
+  joinActiveGame: {
+    payload: {
+      playerRid: IPlayerRid;
+    };
+    response: Record<string, never>;
   };
 }
 

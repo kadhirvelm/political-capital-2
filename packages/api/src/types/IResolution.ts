@@ -6,15 +6,19 @@ import { BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER } from "../constants/game";
 import { type IGameModifier } from "./IGameModifier";
 
 export interface IBasicResolution {
-  title: string;
   description: string;
+  gameModifier?: IGameModifier;
   /** This is the total political capital payout per player in the game. */
   politicalCapitalPayout: number;
-  gameModifier?: IGameModifier;
   stage: "early" | "middle" | "late";
+  title: string;
 }
 
 type IOmitStaged = Omit<IBasicResolution, "stage">;
+
+const STAFFER_EFFECT = "staffer-effect";
+const UNDER_CONSTRUCTION = "Under construction";
+const RESOLUTION_EFFECT = "resolution-effect";
 
 const EARLY: IOmitStaged[] = [
   {
@@ -23,7 +27,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       effectiveness: 0.1,
       staffersAffected: ["generator"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Robots require rain",
@@ -34,7 +38,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       costToAcquire: 0.1,
       staffersAffected: ["generator"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "The swamp industry is taking over",
@@ -45,7 +49,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       costToAcquire: -0.1,
       staffersAffected: ["voter"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Kittens 'R Us",
@@ -56,7 +60,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       staffersAffected: ["voter"],
       timeToAcquire: 0.1,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "The noisy neighbors",
@@ -67,7 +71,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       staffersAffected: ["recruit"],
       timeToAcquire: -0.1,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Everyone needs public transport",
@@ -78,7 +82,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       costToAcquire: 0.1,
       staffersAffected: ["recruit"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Increase the minimum anchovy",
@@ -89,7 +93,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       staffersAffected: ["trainer"],
       timeToAcquire: -0.1,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Lower robot power requirements",
@@ -100,7 +104,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       costToAcquire: 0.1,
       staffersAffected: ["trainer"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "The monsters pay too much",
@@ -111,7 +115,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       costToAcquire: -0.1,
       staffersAffected: ["shadowGovernment"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "The shadows are moving",
@@ -122,7 +126,7 @@ const EARLY: IOmitStaged[] = [
     gameModifier: {
       staffersAffected: ["shadowGovernment"],
       timeToAcquire: 0.1,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Lights everywhere",
@@ -134,7 +138,7 @@ const EARLY: IOmitStaged[] = [
       costToAcquire: -0.1,
       staffersAffected: ["everyone"],
       timeToAcquire: 0.1,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Let's be happy",
@@ -145,7 +149,7 @@ const EARLY: IOmitStaged[] = [
       costToAcquire: 0.1,
       staffersAffected: ["everyone"],
       timeToAcquire: -0.1,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Everyone needs to work",
@@ -160,198 +164,198 @@ const EARLY: IOmitStaged[] = [
 
 const MIDDLE: IOmitStaged[] = [
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       effectiveness: 0.5,
       staffersAffected: ["voter"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 5",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       staffersAffected: ["voter"],
       timeToAcquire: 1,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 6",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       effectiveness: 0.5,
       staffersAffected: ["generator"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 7",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       staffersAffected: ["generator"],
       timeToAcquire: 0.5,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 8",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       costToAcquire: -0.75,
       staffersAffected: ["recruit"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 9",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       staffersAffected: ["recruit"],
       timeToAcquire: 0.5,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 10",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       costToAcquire: -0.75,
       staffersAffected: ["trainer"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 11",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       staffersAffected: ["trainer"],
       timeToAcquire: 0.5,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 12",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       staffersAffected: ["shadowGovernment"],
       timeToAcquire: -0.5,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 13",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       costToAcquire: 0.5,
       staffersAffected: ["shadowGovernment"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 14",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       earlyVotingBonus: 0.25,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 15",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       earlyVotingBonus: -0.25,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 16",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       payoutPerResolution: 0.25,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 17",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       payoutPerResolution: -0.25,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 18",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       disableHiring: true,
       disableTraining: true,
       staffersAffected: ["voter"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 19",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       disableHiring: true,
       disableTraining: true,
       staffersAffected: ["generator"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 20",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       disableHiring: true,
       disableTraining: true,
       staffersAffected: ["recruit"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 21",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       disableHiring: true,
       disableTraining: true,
       staffersAffected: ["trainer"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 22",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       disableHiring: true,
       disableTraining: true,
       staffersAffected: ["shadowGovernment"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 23",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 3,
     title: "Under construction 24",
   },
@@ -363,7 +367,7 @@ const LATE: IOmitStaged[] = [
       "The freshly minted voters don't find us relatable. This puts the government on the popular SwampTok, that should fix the problem.",
     gameModifier: {
       payoutPerResolution: 0.2,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 0.8,
     title: "Put the government on social media",
@@ -373,7 +377,7 @@ const LATE: IOmitStaged[] = [
       "We've had too many viral videos on SwampTok. People are paying too much attention. This cuts our social media presence back.",
     gameModifier: {
       payoutPerResolution: -0.2,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.2,
     title: "Restrict government propaganda",
@@ -383,7 +387,7 @@ const LATE: IOmitStaged[] = [
       "The elite of the metropolis aren't paying attention to us. This increases the allowed political donation cap.",
     gameModifier: {
       payoutPerPlayer: 0.2,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "The rich need to help",
@@ -393,7 +397,7 @@ const LATE: IOmitStaged[] = [
       "The elite of the metropolis have their hands in everything, especially the cookies. We need our snacks back. This limits the intervention of the rich in government affairs.",
     gameModifier: {
       payoutPerPlayer: -0.2,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "The rich need to leave",
@@ -403,7 +407,7 @@ const LATE: IOmitStaged[] = [
       "This government is making too many decision too quickly. We need to slow down before we do something stupid. The time increase might remove the last resolution.",
     gameModifier: {
       timeBetweenResolutions: 0.3,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Too many decisions",
@@ -414,7 +418,7 @@ const LATE: IOmitStaged[] = [
     gameModifier: {
       timeBetweenResolutions: -0.3,
       timePerResolution: -0.3,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Pass all the resolutions",
@@ -424,7 +428,7 @@ const LATE: IOmitStaged[] = [
       "Swamp Industries is offering to add a little something extra when representatives do their job. This allows their altruism to go unchecked.",
     gameModifier: {
       earlyVotingBonus: 0.15,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Swamp Industries wants you to vote",
@@ -434,7 +438,7 @@ const LATE: IOmitStaged[] = [
       "Swamp Industries has come to collect from the government. This starts the painful process of paying back the bailout we took from them.",
     gameModifier: {
       earlyVotingBonus: -0.1,
-      type: "resolution-effect",
+      type: RESOLUTION_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Swamp Industries needs dividends",
@@ -445,43 +449,43 @@ const LATE: IOmitStaged[] = [
     gameModifier: {
       costToAcquire: -0.2,
       staffersAffected: ["everyone"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Open the floodgates",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       costToAcquire: 0.15,
       staffersAffected: ["everyone"],
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 1",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       staffersAffected: ["everyone"],
       timeToAcquire: 0.15,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 2",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     gameModifier: {
       staffersAffected: ["everyone"],
       timeToAcquire: -0.2,
-      type: "staffer-effect",
+      type: STAFFER_EFFECT,
     },
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER,
     title: "Under construction 3",
   },
   {
-    description: "Under construction",
+    description: UNDER_CONSTRUCTION,
     politicalCapitalPayout: BASE_PC_PAYOUT_RESOLUTION_PER_PLAYER * 1.6,
     title: "Under construction 4",
   },

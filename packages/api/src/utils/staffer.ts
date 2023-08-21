@@ -162,25 +162,25 @@ export function isShadowGovernment(staffer: IActiveOrPossibleStaffer): staffer i
 
 export const allRecruits = (() => {
   const allStaffers = Object.values(DEFAULT_STAFFER);
-  return allStaffers.filter(isRecruit).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  return allStaffers.filter((s) => isRecruit(s)).sort((a, b) => a.displayName.localeCompare(b.displayName));
 })();
 
 export const allTrainers = (() => {
   const allStaffers = Object.values(DEFAULT_STAFFER);
-  return allStaffers.filter(isTrainer).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  return allStaffers.filter((s) => isTrainer(s)).sort((a, b) => a.displayName.localeCompare(b.displayName));
 })();
 
 export const allGenerators = (() => {
   const allStaffers = Object.values(DEFAULT_STAFFER);
-  return allStaffers.filter(isGenerator).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  return allStaffers.filter((s) => isGenerator(s)).sort((a, b) => a.displayName.localeCompare(b.displayName));
 })();
 
 export const allVoters = (() => {
   const allStaffers = Object.values(DEFAULT_STAFFER);
-  return allStaffers.filter(isVoter).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  return allStaffers.filter((s) => isVoter(s)).sort((a, b) => a.displayName.localeCompare(b.displayName));
 })();
 
 export const allShadowGovernment = (() => {
   const allStaffers = Object.values(DEFAULT_STAFFER);
-  return allStaffers.filter(isShadowGovernment).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  return allStaffers.filter((s) => isShadowGovernment(s)).sort((a, b) => a.displayName.localeCompare(b.displayName));
 })();

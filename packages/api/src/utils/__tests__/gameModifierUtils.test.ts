@@ -7,6 +7,8 @@ import { DEFAULT_STAFFER } from "../../types/generatedStaffers";
 import { type IPassedGameModifier } from "../../types/politicalCapitalTwo";
 import { getEffectivenessModifier } from "../gameModifierUtils";
 
+const STAFFER_EFFECT = "staffer-effect";
+
 describe("Game modifier utils works as expected", () => {
   it("effectiveness modifiers works as expected", () => {
     const someGameState = "some-game-state-rid" as IGameStateRid;
@@ -20,7 +22,7 @@ describe("Game modifier utils works as expected", () => {
         modifier: {
           effectiveness: 1,
           staffersAffected: ["everyone"],
-          type: "staffer-effect",
+          type: STAFFER_EFFECT,
         },
       },
       {
@@ -30,7 +32,7 @@ describe("Game modifier utils works as expected", () => {
         modifier: {
           effectiveness: -0.5,
           staffersAffected: ["everyone"],
-          type: "staffer-effect",
+          type: STAFFER_EFFECT,
         },
       },
     ];
@@ -45,7 +47,7 @@ describe("Game modifier utils works as expected", () => {
         modifier: {
           effectiveness: 0.5,
           staffersAffected: ["everyone"],
-          type: "staffer-effect",
+          type: STAFFER_EFFECT,
         },
       },
       {
@@ -55,7 +57,7 @@ describe("Game modifier utils works as expected", () => {
         modifier: {
           effectiveness: -0.5,
           staffersAffected: ["everyone"],
-          type: "staffer-effect",
+          type: STAFFER_EFFECT,
         },
       },
     ];

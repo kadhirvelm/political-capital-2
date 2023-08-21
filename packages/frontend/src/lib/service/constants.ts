@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
 export const ORIGIN = process.env.ORIGIN ?? "127.0.0.1";
