@@ -15,6 +15,7 @@ module.exports = {
       "plugin:promise/recommended",
       "plugin:typescript-sort-keys/recommended",
       "plugin:react/recommended",
+      "next",
       "prettier"
     ],
     "parser": '@typescript-eslint/parser',

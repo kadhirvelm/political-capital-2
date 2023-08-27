@@ -2,16 +2,18 @@
  * Copyright 2023 KM.
  */
 
+import chalk from "chalk";
+import { watch } from "chokidar";
 import { readFileSync, writeFileSync } from "node:fs";
 
-const getTypeFromInterface = (byNewLines) =>
+const getTypeFromInterface = (byNewLines: string[]): string =>
   byNewLines
     .find((line) => line.match(/type: ".*"/g))
-    .match(/".*"/g)?.[0]
+    ?.match(/".*"/g)?.[0]
     .toString()
     .slice(1, -1) ?? "";
 
-function createImport(filteredToJustInterfaces) {
+function createImport(filteredToJustInterfaces: string[]) {
   const file = [];
 
   file.push("import {");
@@ -37,7 +39,7 @@ function createImport(filteredToJustInterfaces) {
   return file;
 }
 
-function createIAllStaffers(filteredToJustInterfaces) {
+function createIAllStaffers(filteredToJustInterfaces: string[]) {
   const file = [];
 
   file.push(`export interface IAllStaffers {`);
@@ -58,12 +60,12 @@ function createIAllStaffers(filteredToJustInterfaces) {
   return file;
 }
 
-function createDefaultStaffers(filteredToJustInterfaces) {
+function createDefaultStaffers(filteredToJustInterfaces: string[]) {
   const file = [];
 
   file.push('export const DEFAULT_STAFFER: Omit<IAllStaffers, "unknown"> = {');
 
-  const stafferAdditions = {};
+  const stafferAdditions: { [type: string]: { [key: string]: string } } = {};
 
   for (const string_ of filteredToJustInterfaces) {
     const byNewLines = string_.split("\n");
@@ -72,7 +74,7 @@ function createDefaultStaffers(filteredToJustInterfaces) {
 
     const partsByCasing = type
       .match(/[A-Z]?[a-z]+/g)
-      .map((string, index) =>
+      ?.map((string, index) =>
         index === 0 ? `${string[0].toUpperCase()}${string.slice(1).toLowerCase()}` : string.toLowerCase(),
       )
       .join(" ");
@@ -99,12 +101,12 @@ function createDefaultStaffers(filteredToJustInterfaces) {
   return file;
 }
 
-function createStafferNamespace(filteredToJustInterfaces) {
+function createStafferNamespace(filteredToJustInterfaces: string[]) {
   const file = [];
 
   file.push("export const Staffer: VisitorPattern<IAllStaffers> = {", "  typeChecks: {");
 
-  const typeChecks = {};
+  const typeChecks: { [type: string]: string[] } = {};
 
   for (const string_ of filteredToJustInterfaces) {
     const byNewLines = string_.split("\n");
@@ -145,11 +147,16 @@ function createStafferNamespace(filteredToJustInterfaces) {
   return file;
 }
 
-export function convertTypes() {
+function performConvertFile() {
+  const startPerformance = performance.now();
+  console.log(chalk.yellow("Pulling information from Staffer.ts"));
+
   const rawTypes = readFileSync("./src/types/Staffer.ts").toString();
 
   const allSplit = rawTypes.split(/(export.*{(.|\s)*?})/g);
   const filteredToJustInterfaces = allSplit.filter((s) => s.includes("interface") && s.includes("extends"));
+
+  console.log(chalk.yellow("Generating output file"));
 
   const FINAL_FILE = [
     "/*",
@@ -169,7 +176,24 @@ export function convertTypes() {
     ...createStafferNamespace(filteredToJustInterfaces),
   );
 
+  console.log(chalk.yellow("Writing output file to generatedStaffers.ts"));
+
   writeFileSync("./src/types/generatedStaffers.ts", FINAL_FILE.join("\n"));
+
+  console.log(chalk.green(`All done. Took ${Math.round((performance.now() - startPerformance) * 10) / 10}ms`));
 }
 
-convertTypes();
+export function convertFiles(shouldWatch: boolean) {
+  performConvertFile();
+
+  if (!shouldWatch) {
+    return;
+  }
+
+  console.log(chalk.blue("Watching Staffer.ts for changes..."));
+
+  watch("./src/types/Staffer.ts").on("change", () => {
+    console.log(chalk.blue("Changes detected to Staffer.ts, triggering regeneration"));
+    performConvertFile();
+  });
+}

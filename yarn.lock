@@ -393,6 +393,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.21.0":
+  version: 7.22.11
+  resolution: "@babel/runtime@npm:7.22.11"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: a5cd6683a8fcdb8065cb1677f221e22f6c67ec8f15ad1d273b180b93ab3bd86c66da2c48f500d4e72d8d2cfa85ff4872a3f350e5aa3855630036af5da765c001
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.22.5, @babel/template@npm:^7.3.3":
   version: 7.22.5
   resolution: "@babel/template@npm:7.22.5"
@@ -2391,6 +2400,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/eslint-plugin-next@npm:^13.4.19":
+  version: 13.4.19
+  resolution: "@next/eslint-plugin-next@npm:13.4.19"
+  dependencies:
+    glob: 7.1.7
+  checksum: d60c136e4a8d156b50d4b248eef9918bbf4bd7da293487cdf1f7bc172b07beeae4a2822798942d2f87999af86c53d871ebea592f3d6099ae23a0746d2abf7c73
+  languageName: node
+  linkType: hard
+
 "@next/swc-darwin-arm64@npm:13.4.13":
   version: 13.4.13
   resolution: "@next/swc-darwin-arm64@npm:13.4.13"
@@ -2537,9 +2555,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@pc2/api@workspace:packages/api"
   dependencies:
+    "@pc2/pc2-cli": "workspace:^"
     "@types/jest": ^29.5.3
     "@types/lodash": ^4.14.191
     "@types/node": ^20.5.0
+    concurrently: ^8.2.1
     eslint: ^8.47.0
     lodash: ^4.17.21
     tslib: ^2.6.1
@@ -2606,6 +2626,7 @@ __metadata:
     "@emotion/react": ^11.0.0
     "@emotion/styled": ^11.10.5
     "@pc2/api": 1.0.0
+    "@pc2/pc2-cli": "workspace:^"
     "@reduxjs/toolkit": ^1.9.1
     "@testing-library/dom": ^8.19.0
     "@testing-library/jest-dom": ^5.16.5
@@ -2622,6 +2643,7 @@ __metadata:
     "@typescript-eslint/parser": ^6.3.0
     classnames: ^2.3.2
     eslint: 8.47.0
+    eslint-plugin-next: ^0.0.0
     framer-motion: ^7.7.2
     lodash-es: ^4.17.21
     next: 13.4.13
@@ -2640,6 +2662,25 @@ __metadata:
     tslib: ^2.6.1
     typescript: 5.1.6
     uuid: ^9.0.0
+  languageName: unknown
+  linkType: soft
+
+"@pc2/pc2-cli@workspace:^, @pc2/pc2-cli@workspace:packages/pc-cli":
+  version: 0.0.0-use.local
+  resolution: "@pc2/pc2-cli@workspace:packages/pc-cli"
+  dependencies:
+    "@types/jest": ^29.5.4
+    "@types/lodash": ^4.14.191
+    "@types/node": ^20.5.0
+    chalk: ^5.3.0
+    chokidar: ^3.5.3
+    commander: ^11.0.0
+    eslint: ^8.47.0
+    lodash: ^4.17.21
+    tslib: ^2.6.1
+    typescript: ^5.1.6
+  bin:
+    pc2-cli: ./dist/index.js
   languageName: unknown
   linkType: soft
 
@@ -3237,6 +3278,16 @@ __metadata:
     expect: ^29.0.0
     pretty-format: ^29.0.0
   checksum: e36bb92e0b9e5ea7d6f8832baa42f087fc1697f6cd30ec309a07ea4c268e06ec460f1f0cfd2581daf5eff5763475190ec1ad8ac6520c49ccfe4f5c0a48bfa676
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^29.5.4":
+  version: 29.5.4
+  resolution: "@types/jest@npm:29.5.4"
+  dependencies:
+    expect: ^29.0.0
+    pretty-format: ^29.0.0
+  checksum: 38ed5942f44336452efd0f071eab60aaa57cd8d46530348d0a3aa5a691dcbf1366c4ca8f6ee8364efb45b4413bfefae443e5d4f469246a472a03b21ac11cd4ed
   languageName: node
   linkType: hard
 
@@ -4981,13 +5032,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.0.2, chalk@npm:^4.1.0":
+"chalk@npm:^4.0.0, chalk@npm:^4.0.2, chalk@npm:^4.1.0, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
   checksum: fe75c9d5c76a7a98d45495b91b2172fa3b7a09e0cc9370e5c8feb1c567b85c4288e2b3fded7cfdd7359ac28d6b3844feb8b82b8686842e93d23c827c417e83fc
+  languageName: node
+  linkType: hard
+
+"chalk@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "chalk@npm:5.3.0"
+  checksum: 623922e077b7d1e9dedaea6f8b9e9352921f8ae3afe739132e0e00c275971bdd331268183b2628cf4ab1727c45ea1f28d7e24ac23ce1db1eb653c414ca8a5a80
   languageName: node
   linkType: hard
 
@@ -5245,6 +5303,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "commander@npm:11.0.0"
+  checksum: 6621954e1e1d078b4991c1f5bbd9439ad37aa7768d6ab4842de1dbd4d222c8a27e1b8e62108b3a92988614af45031d5bb2a2aaa92951f4d0c934d1a1ac564bb4
+  languageName: node
+  linkType: hard
+
 "commander@npm:^2.20.0":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
@@ -5299,6 +5364,26 @@ __metadata:
   version: 0.0.1
   resolution: "concat-map@npm:0.0.1"
   checksum: 902a9f5d8967a3e2faf138d5cb784b9979bad2e6db5357c5b21c568df4ebe62bcb15108af1b2253744844eb964fc023fbd9afbbbb6ddd0bcc204c6fb5b7bf3af
+  languageName: node
+  linkType: hard
+
+"concurrently@npm:^8.2.1":
+  version: 8.2.1
+  resolution: "concurrently@npm:8.2.1"
+  dependencies:
+    chalk: ^4.1.2
+    date-fns: ^2.30.0
+    lodash: ^4.17.21
+    rxjs: ^7.8.1
+    shell-quote: ^1.8.1
+    spawn-command: 0.0.2
+    supports-color: ^8.1.1
+    tree-kill: ^1.2.2
+    yargs: ^17.7.2
+  bin:
+    conc: dist/bin/concurrently.js
+    concurrently: dist/bin/concurrently.js
+  checksum: 216cb16d5b301cbd9c657b19430836d1686fe8fa9b9ef35ef7ac601e1a5cf6535166a3e57de446696dbd5e7e3f45d78fc70f33c5fd4bb565342cd5e752c5b069
   languageName: node
   linkType: hard
 
@@ -5620,6 +5705,15 @@ __metadata:
   version: 5.0.1
   resolution: "data-uri-to-buffer@npm:5.0.1"
   checksum: 10958f89c0047b84bd86d572b6b77c9bf238ebe7b55a9a9ab04c90fbf5ab1881783b72e31dc0febdffd30ec914930244f2f728e3629bb8911d922baba129426f
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.30.0":
+  version: 2.30.0
+  resolution: "date-fns@npm:2.30.0"
+  dependencies:
+    "@babel/runtime": ^7.21.0
+  checksum: f7be01523282e9bb06c0cd2693d34f245247a29098527d4420628966a2d9aad154bd0e90a6b1cf66d37adcb769cd108cf8a7bd49d76db0fb119af5cdd13644f4
   languageName: node
   linkType: hard
 
@@ -7231,6 +7325,7 @@ __metadata:
   resolution: "frontend-stack@workspace:."
   dependencies:
     "@eslint/eslintrc": ^2.1.2
+    "@next/eslint-plugin-next": ^13.4.19
     "@types/eslint": ^8.44.2
     "@types/jest": ^29.5.3
     "@types/node": ^18.11.13
@@ -7245,7 +7340,6 @@ __metadata:
     eslint-import-resolver-typescript: ^3.6.0
     eslint-plugin-header: ^3.1.1
     eslint-plugin-import: ^2.28.0
-    eslint-plugin-next: ^0.0.0
     eslint-plugin-prettier: ^5.0.0
     eslint-plugin-promise: ^6.1.1
     eslint-plugin-react: ^7.33.1
@@ -7263,6 +7357,11 @@ __metadata:
     tslib: ^2.6.1
     turbo: ^1.10.12
     typescript: ^5.1.6
+  dependenciesMeta:
+    chokidar@3.5.3:
+      unplugged: true
+    ts-node@10.9.1:
+      unplugged: true
   languageName: unknown
   linkType: soft
 
@@ -11827,7 +11926,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.6.0":
+"rxjs@npm:^7.6.0, rxjs@npm:^7.8.1":
   version: 7.8.1
   resolution: "rxjs@npm:7.8.1"
   dependencies:
@@ -12154,6 +12253,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"shell-quote@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "shell-quote@npm:1.8.1"
+  checksum: 5f01201f4ef504d4c6a9d0d283fa17075f6770bfbe4c5850b074974c68062f37929ca61700d95ad2ac8822e14e8c4b990ca0e6e9272e64befd74ce5e19f0736b
+  languageName: node
+  linkType: hard
+
 "shimmer@npm:^1.1.0, shimmer@npm:^1.2.0":
   version: 1.2.1
   resolution: "shimmer@npm:1.2.1"
@@ -12297,6 +12403,13 @@ __metadata:
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
   checksum: 59ce8640cf3f3124f64ac289012c2b8bd377c238e316fb323ea22fbfe83da07d81e000071d7242cad7a23cd91c7de98e4df8830ec3f133cb6133a5f6e9f67bc2
+  languageName: node
+  linkType: hard
+
+"spawn-command@npm:0.0.2":
+  version: 0.0.2
+  resolution: "spawn-command@npm:0.0.2"
+  checksum: e35c5d28177b4d461d33c88cc11f6f3a5079e2b132c11e1746453bbb7a0c0b8a634f07541a2a234fa4758239d88203b758def509161b651e81958894c0b4b64b
   languageName: node
   linkType: hard
 
@@ -12698,7 +12811,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^8.0.0":
+"supports-color@npm:^8.0.0, supports-color@npm:^8.1.1":
   version: 8.1.1
   resolution: "supports-color@npm:8.1.1"
   dependencies:
@@ -12921,6 +13034,15 @@ __metadata:
   bin:
     nodetouch: ./bin/nodetouch.js
   checksum: e0be589cb5b0e6dbfce6e7e077d4a0d5f0aba558ef769c6d9c33f635e00d73d5be49da6f8631db302ee073919d82b5b7f56da2987feb28765c95a7673af68647
+  languageName: node
+  linkType: hard
+
+"tree-kill@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "tree-kill@npm:1.2.2"
+  bin:
+    tree-kill: cli.js
+  checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
   languageName: node
   linkType: hard
 
@@ -13904,7 +14026,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.3.1":
+"yargs@npm:^17.3.1, yargs@npm:^17.7.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:
