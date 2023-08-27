@@ -1,11 +1,11 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
 export function sleep(timeInSeconds: number) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve({});
-        }, timeInSeconds * 1000);
-    });
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({});
+    }, timeInSeconds * 1000);
+  });
 }

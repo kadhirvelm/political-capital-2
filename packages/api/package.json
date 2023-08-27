@@ -1,31 +1,29 @@
 {
-    "name": "@pc2/api",
-    "version": "1.0.0",
-    "description": "The API",
-    "main": "dist/index.js",
-    "typings": "dist/index.d.ts",
-    "repository": "https://github.com/kadhirvelm/political-capital-2",
-    "type": "module",
-    "dependencies": {
-        "express": "^4.18.2",
-        "lodash": "^4.17.21"
-    },
-    "scripts": {
-        "build": "tsc -d",
-        "dev": "tsc -d --watch",
-        "lint": "eslint . --ext .ts,.tsx --cache",
-        "lint:fix": "yarn lint --fix",
-        "convert": "node ./scripts/convertTypes.js",
-        "test": "NODE_OPTIONS=--experimental-vm-modules jest --colors --detectOpenHandles"
-    },
-    "devDependencies": {
-        "@types/express": "^4.17.14",
-        "@types/jest": "^29.5.3",
-        "@types/lodash": "^4.14.191",
-        "@types/node": "^20.5.0",
-        "jest": "^29.3.1",
-        "ts-jest": "^29.0.3",
-        "tslib": "^2.6.1",
-        "typescript": "^5.1.6"
-    }
+  "name": "@pc2/api",
+  "version": "1.0.0",
+  "description": "The API",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "repository": "https://github.com/kadhirvelm/political-capital-2",
+  "type": "module",
+  "dependencies": {
+    "eslint": "^8.47.0",
+    "lodash": "^4.17.21"
+  },
+  "scripts": {
+    "build": "pc2-cli convert && tsc -d",
+    "dev": "concurrently \"tsc -d --watch\" \"pc2-cli convert --watch\"",
+    "lint": "eslint . --ext .ts,.tsx --cache",
+    "lint:fix": "yarn lint --fix",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --colors --detectOpenHandles"
+  },
+  "devDependencies": {
+    "@pc2/pc2-cli": "workspace:^",
+    "@types/jest": "^29.5.3",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^20.5.0",
+    "concurrently": "^8.2.1",
+    "tslib": "^2.6.1",
+    "typescript": "^5.1.6"
+  }
 }

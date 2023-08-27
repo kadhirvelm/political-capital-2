@@ -1,34 +1,34 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
-import { IPlayer } from "@pc2/api";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { type IPlayer } from "@pc2/api";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface IPlayerState {
-    player: IPlayer | undefined;
-    isConnectedToServer: boolean;
+  isConnectedToServer: boolean;
+  player: IPlayer | undefined;
 }
 
 const initialState: IPlayerState = {
-    player: undefined,
-    isConnectedToServer: false,
+  isConnectedToServer: false,
+  player: undefined,
 };
 
 export const playerState = createSlice({
-    name: "playerState",
-    initialState,
-    reducers: {
-        isConnectedToServer: (state) => {
-            state.isConnectedToServer = true;
-        },
-        disconnectedFromServer: (state) => {
-            state.isConnectedToServer = false;
-        },
-        setPlayer: (state, action: PayloadAction<IPlayer>) => {
-            state.player = action.payload;
-        },
+  initialState,
+  name: "playerState",
+  reducers: {
+    disconnectedFromServer: (state) => {
+      state.isConnectedToServer = false;
     },
+    isConnectedToServer: (state) => {
+      state.isConnectedToServer = true;
+    },
+    setPlayer: (state, action: PayloadAction<IPlayer>) => {
+      state.player = action.payload;
+    },
+  },
 });
 
 export const { isConnectedToServer, disconnectedFromServer, setPlayer } = playerState.actions;

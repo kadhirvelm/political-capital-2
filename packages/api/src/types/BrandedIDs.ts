@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
 export type IPlayerRid = string & { _brand: "playerRid" };

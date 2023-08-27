@@ -1,44 +1,41 @@
-/**
- * Copyright (c) 2023 - KM
+/*
+ * Copyright 2023 KM.
  */
 
-import { implementEndpoints, IService } from "../common/generics";
-import { IActiveNotificationRid, IPlayerRid } from "../types/BrandedIDs";
-import { IActiveNotification } from "../types/politicalCapitalTwo";
+import { type IImplementEndpoint, type IService } from "../common/generics";
+import { type IActiveNotificationRid, type IPlayerRid } from "../types/BrandedIDs";
+import { type IActiveNotification } from "../types/politicalCapitalTwo";
 
 export interface INotificationService extends IService {
-    createNewNotification: {
-        payload: IActiveNotification;
-        response: {};
+  createNewNotification: {
+    payload: IActiveNotification;
+    response: Record<string, never>;
+  };
+  getAllNotifications: {
+    payload: {
+      playerRid: IPlayerRid;
     };
-    getAllNotifications: {
-        payload: {
-            playerRid: IPlayerRid;
-        };
-        response: IActiveNotification[];
+    response: IActiveNotification[];
+  };
+  markNotificationAsRead: {
+    payload: {
+      activeNotificationRid: IActiveNotificationRid;
     };
-    markNotificationAsRead: {
-        payload: {
-            activeNotificationRid: IActiveNotificationRid;
-        };
-        response: IActiveNotification;
-    };
+    response: IActiveNotification;
+  };
 }
 
-const { backend, frontend } = implementEndpoints<INotificationService>({
-    createNewNotification: {
-        slug: "/notification-service/create-new-notification",
-        method: "post",
-    },
-    getAllNotifications: {
-        slug: "/notification-service/get-all-notifications",
-        method: "post",
-    },
-    markNotificationAsRead: {
-        slug: "/notification-service/mark-notification-as-read",
-        method: "post",
-    },
-});
-
-export const NotificationServiceBackend = backend;
-export const NotificationServiceFrontend = frontend;
+export const NotificationService: IImplementEndpoint<INotificationService> = {
+  createNewNotification: {
+    method: "post",
+    slug: "/notification-service/create-new-notification",
+  },
+  getAllNotifications: {
+    method: "post",
+    slug: "/notification-service/get-all-notifications",
+  },
+  markNotificationAsRead: {
+    method: "post",
+    slug: "/notification-service/mark-notification-as-read",
+  },
+};

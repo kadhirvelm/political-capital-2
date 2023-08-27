@@ -1,18 +1,22 @@
+/*
+ * Copyright 2023 KM.
+ */
+
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.scss";
 
 export const metadata: Metadata = {
-    title: "Political capital two",
-    description: "PC2",
+  description: "PC2",
+  title: "Political capital two",
 };
 
-const roboto = Roboto({ weight: ["300", "400", "500"], subsets: ["latin"] });
+const roboto = Roboto({ subsets: ["latin"], weight: ["300", "400", "500"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <html lang="en">
-            <body className={roboto.className}>{children}</body>
-        </html>
-    );
+  return (
+    <html lang="en">
+      <body className={roboto.className}>{children}</body>
+    </html>
+  );
 }

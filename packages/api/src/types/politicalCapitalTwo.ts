@@ -1,100 +1,100 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
 import {
-    IActiveResolutionRid,
-    IActiveStafferRid,
-    IGameClock,
-    IGameStateRid,
-    IActiveNotificationRid,
-    IPlayerRid,
+  type IActiveResolutionRid,
+  type IActiveStafferRid,
+  type IGameClock,
+  type IGameStateRid,
+  type IActiveNotificationRid,
+  type IPlayerRid,
 } from "./BrandedIDs";
-import { IPossibleStaffer } from "./generatedStaffers";
-import { IPossibleEvent } from "./IEvent";
-import { IBasicResolution } from "./IResolution";
-import { IGameModifier } from "./IGameModifier";
-import { IPossibleNotification } from "./INotification";
+import { type IPossibleStaffer } from "./generatedStaffers";
+import { type IPossibleEvent } from "./IEvent";
+import { type IBasicResolution } from "./IResolution";
+import { type IGameModifier } from "./IGameModifier";
+import { type IPossibleNotification } from "./INotification";
 
 export interface IPlayer {
-    playerRid: IPlayerRid;
-    browserIdentifier: string;
-    name: string;
+  browserIdentifier: string;
+  name: string;
+  playerRid: IPlayerRid;
 }
 
 export interface IGameState {
-    gameStateRid: IGameStateRid;
-    state: "waiting" | "active" | "paused" | "complete";
-    gameClock: IGameClock;
+  gameClock: IGameClock;
+  gameStateRid: IGameStateRid;
+  state: "waiting" | "active" | "paused" | "complete";
 }
 
 export type IAvatarSet = "robots" | "monsters" | "cats" | "humans";
 export const AvatarSet: IAvatarSet[] = ["robots", "monsters", "cats", "humans"];
 
 export interface IActivePlayer {
-    gameStateRid: IGameStateRid;
-    playerRid: IPlayerRid;
-    politicalCapital: number;
-    approvalRating: number;
-    avatarSet: IAvatarSet;
-    lastUpdatedGameClock: IGameClock;
-    isReady: boolean;
+  approvalRating: number;
+  avatarSet: IAvatarSet;
+  gameStateRid: IGameStateRid;
+  isReady: boolean;
+  lastUpdatedGameClock: IGameClock;
+  playerRid: IPlayerRid;
+  politicalCapital: number;
 }
 
 export interface IActiveResolution {
-    gameStateRid: IGameStateRid;
-    activeResolutionRid: IActiveResolutionRid;
-    resolutionDetails: IBasicResolution;
-    state: "active" | "passed" | "failed";
-    createdOn: IGameClock;
+  activeResolutionRid: IActiveResolutionRid;
+  createdOn: IGameClock;
+  gameStateRid: IGameStateRid;
+  resolutionDetails: IBasicResolution;
+  state: "active" | "passed" | "failed";
 }
 
 export interface IActiveResolutionVote {
-    gameStateRid: IGameStateRid;
-    activeResolutionRid: IActiveResolutionRid;
-    activeStafferRid: IActiveStafferRid;
-    vote: "passed" | "failed";
+  activeResolutionRid: IActiveResolutionRid;
+  activeStafferRid: IActiveStafferRid;
+  gameStateRid: IGameStateRid;
+  vote: "passed" | "failed";
 }
 
 export interface IActiveStaffer {
-    gameStateRid: IGameStateRid;
-    playerRid: IPlayerRid;
-    activeStafferRid: IActiveStafferRid;
-    stafferDetails: IPossibleStaffer;
-    avatarSet: IAvatarSet;
-    state: "active" | "disabled";
+  activeStafferRid: IActiveStafferRid;
+  avatarSet: IAvatarSet;
+  gameStateRid: IGameStateRid;
+  playerRid: IPlayerRid;
+  stafferDetails: IPossibleStaffer;
+  state: "active" | "disabled";
 }
 
 export interface IResolveGameEvent {
-    gameStateRid: IGameStateRid;
-    resolvesOn: IGameClock;
-    eventDetails: IPossibleEvent;
-    state: "active" | "complete";
+  eventDetails: IPossibleEvent;
+  gameStateRid: IGameStateRid;
+  resolvesOn: IGameClock;
+  state: "active" | "complete";
 }
 
 export interface IPassedGameModifier {
-    gameStateRid: IGameStateRid;
-    fromActiveResolutionRid: IActiveResolutionRid;
-    modifier: IGameModifier;
-    createdOn: IGameClock;
+  createdOn: IGameClock;
+  fromActiveResolutionRid: IActiveResolutionRid;
+  gameStateRid: IGameStateRid;
+  modifier: IGameModifier;
 }
 
 export interface IActivePlayerModifier {
-    modifier: IGameModifier;
-    createdOn: IGameClock;
+  createdOn: IGameClock;
+  modifier: IGameModifier;
 }
 
 export interface IHistoricalGameState {
-    gameStateRid: IGameStateRid;
-    gameClock: IGameClock;
-    snapshot: Array<{ playerRid: IPlayerRid; politicalCapital: number }>;
+  gameClock: IGameClock;
+  gameStateRid: IGameStateRid;
+  snapshot: Array<{ playerRid: IPlayerRid; politicalCapital: number }>;
 }
 
 export interface IActiveNotification {
-    activeNotificationRid: IActiveNotificationRid;
-    gameStateRid: IGameStateRid;
-    notificationDetails: IPossibleNotification;
-    toPlayerRid: IPlayerRid;
-    createdOn: IGameClock;
-    status: "unread" | "read";
+  activeNotificationRid: IActiveNotificationRid;
+  createdOn: IGameClock;
+  gameStateRid: IGameStateRid;
+  notificationDetails: IPossibleNotification;
+  status: "unread" | "read";
+  toPlayerRid: IPlayerRid;
 }

@@ -1,137 +1,134 @@
-/**
- * Copyright (c) 2022 - KM
+/*
+ * Copyright 2023 KM.
  */
 
-import { implementEndpoints, IService } from "../common/generics";
+import { type IImplementEndpoint, type IService } from "../common/generics";
 import {
-    IActiveResolutionRid,
-    IActiveStafferRid,
-    IGameStateRid,
-    IGlobalScreenIdentifier,
-    IPlayerRid,
+  type IActiveResolutionRid,
+  type IActiveStafferRid,
+  type IGameStateRid,
+  type IGlobalScreenIdentifier,
+  type IPlayerRid,
 } from "../types/BrandedIDs";
 import {
-    IActivePlayer,
-    IActiveResolution,
-    IActiveResolutionVote,
-    IActiveStaffer,
-    IAvatarSet,
-    IGameState,
-    IHistoricalGameState,
-    IPassedGameModifier,
-    IPlayer,
-    IResolveGameEvent,
+  type IActivePlayer,
+  type IActiveResolution,
+  type IActiveResolutionVote,
+  type IActiveStaffer,
+  type IAvatarSet,
+  type IGameState,
+  type IHistoricalGameState,
+  type IPassedGameModifier,
+  type IPlayer,
+  type IResolveGameEvent,
 } from "../types/politicalCapitalTwo";
 
 export interface IIndexedResolveEvents {
-    game: IResolveGameEvent[];
-    players: {
-        [playerRid: IPlayerRid]: {
-            overall: IResolveGameEvent[];
-            staffers: {
-                [stafferRid: IActiveStafferRid]: IResolveGameEvent[];
-            };
-        };
+  game: IResolveGameEvent[];
+  players: {
+    [playerRid: IPlayerRid]: {
+      overall: IResolveGameEvent[];
+      staffers: {
+        [stafferRid: IActiveStafferRid]: IResolveGameEvent[];
+      };
     };
+  };
 }
 
 export interface IFullGameState {
-    gameState: IGameState;
-    passedGameModifiers: IPassedGameModifier[];
-    players: { [playerRid: IPlayerRid]: IPlayer };
-    activePlayers: { [playerRid: IPlayerRid]: IActivePlayer };
-    activeResolutions: IActiveResolution[];
-    activePlayersVotes: {
-        [activeResolutionRid: IActiveResolutionRid]: { [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote[] };
-    };
-    activePlayersStaffers: {
-        [playerRid: IPlayerRid]: IActiveStaffer[];
-    };
-    resolveEvents: IIndexedResolveEvents;
+  activePlayers: { [playerRid: IPlayerRid]: IActivePlayer };
+  activePlayersStaffers: {
+    [playerRid: IPlayerRid]: IActiveStaffer[];
+  };
+  activePlayersVotes: {
+    [activeResolutionRid: IActiveResolutionRid]: { [activeStafferRid: IActiveStafferRid]: IActiveResolutionVote[] };
+  };
+  activeResolutions: IActiveResolution[];
+  gameState: IGameState;
+  passedGameModifiers: IPassedGameModifier[];
+  players: { [playerRid: IPlayerRid]: IPlayer };
+  resolveEvents: IIndexedResolveEvents;
 }
 
 export interface IActiveGameService extends IService {
-    createNewGame: {
-        payload: {
-            playerRid: IPlayerRid;
-        };
-        response: {};
+  changeActiveGameState: {
+    payload: {
+      gameStateRid: IGameStateRid;
+      newState: IGameState["state"];
     };
-    joinActiveGame: {
-        payload: {
-            playerRid: IPlayerRid;
-        };
-        response: {};
+    response: Record<string, never>;
+  };
+  changeReadyState: {
+    payload: {
+      avatarSet: IAvatarSet;
+      gameStateRid: IGameStateRid;
+      isReady: boolean;
+      playerRid: IPlayerRid;
     };
-    changeReadyState: {
-        payload: {
-            playerRid: IPlayerRid;
-            gameStateRid: IGameStateRid;
-            isReady: boolean;
-            avatarSet: IAvatarSet;
-        };
-        response: {};
+    response: Record<string, never>;
+  };
+  createNewGame: {
+    payload: {
+      playerRid: IPlayerRid;
     };
-    changeActiveGameState: {
-        payload: {
-            gameStateRid: IGameStateRid;
-            newState: IGameState["state"];
-        };
-        response: {};
+    response: Record<string, never>;
+  };
+  getActiveGameState: {
+    payload: {
+      globalScreenIdentifier: IGlobalScreenIdentifier;
     };
-    getGameState: {
-        payload: {
-            gameStateRid: IGameStateRid;
-        };
-        response: IFullGameState;
+    response: Record<string, never>;
+  };
+  getGameState: {
+    payload: {
+      gameStateRid: IGameStateRid;
     };
-    getActiveGameState: {
-        payload: {
-            globalScreenIdentifier: IGlobalScreenIdentifier;
-        };
-        response: {};
+    response: IFullGameState;
+  };
+  getHistoricalGame: {
+    payload: {
+      gameStateRid: IGameStateRid;
     };
-    getHistoricalGame: {
-        payload: {
-            gameStateRid: IGameStateRid;
-        };
-        response: {
-            historicalGame: IHistoricalGameState[];
-            players: IPlayer[];
-        };
+    response: {
+      historicalGame: IHistoricalGameState[];
+      players: IPlayer[];
     };
+  };
+  joinActiveGame: {
+    payload: {
+      playerRid: IPlayerRid;
+    };
+    response: Record<string, never>;
+  };
 }
 
-const { backend, frontend } = implementEndpoints<IActiveGameService>({
-    createNewGame: {
-        slug: "/game-service/create-new-game",
-        method: "post",
-    },
-    joinActiveGame: {
-        slug: "/game-service/join-active-game",
-        method: "post",
-    },
-    changeReadyState: {
-        slug: "/game-service/change-ready-state",
-        method: "post",
-    },
-    changeActiveGameState: {
-        slug: "/game-service/change-active-game-state",
-        method: "post",
-    },
-    getGameState: {
-        slug: "/game-service/get-game-state",
-        method: "post",
-    },
-    getActiveGameState: {
-        slug: "/game-service/get-active-game-state",
-        method: "post",
-    },
-    getHistoricalGame: {
-        slug: "/game-service/get-historical-game",
-        method: "post",
-    },
-});
-
-export const ActiveGameBackend = backend;
-export const ActiveGameFrontend = frontend;
+export const ActiveGameService: IImplementEndpoint<IActiveGameService> = {
+  changeActiveGameState: {
+    method: "post",
+    slug: "/game-service/change-active-game-state",
+  },
+  changeReadyState: {
+    method: "post",
+    slug: "/game-service/change-ready-state",
+  },
+  createNewGame: {
+    method: "post",
+    slug: "/game-service/create-new-game",
+  },
+  getActiveGameState: {
+    method: "post",
+    slug: "/game-service/get-active-game-state",
+  },
+  getGameState: {
+    method: "post",
+    slug: "/game-service/get-game-state",
+  },
+  getHistoricalGame: {
+    method: "post",
+    slug: "/game-service/get-historical-game",
+  },
+  joinActiveGame: {
+    method: "post",
+    slug: "/game-service/join-active-game",
+  },
+};

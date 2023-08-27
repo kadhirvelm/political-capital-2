@@ -1,80 +1,76 @@
 module.exports = {
-    parser: "@typescript-eslint/parser",
-    parserOptions: {
-        tsconfigRootDir: __dirname,
-        project: ["./tsconfig.json", "./packages/*/tsconfig.json"],
-        extraFileExtensions: [".cjs"],
+    "env": {
+      "browser": true,
+      "es2022": true,
+      "node": true
     },
-
-    plugins: ["@typescript-eslint", "jest", "prettier", "import"],
-
-    extends: [
-        "next/core-web-vitals",
-        "airbnb-typescript",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:jest/recommended",
-        "plugin:prettier/recommended",
+    "extends": [
+      "eslint:recommended",
+      "turbo",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:import/recommended",
+      "plugin:sonarjs/recommended",
+      "plugin:unicorn/recommended",
+      "plugin:promise/recommended",
+      "plugin:typescript-sort-keys/recommended",
+      "plugin:react/recommended",
+      "next",
+      "prettier"
     ],
-
-    rules: {
-        "prettier/prettier": "warn",
-        "@typescript-eslint/quotes": ["error", "double"],
-        "@typescript-eslint/no-misused-promises": 0,
-        "import/prefer-default-export": 0,
-        "comma-dangle": 0,
-        "react/state-in-constructor": 0,
-        "react/sort-comp": 0,
-        "implicit-arrow-linebreak": 0,
-        "arrow-parens": 0,
-        "class-methods-use-this": 0,
-        "no-async-promise-executor": 0,
-        "jsx-a11y/click-events-have-key-events": 0,
-        "jsx-a11y/no-static-element-interactions": 0,
-        "function-paren-newline": 0,
-        "@typescript-eslint/unbound-method": 0,
-        "object-curly-newline": 0,
-        "react/no-did-update-set-state": 0,
-        "operator-linebreak": 0,
-        "react/jsx-props-no-spreading": 0,
-        "no-console": 2,
-        "lines-between-class-members": 0,
-        "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "_", varsIgnorePattern: "_" }],
-        "@typescript-eslint/naming-convention": [
-            "error",
-            {
-                selector: "default",
-                format: ["camelCase", "PascalCase", "snake_case", "UPPER_CASE"],
-                leadingUnderscore: "allow",
-            },
-        ],
-        "@typescript-eslint/restrict-plus-operands": 0,
-        "react/prop-types": 0,
-        "import/namespace": 0,
-        "@typescript-eslint/no-floating-promises": 0,
-        "@typescript-eslint/no-unsafe-assignment": 0,
-        "@typescript-eslint/no-unsafe-member-access": 0,
-        "@typescript-eslint/no-unsafe-return": 0,
-        "@typescript-eslint/no-unsafe-call": 0,
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
-        "@typescript-eslint/restrict-template-expressions": 0,
-        "@typescript-eslint/quotes": 0,
-        "no-case-declarations": 0,
-        "no-restricted-globals": 0,
-        "no-console": ["warn"],
-        "react-hooks/exhaustive-deps": 0,
-        "@typescript-eslint/no-unsafe-argument": 0,
-        "react/jsx-filename-extension": 0,
+    "parser": '@typescript-eslint/parser',
+    "parserOptions": {
+      "ecmaVersion": "es2022",
+      "tsconfigRootDir": __dirname,
+      "sourceType": "module",
+      "project": [
+        "./tsconfig.json",
+        "./packages/*/tsconfig.json",
+      ],
     },
-
-    settings: {
-        "import/resolver": {
-            node: {
-                extensions: [".js", ".jsx", ".ts", ".tsx", ".d.ts"],
-            },
+    "plugins": [
+      "@typescript-eslint",
+      "sort-keys-fix",
+      "typescript-sort-keys",
+      "promise",
+      "react",
+      "header",
+      "prettier"
+    ],
+    "root": true,
+    "ignorePatterns": ["*dist*"],
+    "rules": {
+      "prettier/prettier": ["error"],
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
         },
-        jest: {
+      ],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { prefer: "type-imports", fixStyle: "inline-type-imports" },
+      ],
+      "sort-keys-fix/sort-keys-fix": "error",
+      "sort-keys": ["error", "asc", { "caseSensitive": true, "natural": false, "minKeys": 2 }],
+      "react/jsx-sort-props": ["error"],
+      "header/header": [2, "block", "\n * Copyright 2023 KM.\n ", 2],
+      "unicorn/filename-case": [2, { "cases": { "pascalCase": true, "camelCase": true, } }],
+    },
+    "settings": {
+      "import/resolver": {
+        typescript: {
+          project: "<root>/tsconfig.json",
+        },
+      },
+      "react": {
+        "version": "detect"
+      },
+      jest: {
             version: "^26.6.0",
         },
-    },
-};
+    }
+  }

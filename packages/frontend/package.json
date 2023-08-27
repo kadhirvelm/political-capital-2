@@ -6,11 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "pc2-cli",
+    "modules": "ts-node-esm scripts/generateModuleTypes.ts",
     "lint": "yarn lint:code && yarn lint:styles",
     "lint:code": "eslint . --ext .ts,.tsx --cache",
     "lint:styles": "yarn stylelint '**/*.scss'",
     "lint:fix": "yarn lint:code --fix && yarn lint:styles --fix"
   },
+  "packageManager": "yarn@3.6.0",
   "dependencies": {
     "@chakra-ui/icons": "^2.0.13",
     "@chakra-ui/next-js": "^2.1.5",
@@ -33,6 +36,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@pc2/pc2-cli": "workspace:^",
     "@testing-library/dom": "^8.19.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -45,7 +49,9 @@
     "@types/uuid": "^9.0.2",
     "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
     "eslint": "8.47.0",
+    "eslint-plugin-next": "^0.0.0",
     "postcss": "^8.4.27",
     "postcss-scss": "^4.0.6",
     "sass": "^1.65.1",
