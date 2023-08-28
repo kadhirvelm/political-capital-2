@@ -2,8 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "rootDirs": [
-      "./css_types",
-      "./src",
+      "css_types",
+      ".",
     ],
     "outDir": "./dist",
     "lib": [

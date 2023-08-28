@@ -8,7 +8,7 @@ import { watch } from "chokidar";
 import { generateOutputTypeFile } from "./generateOutputTypeFile.js";
 
 const OUTPUT_DIRECTORY = "css_types";
-const SCSS_GLOB_PATTERN = "**/GlobalScreen.module.scss";
+const SCSS_GLOB_PATTERN = "**/*.module.scss";
 
 const getCurrentScssModuleFiles = () => glob(SCSS_GLOB_PATTERN);
 
