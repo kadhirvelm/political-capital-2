@@ -26,7 +26,7 @@ export const GlobalScreen: FC<Record<string, never>> = () => {
   }
 
   if (activeGame === undefined) {
-    return null;
+    return;
   }
 
   if (activeGame.gameState.state === "complete") {

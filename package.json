@@ -71,6 +71,9 @@
     },
     "ts-node@10.9.1": {
       "unplugged": true
+    },
+    "typed-scss-modules@7.1.4": {
+      "unplugged": true
     }
   }
 }
